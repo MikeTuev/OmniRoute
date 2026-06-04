@@ -9,6 +9,7 @@
  */
 
 import { createHash, randomBytes, randomUUID } from "node:crypto";
+import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 
 // ---------- Versions ------------------------------------------------------
 
@@ -322,7 +323,8 @@ function isContext1mModel(model: unknown): boolean {
  */
 export function selectBetaFlags(
   body: Record<string, unknown> | null | undefined,
-  model?: string | null
+  model?: string | null,
+  clientHeaders?: Record<string, string> | null
 ): string {
   const b = body || {};
   const hasSystem =
@@ -361,6 +363,13 @@ export function selectBetaFlags(
   }
   if (isHeavyAgent) {
     flags.push("advanced-tool-use-2025-11-20", "effort-2025-11-24");
+    if (isFeatureFlagEnabled("PASSTHROUGH_AFK_BETA")) {
+      const clientBeta =
+        clientHeaders?.["anthropic-beta"] || clientHeaders?.["Anthropic-Beta"] || "";
+      if (clientBeta.includes("afk-mode")) {
+        flags.push("afk-mode-2026-01-31");
+      }
+    }
   }
   return flags.join(",");
 }

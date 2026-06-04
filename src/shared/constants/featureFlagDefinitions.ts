@@ -266,6 +266,30 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     requiresRestart: false,
     warningLevel: "info",
   },
+  {
+    key: "PASSTHROUGH_THINKING_SIGNATURES",
+    label: "Passthrough Thinking Signatures",
+    description:
+      "Forward original thinking blocks with client signatures instead of converting to redacted_thinking. Fixes intermittent missing tool_use blocks but may cause 400 errors on mid-session model switches.",
+    descriptionI18nKey: "featureFlagPassthroughThinkingSignaturesDescription",
+    category: "runtime",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "caution",
+  },
+  {
+    key: "PASSTHROUGH_AFK_BETA",
+    label: "Passthrough AFK Beta",
+    description:
+      "Forward the afk-mode beta flag from Claude Code client headers to Anthropic. Required for Claude Code auto-mode sessions to function correctly.",
+    descriptionI18nKey: "featureFlagPassthroughAfkBetaDescription",
+    category: "runtime",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "info",
+  },
 
   // ──────────────── CLI (3) ────────────────
   {

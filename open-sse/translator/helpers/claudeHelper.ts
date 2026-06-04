@@ -1,6 +1,7 @@
 // Claude helper functions for translator
 import { DEFAULT_THINKING_CLAUDE_SIGNATURE } from "../../config/defaultThinkingSignature.ts";
 import { lookupReasoning, recordReplay } from "../../services/reasoningCache.ts";
+import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 
 // Placeholder thinking text used as last-resort fallback when:
 //   - Target upstream is a non-Anthropic Claude-shape provider
@@ -413,10 +414,13 @@ export function prepareClaudeRequest(
         //   cache misses (rare but possible after a process restart or TTL
         //   eviction). Empty text is treated as "missing" by kimi-coding so
         //   never emit an empty thinking field.
+        const passthroughThinking = isFeatureFlagEnabled("PASSTHROUGH_THINKING_SIGNATURES");
         let thinkingBlockIdx = 0;
         for (const block of content) {
           if (block.type === "thinking" || block.type === "redacted_thinking") {
-            if (supportsRedactedThinking) {
+            if (supportsRedactedThinking && passthroughThinking) {
+              // Leave thinking blocks as-is — forward original signatures
+            } else if (supportsRedactedThinking) {
               block.type = "redacted_thinking";
               block.data = DEFAULT_THINKING_CLAUDE_SIGNATURE;
               delete block.thinking;
@@ -463,7 +467,9 @@ export function prepareClaudeRequest(
         // assistant turn's content[] needs a thinking block in front of any
         // tool_use. Use the same provider-aware shape selection as above.
         if (thinkingEnabled && !hasThinking && hasToolUse) {
-          if (supportsRedactedThinking) {
+          if (supportsRedactedThinking && passthroughThinking) {
+            // No precursor needed — thinking blocks are passed through as-is
+          } else if (supportsRedactedThinking) {
             content.unshift({
               type: "redacted_thinking",
               data: DEFAULT_THINKING_CLAUDE_SIGNATURE,

@@ -3288,9 +3288,9 @@ export async function handleChatCore({
       translatedBody._disableToolPrefix = true;
 
       // Sanitize historical thinking-block signatures for Anthropic-native Claude OAuth.
-      // Only Anthropic's first-party API validates these signatures (token-bound); third-party
-      // Claude-shape providers do not. See redactPassthroughThinkingSignatures + issue #2454.
-      if (provider === "claude") {
+      // Gated by PASSTHROUGH_THINKING_SIGNATURES: when enabled, forward original
+      // thinking blocks 1:1 (fixes intermittent missing tool_use blocks).
+      if (provider === "claude" && !isFeatureFlagEnabled("PASSTHROUGH_THINKING_SIGNATURES")) {
         translatedBody.messages = redactPassthroughThinkingSignatures(
           translatedBody.messages,
           DEFAULT_THINKING_CLAUDE_SIGNATURE
