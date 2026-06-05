@@ -9,6 +9,7 @@
  */
 
 import { createHash, randomBytes, randomUUID } from "node:crypto";
+import { isFeatureFlagEnabled } from "@/shared/utils/featureFlags";
 
 // ---------- Versions ------------------------------------------------------
 
@@ -319,10 +320,14 @@ function isContext1mModel(model: unknown): boolean {
  * Claude Code captures, Sonnet receives effort/advanced-tool-use but not
  * context-1m; sending context-1m to Sonnet trips Anthropic's long-context credit
  * gate for accounts where direct Claude Code works.
+ *
+ * `clientHeaders` is consulted only to forward the client's afk-mode beta when
+ * the CLAUDE_FORWARD_AFK_BETA flag is enabled (auto-mode passthrough).
  */
 export function selectBetaFlags(
   body: Record<string, unknown> | null | undefined,
-  model?: string | null
+  model?: string | null,
+  clientHeaders?: Record<string, string> | null
 ): string {
   const b = body || {};
   const hasSystem =
@@ -361,6 +366,16 @@ export function selectBetaFlags(
   }
   if (isHeavyAgent) {
     flags.push("advanced-tool-use-2025-11-20", "effort-2025-11-24");
+    // afk-mode is a client-initiated flag (Claude Code auto-mode). Forward it
+    // only when the client explicitly sent it AND the operator opted in via
+    // CLAUDE_FORWARD_AFK_BETA — it is not part of any default CC capture.
+    if (isFeatureFlagEnabled("CLAUDE_FORWARD_AFK_BETA")) {
+      const clientBeta =
+        clientHeaders?.["anthropic-beta"] ?? clientHeaders?.["Anthropic-Beta"] ?? "";
+      if (clientBeta.includes("afk-mode")) {
+        flags.push("afk-mode-2026-01-31");
+      }
+    }
   }
   return flags.join(",");
 }

@@ -30,13 +30,13 @@ const {
 // Test group 1 — Flag definitions registry
 // ──────────────────────────────────────────────────────
 describe("featureFlagDefinitions", () => {
-  it("has exactly 28 flag definitions", () => {
-    assert.strictEqual(FEATURE_FLAG_DEFINITIONS.length, 28);
+  it("has exactly 29 flag definitions", () => {
+    assert.strictEqual(FEATURE_FLAG_DEFINITIONS.length, 29);
   });
 
   it("has unique keys for all flags", () => {
     const keys = FEATURE_FLAG_DEFINITIONS.map((d) => d.key);
-    assert.strictEqual(new Set(keys).size, 28);
+    assert.strictEqual(new Set(keys).size, 29);
   });
 
   it("has valid categories for all flags", () => {
@@ -83,6 +83,15 @@ describe("featureFlagDefinitions", () => {
         );
       }
     }
+  });
+
+  it("CLAUDE_FORWARD_AFK_BETA is a runtime boolean defaulting to false", () => {
+    const def = FEATURE_FLAG_DEFINITIONS.find((d) => d.key === "CLAUDE_FORWARD_AFK_BETA");
+    assert.ok(def, "CLAUDE_FORWARD_AFK_BETA should exist");
+    assert.strictEqual(def.category, "runtime");
+    assert.strictEqual(def.type, "boolean");
+    assert.strictEqual(def.defaultValue, "false");
+    assert.strictEqual(def.requiresRestart, false);
   });
 });
 
@@ -221,9 +230,9 @@ describe("resolveFeatureFlag", () => {
   });
 
   describe("resolveAllFeatureFlags", () => {
-    it("returns all 28 flags", () => {
+    it("returns all 29 flags", () => {
       const all = resolveAllFeatureFlags();
-      assert.strictEqual(all.length, 28);
+      assert.strictEqual(all.length, 29);
     });
 
     it("marks DB-overridden flags with source 'db'", () => {

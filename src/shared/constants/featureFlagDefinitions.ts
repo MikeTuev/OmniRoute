@@ -266,6 +266,18 @@ export const FEATURE_FLAG_DEFINITIONS: FeatureFlagDefinition[] = [
     requiresRestart: false,
     warningLevel: "info",
   },
+  {
+    key: "CLAUDE_FORWARD_AFK_BETA",
+    label: "Claude Forward AFK Beta",
+    description:
+      "Forward the afk-mode anthropic-beta flag to Anthropic when the Claude Code client sends it (auto-mode sessions). When off, afk-mode is not forwarded.",
+    descriptionI18nKey: "featureFlagClaudeForwardAfkBetaDescription",
+    category: "runtime",
+    defaultValue: "false",
+    type: "boolean",
+    requiresRestart: false,
+    warningLevel: "info",
+  },
 
   // ──────────────── CLI (3) ────────────────
   {
