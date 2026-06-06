@@ -582,6 +582,7 @@ interface PassthroughModelRowProps {
   modelId: string;
   fullModel: string;
   source?: string;
+  isFree?: boolean;
   isHidden?: boolean;
   copied?: string;
   onCopy: (text: string, key: string) => void;
@@ -738,6 +739,8 @@ interface ConnectionRowConnection {
   tokenExpiresAt?: string;
   maxConcurrent?: number | null;
   authType?: string;
+  proxyEnabled?: boolean;
+  perKeyProxyEnabled?: boolean;
 }
 
 interface ConnectionRowProps {
@@ -770,6 +773,10 @@ interface ConnectionRowProps {
   hasProxy?: boolean;
   proxySource?: string;
   proxyHost?: string;
+  proxyEnabled?: boolean;
+  perKeyProxyEnabled?: boolean;
+  onToggleProxyEnabled?: (enabled: boolean) => void;
+  onTogglePerKeyProxyEnabled?: (enabled: boolean) => void;
   onRefreshToken?: () => void;
   isRefreshing?: boolean;
   onApplyCodexAuthLocal?: () => void;
@@ -960,6 +967,7 @@ function ModelCompatPopover({
   getUpstreamHeadersRecord,
   onCompatPatch,
   showDeveloperToggle = true,
+  compact = false,
   disabled,
 }: {
   t: (key: string) => string;
@@ -975,6 +983,7 @@ function ModelCompatPopover({
     }
   ) => void;
   showDeveloperToggle?: boolean;
+  compact?: boolean;
   disabled?: boolean;
 }) {
   const [open, setOpen] = useState(false);
@@ -1117,7 +1126,7 @@ function ModelCompatPopover({
         title={t("compatAdjustmentsTitle")}
       >
         <span className="material-symbols-outlined text-base leading-none">tune</span>
-        {t("compatButtonLabel")}
+        {!compact && t("compatButtonLabel")}
       </button>
       {open &&
         typeof document !== "undefined" &&
@@ -1393,6 +1402,7 @@ export default function ProviderDetailPage() {
   const emailsVisible = useEmailPrivacyStore((s) => s.emailsVisible);
   const notify = useNotificationStore();
   const [proxyTarget, setProxyTarget] = useState(null);
+  const [distributingProxies, setDistributingProxies] = useState(false);
   const [proxyConfig, setProxyConfig] = useState(null);
   const [connProxyMap, setConnProxyMap] = useState<
     Record<string, { proxy: any; level: string } | null>
@@ -1432,6 +1442,13 @@ export default function ProviderDetailPage() {
   );
   const [exportingCodexAuthId, setExportingCodexAuthId] = useState<string | null>(null);
   const [importCodexModalOpen, setImportCodexModalOpen] = useState(false);
+  // "Adicionar Externo": public shareable device-flow link state.
+  const [externalLinkModalOpen, setExternalLinkModalOpen] = useState(false);
+  const [externalLinkUrl, setExternalLinkUrl] = useState("");
+  const [externalLinkToken, setExternalLinkToken] = useState<string | null>(null);
+  const [externalLinkLoading, setExternalLinkLoading] = useState(false);
+  const [externalLinkError, setExternalLinkError] = useState<string | null>(null);
+  const { copied: externalLinkCopied, copy: externalLinkCopy } = useCopyToClipboard();
   const [applyingClaudeAuthId, setApplyingClaudeAuthId] = useState<string | null>(null);
   const [applyClaudeModalConnectionId, setApplyClaudeModalConnectionId] = useState<string | null>(
     null
@@ -1454,6 +1471,8 @@ export default function ProviderDetailPage() {
   const [savingCodexGlobalServiceMode, setSavingCodexGlobalServiceMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [batchDeleting, setBatchDeleting] = useState(false);
+  const [batchUpdating, setBatchUpdating] = useState<"activate" | "deactivate" | null>(null);
+  const [batchRetesting, setBatchRetesting] = useState(false);
   const commandCodeAuthWindowRef = useRef<Window | null>(null);
   const commandCodeAuthTimerRef = useRef<number | null>(null);
   const pendingRiskActionRef = useRef<(() => void) | null>(null);
@@ -1964,6 +1983,35 @@ export default function ProviderDetailPage() {
     }
   };
 
+  const handleBatchSetActive = async (isActive: boolean) => {
+    if (selectedIds.size === 0 || batchUpdating) return;
+    setBatchUpdating(isActive ? "activate" : "deactivate");
+    try {
+      const res = await fetch("/api/providers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids: Array.from(selectedIds), isActive }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        await fetchConnections();
+        notify.success(
+          isActive
+            ? t("batchActivateSuccess", { count: data.updated })
+            : t("batchDeactivateSuccess", { count: data.updated })
+        );
+      } else {
+        const data = await res.json().catch(() => ({}));
+        notify.error(data.error?.message || data.error || "Batch update failed");
+      }
+    } catch {
+      notify.error("Network error during batch update");
+    } finally {
+      setBatchUpdating(null);
+    }
+  };
+
   const handleOAuthSuccess = useCallback(() => {
     fetchConnections();
     setShowOAuthModal(false);
@@ -1984,6 +2032,69 @@ export default function ProviderDetailPage() {
     }
     openApiKeyAddFlow();
   }, [isOAuth, openApiKeyAddFlow]);
+
+  // "Adicionar Externo": generate a single-use public link so a third party can
+  // complete the Codex device flow in their own browser.
+  const openExternalLinkFlow = useCallback(async () => {
+    setExternalLinkModalOpen(true);
+    setExternalLinkUrl("");
+    setExternalLinkToken(null);
+    setExternalLinkError(null);
+    setExternalLinkLoading(true);
+    try {
+      const res = await fetch(`/api/oauth/${providerId}/public-link`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data?.url) {
+        setExternalLinkUrl(data.url);
+        setExternalLinkToken(data.token || null);
+      } else {
+        setExternalLinkError(data?.error || "Falha ao gerar o link.");
+      }
+    } catch {
+      setExternalLinkError("Não foi possível contatar o servidor.");
+    } finally {
+      setExternalLinkLoading(false);
+    }
+  }, [providerId]);
+
+  // While the share popup is open, poll the ticket status so the dashboard can
+  // notify + refresh the connections the moment the external visitor finishes.
+  useEffect(() => {
+    if (!externalLinkModalOpen || !externalLinkToken) return;
+    let active = true;
+    const interval = setInterval(async () => {
+      if (!active) return;
+      try {
+        const res = await fetch(
+          `/api/oauth/${providerId}/public-link-status?token=${encodeURIComponent(externalLinkToken)}`
+        );
+        const data = await res.json().catch(() => ({}));
+        if (!active) return;
+        if (data?.status === "completed") {
+          active = false;
+          clearInterval(interval);
+          notify.success("Conta Codex conectada pelo link externo.");
+          fetchConnections();
+          setExternalLinkModalOpen(false);
+          setExternalLinkToken(null);
+        } else if (data?.status === "expired") {
+          active = false;
+          clearInterval(interval);
+          setExternalLinkError("O link expirou sem ser concluído.");
+        }
+      } catch {
+        /* transient network error — keep polling */
+      }
+    }, 3000);
+    return () => {
+      active = false;
+      clearInterval(interval);
+    };
+  }, [externalLinkModalOpen, externalLinkToken, providerId, notify, fetchConnections]);
 
   const gateConnectionFlow = useCallback(
     (callback: () => void) => {
@@ -2389,6 +2500,127 @@ export default function ProviderDetailPage() {
     }
   };
 
+  const handleToggleProxyEnabled = async (connectionId, proxyEnabled) => {
+    try {
+      const res = await fetch(`/api/providers/${connectionId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ proxyEnabled }),
+      });
+      if (res.ok) {
+        setConnections((prev) =>
+          prev.map((c) => (c.id === connectionId ? { ...c, proxyEnabled } : c))
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling proxy enabled:", error);
+    }
+  };
+
+  const handleTogglePerKeyProxyEnabled = async (connectionId, perKeyProxyEnabled) => {
+    try {
+      const res = await fetch(`/api/providers/${connectionId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ perKeyProxyEnabled }),
+      });
+      if (res.ok) {
+        setConnections((prev) =>
+          prev.map((c) => (c.id === connectionId ? { ...c, perKeyProxyEnabled } : c))
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling per-key proxy enabled:", error);
+    }
+  };
+
+  const handleDistributeProxies = async (tagFilter?: string) => {
+    const targetConnections = tagFilter
+      ? connections.filter(
+          (c: any) =>
+            (c.providerSpecificData?.tag as string | undefined)?.trim() === tagFilter
+        )
+      : connections;
+    if (targetConnections.length === 0) return;
+    setDistributingProxies(true);
+    try {
+      const proxiesRes = await fetch("/api/settings/proxies");
+      if (!proxiesRes.ok) throw new Error("Failed to fetch proxies");
+      const proxiesData = await proxiesRes.json();
+      const savedProxies = (proxiesData?.items || []).filter(
+        (p: any) => p.status === "active"
+      );
+      if (savedProxies.length === 0) {
+        notify.error("No saved proxies found. Add proxies in Settings → Proxy first.");
+        return;
+      }
+
+      let assigned = 0;
+      const sorted = [...targetConnections].sort(
+        (a: any, b: any) => (a.priority || 0) - (b.priority || 0)
+      );
+
+      for (let i = 0; i < sorted.length; i++) {
+        const conn = sorted[i] as any;
+        const proxy = savedProxies[i % savedProxies.length];
+
+        try {
+          await fetch("/api/settings/proxies/assignments", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              scope: "account",
+              scopeId: conn.id,
+              proxyId: null,
+            }),
+          });
+        } catch {
+          /* clear old assignment */
+        }
+
+        const patchRes = await fetch(`/api/providers/${conn.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ proxyEnabled: true, perKeyProxyEnabled: true }),
+        });
+
+        if (!patchRes.ok) {
+          console.error(`Failed to update connection ${conn.id}`);
+          continue;
+        }
+
+        // Assign new proxy
+        const assignRes = await fetch("/api/settings/proxies/assignments", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            scope: "account",
+            scopeId: conn.id,
+            proxyId: proxy.id,
+          }),
+        });
+
+        if (!assignRes.ok) {
+          console.error(`Failed to assign proxy to ${conn.id}`);
+          continue;
+        }
+
+        assigned++;
+      }
+
+      await fetchConnections();
+      const tagLabel = tagFilter ? `"${tagFilter}" ` : "";
+      notify.success(
+        `Distributed ${assigned} proxy assignment(s) across ${tagLabel}${sorted.length} connection(s).`
+      );
+    } catch (err) {
+      console.error("Error distributing proxies:", err);
+      notify.error("Failed to distribute proxies.");
+    } finally {
+      setDistributingProxies(false);
+    }
+  };
+
   const handleToggleRateLimit = async (connectionId, enabled) => {
     try {
       const res = await fetch("/api/rate-limits", {
@@ -2635,10 +2867,8 @@ export default function ProviderDetailPage() {
     }
   };
 
-  // Batch test all connections for this provider
-  const handleBatchTestAll = async () => {
-    if (batchTesting || connections.length === 0) return;
-    setBatchTesting(true);
+  // Shared runner for batch connection tests (all-for-provider or selected IDs)
+  const runBatchTest = async (payload: Record<string, unknown>) => {
     setBatchTestResults(null);
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 120_000); // 2min max
@@ -2646,7 +2876,7 @@ export default function ProviderDetailPage() {
       const res = await fetch("/api/providers/test-batch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "provider", providerId }),
+        body: JSON.stringify(payload),
         signal: controller.signal,
       });
       let data: any;
@@ -2677,7 +2907,28 @@ export default function ProviderDetailPage() {
       notify.error(msg);
     } finally {
       clearTimeout(timeoutId);
+    }
+  };
+
+  // Batch test all connections for this provider
+  const handleBatchTestAll = async () => {
+    if (batchTesting || connections.length === 0) return;
+    setBatchTesting(true);
+    try {
+      await runBatchTest({ mode: "provider", providerId });
+    } finally {
       setBatchTesting(false);
+    }
+  };
+
+  // Batch retest only the selected connections
+  const handleBatchRetest = async () => {
+    if (batchRetesting || selectedIds.size === 0) return;
+    setBatchRetesting(true);
+    try {
+      await runBatchTest({ mode: "selected", connectionIds: Array.from(selectedIds) });
+    } finally {
+      setBatchRetesting(false);
     }
   };
 
@@ -3289,8 +3540,9 @@ export default function ProviderDetailPage() {
   const [clearingModels, setClearingModels] = useState(false);
   const providerAliasEntries = useMemo(
     () =>
-      Object.entries(modelAliases).filter(([, model]) =>
-        (model as string).startsWith(`${providerStorageAlias}/`)
+      Object.entries(modelAliases).filter(
+        ([, model]) =>
+          typeof model === "string" && model.startsWith(`${providerStorageAlias}/`)
       ),
     [modelAliases, providerStorageAlias]
   );
@@ -4073,6 +4325,24 @@ export default function ProviderDetailPage() {
               </button>
             </div>
             <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+              {connections.length > 0 && (
+                <button
+                  onClick={() => handleDistributeProxies()}
+                  disabled={distributingProxies || batchTesting || !!retestingId}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    distributingProxies
+                      ? "bg-primary/20 border-primary/40 text-primary animate-pulse"
+                      : "bg-bg-subtle border-border text-text-muted hover:text-text-primary hover:border-primary/40"
+                  }`}
+                  title={t("distributeProxies")}
+                  aria-label={t("distributeProxies")}
+                >
+                  <span className="material-symbols-outlined text-[14px]">
+                    {distributingProxies ? "sync" : "swap_horiz"}
+                  </span>
+                  {distributingProxies ? t("distributing") : t("distributeProxies")}
+                </button>
+              )}
               {connections.length > 1 && (
                 <button
                   onClick={handleBatchTestAll}
@@ -4132,6 +4402,28 @@ export default function ProviderDetailPage() {
                           onClick={() => gateConnectionFlow(() => setShowOAuthModal(true))}
                         >
                           Experimental OAuth
+                        </Button>
+                      )}
+                      {providerId === "codex" && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          icon="share"
+                          onClick={() => gateConnectionFlow(openExternalLinkFlow)}
+                        >
+                          Adicionar Externo
+                        </Button>
+                      )}
+                      {providerId === "codex" && (
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          icon="upload_file"
+                          onClick={() => gateConnectionFlow(() => setImportCodexModalOpen(true))}
+                        >
+                          {typeof t.has === "function" && t.has("importCodexAuth")
+                            ? t("importCodexAuth")
+                            : "Import auth"}
                         </Button>
                       )}
                       {providerId === "claude" && (
@@ -4262,6 +4554,51 @@ export default function ProviderDetailPage() {
               );
               const allSelected = selectedIds.size === connections.length && connections.length > 0;
               const someSelected = selectedIds.size > 0 && selectedIds.size < connections.length;
+              const bulkBusy = batchUpdating !== null || batchRetesting || batchDeleting;
+              const bulkActions = selectedIds.size > 0 && (
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon="toggle_on"
+                    loading={batchUpdating === "activate"}
+                    disabled={bulkBusy && batchUpdating !== "activate"}
+                    onClick={() => handleBatchSetActive(true)}
+                  >
+                    {t("batchActivateSelected")}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon="toggle_off"
+                    loading={batchUpdating === "deactivate"}
+                    disabled={bulkBusy && batchUpdating !== "deactivate"}
+                    onClick={() => handleBatchSetActive(false)}
+                  >
+                    {t("batchDeactivateSelected")}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon="play_arrow"
+                    loading={batchRetesting}
+                    disabled={(bulkBusy && !batchRetesting) || !!retestingId}
+                    onClick={handleBatchRetest}
+                  >
+                    {t("batchRetestSelected")}
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    icon="delete"
+                    loading={batchDeleting}
+                    disabled={bulkBusy && !batchDeleting}
+                    onClick={handleBatchDelete}
+                  >
+                    {t("batchDeleteSelected", { count: selectedIds.size })}
+                  </Button>
+                </div>
+              );
 
               if (!hasAnyTag) {
                 return (
@@ -4279,22 +4616,12 @@ export default function ProviderDetailPage() {
                         />
                         <span className="text-sm font-medium text-text-muted">
                           {selectedIds.size > 0
-                            ? `${selectedIds.size} selected`
-                            : `${connections.length} accounts`}
+                            ? t("selectedCount", { count: selectedIds.size })
+                            : t("accountsCount", { count: connections.length })}
                         </span>
                       </label>
 
-                      {selectedIds.size > 0 && (
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          icon="delete"
-                          loading={batchDeleting}
-                          onClick={handleBatchDelete}
-                        >
-                          {t("batchDeleteSelected", { count: selectedIds.size })}
-                        </Button>
-                      )}
+                      {bulkActions}
                     </div>
                     <div className="flex flex-col divide-y divide-black/[0.03] dark:divide-white/[0.03] border border-t-0 border-border rounded-b-lg overflow-hidden">
                       {sorted.map((conn, index) => (
@@ -4398,6 +4725,10 @@ export default function ProviderDetailPage() {
                           hasProxy={!!connProxyMap[conn.id]?.proxy}
                           proxySource={connProxyMap[conn.id]?.level || null}
                           proxyHost={connProxyMap[conn.id]?.proxy?.host || null}
+                          proxyEnabled={conn.proxyEnabled !== false}
+                          onToggleProxyEnabled={(enabled) => handleToggleProxyEnabled(conn.id, enabled)}
+                          perKeyProxyEnabled={conn.perKeyProxyEnabled === true}
+                          onTogglePerKeyProxyEnabled={(enabled) => handleTogglePerKeyProxyEnabled(conn.id, enabled)}
                         />
                       ))}
                     </div>
@@ -4434,22 +4765,25 @@ export default function ProviderDetailPage() {
                         />
                         <span className="text-sm font-medium text-text-muted">
                           {selectedIds.size > 0
-                            ? `${selectedIds.size} selected`
-                            : `${connections.length} accounts`}
+                            ? t("selectedCount", { count: selectedIds.size })
+                            : t("accountsCount", { count: connections.length })}
                         </span>
                       </label>
 
-                      {selectedIds.size > 0 && (
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          icon="delete"
-                          loading={batchDeleting}
-                          onClick={handleBatchDelete}
-                        >
-                          {t("batchDeleteSelected", { count: selectedIds.size })}
-                        </Button>
-                      )}
+                      <div className="flex flex-wrap items-center justify-end gap-2">
+                        {selectedIds.size === 0 && connections.length > 0 && (
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            icon="shield"
+                            loading={distributingProxies}
+                            onClick={() => handleDistributeProxies()}
+                          >
+                            {t("distributeProxies")}
+                          </Button>
+                        )}
+                        {bulkActions}
+                      </div>
                     </div>
                   ) : null}
                   <div className="flex flex-col gap-0 border border-t-0 border-border rounded-b-lg overflow-hidden">
@@ -4473,6 +4807,15 @@ export default function ProviderDetailPage() {
                                 {tag}
                               </span>
                               <div className="flex-1 h-px bg-black/[0.04] dark:bg-white/[0.04]" />
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                icon="shield"
+                                loading={distributingProxies}
+                                onClick={() => handleDistributeProxies(tag)}
+                              >
+                                Distribute Proxies
+                              </Button>
                               <span className="text-[10px] text-text-muted/40">
                                 {groupConns.length}
                               </span>
@@ -4585,6 +4928,10 @@ export default function ProviderDetailPage() {
                                 hasProxy={!!connProxyMap[conn.id]?.proxy}
                                 proxySource={connProxyMap[conn.id]?.level || null}
                                 proxyHost={connProxyMap[conn.id]?.proxy?.host || null}
+                                proxyEnabled={conn.proxyEnabled !== false}
+                                onToggleProxyEnabled={(enabled) => handleToggleProxyEnabled(conn.id, enabled)}
+                                perKeyProxyEnabled={conn.perKeyProxyEnabled === true}
+                                onTogglePerKeyProxyEnabled={(enabled) => handleTogglePerKeyProxyEnabled(conn.id, enabled)}
                               />
                             ))}
                           </div>
@@ -4802,6 +5149,52 @@ export default function ProviderDetailPage() {
             fetchData();
           }}
         />
+      )}
+      {providerId === "codex" && externalLinkModalOpen && (
+        <Modal
+          isOpen={externalLinkModalOpen}
+          onClose={() => setExternalLinkModalOpen(false)}
+          title="Adicionar Externo — link do Codex"
+        >
+          <div className="space-y-4">
+            <p className="text-sm text-text-muted">
+              Compartilhe este link com quem vai autenticar a conta do Codex. A pessoa abre a
+              página, faz o login da OpenAI no próprio navegador e a conexão é cadastrada aqui.
+              Uso único, expira em 15 minutos.
+            </p>
+            {externalLinkLoading ? (
+              <p className="text-sm text-text-muted">Gerando link…</p>
+            ) : externalLinkError ? (
+              <p className="text-sm text-red-500">{externalLinkError}</p>
+            ) : externalLinkUrl ? (
+              <>
+                <div className="rounded-lg border border-border bg-bg-base p-3 break-all text-sm text-text-main">
+                  {externalLinkUrl}
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    className="flex-1"
+                    icon="open_in_new"
+                    onClick={() => window.open(externalLinkUrl, "_blank", "noopener")}
+                  >
+                    Abrir
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    icon="content_copy"
+                    onClick={() => externalLinkCopy(externalLinkUrl, "extlink")}
+                  >
+                    {externalLinkCopied === "extlink" ? "Copiado" : "Copiar"}
+                  </Button>
+                </div>
+                <p className="flex items-center gap-2 text-xs text-text-muted">
+                  <span className="material-symbols-outlined animate-spin text-[16px]">sync</span>
+                  Aguardando a autenticação no navegador da pessoa… esta janela atualiza sozinha.
+                </p>
+              </>
+            ) : null}
+          </div>
+        </Modal>
       )}
       {/* Claude Apply Auth Modal */}
       {providerId === "claude" && applyClaudeModalConnectionId && (
@@ -5038,11 +5431,13 @@ export default function ProviderDetailPage() {
           {importProgress.logs.length > 0 && (
             <div className="max-h-48 overflow-y-auto rounded-lg bg-black/5 dark:bg-white/5 p-3 border border-black/5 dark:border-white/5">
               <div className="flex flex-col gap-1">
-                {importProgress.logs.map((log, i) => (
+                  {importProgress.logs.map((log, i) => (
                   <p
                     key={i}
                     className={`text-xs font-mono ${
-                      log.startsWith("✓") ? "text-green-500 font-semibold" : "text-text-muted"
+                      typeof log === "string" && log.startsWith("✓")
+                        ? "text-green-500 font-semibold"
+                        : "text-text-muted"
                     }`}
                   >
                     {log}
@@ -5409,6 +5804,7 @@ function PassthroughModelsSection({
       alias: string | null;
       displayName: string;
       source: string;
+      isFree: boolean;
       isHidden: boolean;
     }> = [];
     const seenModelIds = new Set<string>();
@@ -5429,6 +5825,10 @@ function PassthroughModelsSection({
         alias: aliasByModelId.get(model.id) || null,
         displayName: model.name || model.id,
         source,
+        isFree:
+          Boolean((model as any).free) ||
+          model.id.endsWith(":free") ||
+          /\bgr[aá]tis\b|\bfree\b/i.test(model.name || ""),
         isHidden: isModelHidden(model.id),
       });
       seenModelIds.add(model.id);
@@ -5456,6 +5856,10 @@ function PassthroughModelsSection({
         alias: alias as string,
         displayName: alias as string,
         source: customModel ? customModel.source || "custom" : "alias",
+        isFree:
+          modelId.endsWith(":free") ||
+          Boolean((customModel as any)?.free) ||
+          /\bgr[aá]tis\b|\bfree\b/i.test(customModel?.name || alias || ""),
         isHidden: isModelHidden(modelId),
       });
       seenModelIds.add(modelId);
@@ -5559,27 +5963,33 @@ function PassthroughModelsSection({
             selectAllDisabled={hiddenFilteredCount === 0 || bulkTogglePending}
             deselectAllDisabled={visibleFilteredCount === 0 || bulkTogglePending}
           />
-          {filteredModels.map(({ modelId, fullModel, alias, isHidden, source }) => (
-            <PassthroughModelRow
-              key={fullModel as string}
-              modelId={modelId}
-              fullModel={fullModel}
-              source={source}
-              isHidden={isHidden}
-              copied={copied}
-              onCopy={onCopy}
-              onDeleteAlias={source === "alias" && alias ? () => onDeleteAlias(alias) : undefined}
-              t={t}
-              showDeveloperToggle
-              effectiveModelNormalize={effectiveModelNormalize}
-              effectiveModelPreserveDeveloper={effectiveModelPreserveDeveloper}
-              getUpstreamHeadersRecord={(p) => getUpstreamHeadersRecord(modelId, p)}
-              saveModelCompatFlags={saveModelCompatFlags}
-              compatDisabled={compatSavingModelId === modelId}
-              onToggleHidden={onToggleHidden}
-              togglingHidden={togglingModelId === modelId}
-            />
-          ))}
+          <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+            {filteredModels.map(({ modelId, fullModel, alias, isHidden, source, isFree }) => (
+              <PassthroughModelRow
+                key={fullModel as string}
+                modelId={modelId}
+                fullModel={fullModel}
+                source={source}
+                isFree={isFree}
+                isHidden={isHidden}
+                copied={copied}
+                onCopy={onCopy}
+                onDeleteAlias={source === "alias" && alias ? () => onDeleteAlias(alias) : undefined}
+                t={t}
+                showDeveloperToggle
+                effectiveModelNormalize={effectiveModelNormalize}
+                effectiveModelPreserveDeveloper={effectiveModelPreserveDeveloper}
+                getUpstreamHeadersRecord={(p) => getUpstreamHeadersRecord(modelId, p)}
+                saveModelCompatFlags={saveModelCompatFlags}
+                compatDisabled={compatSavingModelId === modelId}
+                onToggleHidden={onToggleHidden}
+                togglingHidden={togglingModelId === modelId}
+                onTestModel={onTestModel}
+                testStatus={modelTestStatus?.[modelId] || null}
+                testingModel={testingModelId === modelId}
+              />
+            ))}
+          </div>
           {filteredModels.length === 0 && modelFilter && (
             <p className="py-2 text-sm text-text-muted">
               {providerText(t, "noModelsMatch", `No models match "${modelFilter}"`, {
@@ -5597,6 +6007,7 @@ function PassthroughModelRow({
   modelId,
   fullModel,
   source,
+  isFree,
   isHidden,
   copied,
   onCopy,
@@ -5616,37 +6027,43 @@ function PassthroughModelRow({
 }: PassthroughModelRowProps) {
   return (
     <div
-      className={`flex gap-0 rounded-lg border border-border p-3 transition-opacity hover:bg-sidebar/50 ${
+      className={`flex min-w-0 flex-col gap-2 rounded-lg border border-border px-3.5 py-3 transition-opacity hover:bg-sidebar/50 ${
         isHidden ? "opacity-50" : ""
       }`}
     >
-      <div className="flex min-w-0 flex-1 items-start gap-3">
+      <div className="flex min-w-0 items-center gap-2">
         <span
           className="material-symbols-outlined shrink-0 text-base text-text-muted"
           style={{ color: isHidden ? "var(--color-text-muted)" : undefined }}
         >
           smart_toy
         </span>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium">{modelId}</p>
-          <div className="mt-1 flex flex-wrap items-center gap-1">
-            <code className="rounded bg-sidebar px-1.5 py-0.5 font-mono text-xs text-text-muted">
-              {fullModel}
-            </code>
-            <ModelSourceBadge source={source} />
-            <button
-              onClick={() => onCopy(fullModel, `model-${modelId}`)}
-              className="rounded p-0.5 text-text-muted hover:bg-sidebar hover:text-primary"
-              title={t("copyModel")}
-            >
-              <span className="material-symbols-outlined text-sm">
-                {copied === `model-${modelId}` ? "check" : "content_copy"}
-              </span>
-            </button>
-          </div>
-        </div>
+        <code
+          className="min-w-0 truncate rounded bg-sidebar px-1.5 py-0.5 font-mono text-xs text-text-muted"
+          title={fullModel}
+        >
+          {fullModel}
+        </code>
       </div>
-      <div className="flex shrink-0 items-center gap-1 self-start">
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-1.5">
+          <ModelSourceBadge source={source} />
+          {isFree && (
+            <Badge variant="success" className="shrink-0 px-1.5 py-0 text-[10px]">
+              {providerText(t, "freeBadge", "Free")}
+            </Badge>
+          )}
+        </div>
+        <div className="flex shrink-0 items-center gap-1">
+        <button
+          onClick={() => onCopy(fullModel, `model-${modelId}`)}
+          className="rounded p-0.5 text-text-muted hover:bg-sidebar hover:text-primary"
+          title={t("copyModel")}
+        >
+          <span className="material-symbols-outlined text-sm">
+            {copied === `model-${modelId}` ? "check" : "content_copy"}
+          </span>
+        </button>
         {onTestModel && (
           <button
             onClick={() => onTestModel(modelId, fullModel)}
@@ -5700,6 +6117,7 @@ function PassthroughModelRow({
             saveModelCompatFlags(modelId, { compatByProtocol: { [protocol]: payload } })
           }
           showDeveloperToggle={showDeveloperToggle}
+          compact
           disabled={compatDisabled}
         />
         {onDeleteAlias && (
@@ -5711,6 +6129,7 @@ function PassthroughModelRow({
             <span className="material-symbols-outlined text-sm">delete</span>
           </button>
         )}
+        </div>
       </div>
     </div>
   );
@@ -6292,6 +6711,7 @@ function CompatibleModelsSection({
       alias: string | null;
       displayName: string;
       source: string;
+      isFree: boolean;
       isHidden: boolean;
     }> = [];
     const seenModelIds = new Set<string>();
@@ -6309,6 +6729,10 @@ function CompatibleModelsSection({
         alias: aliasByModelId.get(model.id) || null,
         displayName: model.name || model.id,
         source,
+        isFree:
+          Boolean((model as any).free) ||
+          model.id.endsWith(":free") ||
+          /\bgr[aá]tis\b|\bfree\b/i.test(model.name || ""),
         isHidden: isModelHidden(model.id),
       });
       seenModelIds.add(model.id);
@@ -6339,6 +6763,10 @@ function CompatibleModelsSection({
         alias: alias as string,
         displayName: alias as string,
         source: customModel ? customModel.source || "custom" : "alias",
+        isFree:
+          modelId.endsWith(":free") ||
+          Boolean((customModel as any)?.free) ||
+          /\bgr[aá]tis\b|\bfree\b/i.test(customModel?.name || alias || ""),
         isHidden: isModelHidden(modelId),
       });
       seenModelIds.add(modelId);
@@ -6529,33 +6957,42 @@ function CompatibleModelsSection({
             selectAllDisabled={hiddenFilteredCount === 0 || bulkTogglePending}
             deselectAllDisabled={visibleFilteredCount === 0 || bulkTogglePending}
           />
-          {filteredModels.map(({ modelId, alias, isHidden, source }) => (
-            <PassthroughModelRow
-              key={`${providerStorageAlias}:${modelId}`}
-              modelId={modelId}
-              fullModel={`${providerDisplayAlias}/${modelId}`}
-              source={source}
-              isHidden={isHidden}
-              copied={copied}
-              onCopy={onCopy}
-              onDeleteAlias={
-                source === "custom" || source === "manual"
-                  ? () => handleDeleteModel(modelId, alias)
-                  : source === "alias" && alias
-                    ? () => onDeleteAlias(alias)
-                    : undefined
-              }
-              t={t}
-              showDeveloperToggle={!isAnthropic}
-              effectiveModelNormalize={effectiveModelNormalize}
-              effectiveModelPreserveDeveloper={effectiveModelPreserveDeveloper}
-              getUpstreamHeadersRecord={(p) => getUpstreamHeadersRecord(modelId, p)}
-              saveModelCompatFlags={saveModelCompatFlags}
-              compatDisabled={compatSavingModelId === modelId}
-              onToggleHidden={onToggleHidden}
-              togglingHidden={togglingModelId === modelId}
-            />
-          ))}
+          <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+            {filteredModels.map(({ modelId, alias, isHidden, source, isFree }) => {
+              const fullModel = `${providerDisplayAlias}/${modelId}`;
+              return (
+                <PassthroughModelRow
+                  key={`${providerStorageAlias}:${modelId}`}
+                  modelId={modelId}
+                  fullModel={fullModel}
+                  source={source}
+                  isFree={isFree}
+                  isHidden={isHidden}
+                  copied={copied}
+                  onCopy={onCopy}
+                  onDeleteAlias={
+                    source === "custom" || source === "manual"
+                      ? () => handleDeleteModel(modelId, alias)
+                      : source === "alias" && alias
+                        ? () => onDeleteAlias(alias)
+                        : undefined
+                  }
+                  t={t}
+                  showDeveloperToggle={!isAnthropic}
+                  effectiveModelNormalize={effectiveModelNormalize}
+                  effectiveModelPreserveDeveloper={effectiveModelPreserveDeveloper}
+                  getUpstreamHeadersRecord={(p) => getUpstreamHeadersRecord(modelId, p)}
+                  saveModelCompatFlags={saveModelCompatFlags}
+                  compatDisabled={compatSavingModelId === modelId}
+                  onToggleHidden={onToggleHidden}
+                  togglingHidden={togglingModelId === modelId}
+                  onTestModel={onTestModel}
+                  testStatus={modelTestStatus?.[modelId] || null}
+                  testingModel={testingModelId === modelId}
+                />
+              );
+            })}
+          </div>
           {filteredModels.length === 0 && modelFilter && (
             <p className="py-2 text-sm text-text-muted">
               {providerText(t, "noModelsMatch", `No models match "${modelFilter}"`, {
@@ -6834,6 +7271,10 @@ function ConnectionRow({
   isApplyingGeminiAuthLocal,
   onExportGeminiAuthFile,
   isExportingGeminiAuthFile,
+  perKeyProxyEnabled,
+  onTogglePerKeyProxyEnabled,
+  proxyEnabled,
+  onToggleProxyEnabled,
 }: ConnectionRowProps) {
   const t = useTranslations("providers");
   const emailsVisible = useEmailPrivacyStore((s) => s.emailsVisible);
@@ -7152,6 +7593,40 @@ function ConnectionRow({
                 >
                   <span className="material-symbols-outlined text-[13px]">date_range</span>
                   {t("weeklyShort")} {codexWeeklyEnabled ? t("toggleOnShort") : t("toggleOffShort")}
+                </button>
+              </>
+            )}
+            {onToggleProxyEnabled && (
+              <>
+                <span className="text-text-muted/30 select-none">|</span>
+                <button
+                  onClick={() => onToggleProxyEnabled(!proxyEnabled)}
+                  className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium transition-all cursor-pointer ${
+                    proxyEnabled
+                      ? "bg-emerald-500/15 text-emerald-500 hover:bg-emerald-500/25"
+                      : "bg-black/[0.03] dark:bg-white/[0.03] text-text-muted/50 hover:text-text-muted hover:bg-black/[0.06] dark:hover:bg-white/[0.06]"
+                  }`}
+                  title={proxyEnabled ? t("proxyEnabledTitle") : t("proxyDisabledTitle")}
+                >
+                  <span className="material-symbols-outlined text-[13px]">vpn_lock</span>
+                  {proxyEnabled ? t("proxyOn") : t("proxyOff")}
+                </button>
+              </>
+            )}
+            {onTogglePerKeyProxyEnabled && (
+              <>
+                <span className="text-text-muted/30 select-none">|</span>
+                <button
+                  onClick={() => onTogglePerKeyProxyEnabled(!perKeyProxyEnabled)}
+                  className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium transition-all cursor-pointer ${
+                    perKeyProxyEnabled
+                      ? "bg-violet-500/15 text-violet-500 hover:bg-violet-500/25"
+                      : "bg-black/[0.03] dark:bg-white/[0.03] text-text-muted/50 hover:text-text-muted hover:bg-black/[0.06] dark:hover:bg-white/[0.06]"
+                  }`}
+                  title={perKeyProxyEnabled ? t("perKeyProxyEnabledTitle") : t("perKeyProxyDisabledTitle")}
+                >
+                  <span className="material-symbols-outlined text-[13px]">key</span>
+                  {perKeyProxyEnabled ? t("perKeyProxyOn") : t("perKeyProxyOff")}
                 </button>
               </>
             )}

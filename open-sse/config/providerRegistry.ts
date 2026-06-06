@@ -647,7 +647,7 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
     oauth: {
       clientIdEnv: "CLAUDE_OAUTH_CLIENT_ID",
       clientIdDefault: "9d1c250a-e61b-44d9-88ed-5944d1962f5e",
-      tokenUrl: "https://console.anthropic.com/v1/oauth/token",
+      tokenUrl: "https://api.anthropic.com/v1/oauth/token",
     },
     models: [
       {
@@ -721,6 +721,43 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
     },
     models: [
       { id: "gemini-2.0-flash", name: "Gemini 2.0 Flash", toolCalling: true, supportsVision: true },
+      {
+        id: "gemini-3.1-pro-preview",
+        name: "Gemini 3.1 Pro Preview",
+        toolCalling: true,
+        supportsVision: true,
+      },
+      {
+        id: "gemini-3-flash-preview",
+        name: "Gemini 3 Flash Preview",
+        toolCalling: true,
+        supportsVision: true,
+      },
+      {
+        id: "gemini-3.1-flash-lite-preview",
+        name: "Gemini 3.1 Flash Lite Preview",
+        toolCalling: true,
+        supportsVision: true,
+      },
+      {
+        id: "gemini-3.5-flash",
+        name: "Gemini 3.5 Flash",
+        toolCalling: true,
+        supportsVision: true,
+      },
+      { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro", toolCalling: true, supportsVision: true },
+      {
+        id: "gemini-2.5-flash",
+        name: "Gemini 2.5 Flash",
+        toolCalling: true,
+        supportsVision: true,
+      },
+      {
+        id: "gemini-2.5-flash-lite",
+        name: "Gemini 2.5 Flash Lite",
+        toolCalling: true,
+        supportsVision: true,
+      },
       {
         id: "gemini-2.0-flash-thinking-exp-01-21",
         name: "Gemini 2.0 Flash Thinking",
@@ -1158,6 +1195,8 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
       { id: "work", name: "Work (Auto · fast)" },
       { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro" },
       { id: "gemini-3-flash-solo", name: "Gemini 3 Flash" },
+      // #3110: MiniMax M3 via Trae
+      { id: "minimax-m3", name: "MiniMax M3", contextLength: 1048576 },
       { id: "minimax-m2.7", name: "MiniMax M2.7" },
       { id: "kimi-k2.5", name: "Kimi K2.5" },
       { id: "gpt-5.4", name: "GPT 5.4" },
@@ -1337,8 +1376,15 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
       // #2900: big-pickle's upstream runs DeepSeek thinking mode — declare the
       // interleaved reasoning_content contract so follow-up/tool-use turns replay
       // it (otherwise DeepSeek returns 400 "reasoning_content ... must be passed back").
-      { id: "big-pickle", name: "Big Pickle", supportsReasoning: true, interleavedField: "reasoning_content" },
+      {
+        id: "big-pickle",
+        name: "Big Pickle",
+        supportsReasoning: true,
+        interleavedField: "reasoning_content",
+      },
       { id: "deepseek-v4-flash-free", name: "DeepSeek V4 Flash Free", supportsReasoning: true },
+      // #3110: MiniMax M3 free tier via OpenCode
+      { id: "minimax-m3-free", name: "MiniMax M3 Free", contextLength: 1048576 },
       { id: "minimax-m2.5-free", name: "MiniMax M2.5 Free", contextLength: 204800 },
       { id: "ling-2.6-1t-free", name: "Ling 2.6 Free", contextLength: 262000 },
       {
@@ -1347,7 +1393,13 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
         contextLength: 131000,
       },
       { id: "nemotron-3-super-free", name: "Nemotron 3 Super Free", contextLength: 1000000 },
-      { id: "qwen3.6-plus-free", name: "Qwen3.6 Plus Free", targetFormat: "claude", supportsVision: false, contextLength: 200000, },
+      {
+        id: "qwen3.6-plus-free",
+        name: "Qwen3.6 Plus Free",
+        targetFormat: "claude",
+        supportsVision: false,
+        contextLength: 200000,
+      },
     ],
   },
 
@@ -1372,6 +1424,8 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
       { id: "mimo-v2.5", name: "MiMo-V2.5" },
       { id: "mimo-v2-pro", name: "MiMo-V2-Pro" },
       { id: "mimo-v2-omni", name: "MiMo-V2-Omni" },
+      // #3110: MiniMax M3 via OpenCode Go tier
+      { id: "minimax-m3", name: "MiniMax M3", targetFormat: "claude", contextLength: 1048576 },
       { id: "minimax-m2.7", name: "MiniMax M2.7", targetFormat: "claude" },
       { id: "minimax-m2.5", name: "MiniMax M2.5", targetFormat: "claude" },
       // Issue #2292: Qwen models on opencode-go reject oa-compat format
@@ -1409,7 +1463,12 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
       // #2900: big-pickle's upstream runs DeepSeek thinking mode — declare the
       // interleaved reasoning_content contract so follow-up/tool-use turns replay
       // it (otherwise DeepSeek returns 400 "reasoning_content ... must be passed back").
-      { id: "big-pickle", name: "Big Pickle", supportsReasoning: true, interleavedField: "reasoning_content" },
+      {
+        id: "big-pickle",
+        name: "Big Pickle",
+        supportsReasoning: true,
+        interleavedField: "reasoning_content",
+      },
       { id: "gpt-5-nano", name: "GPT 5 Nano", contextLength: 400000 },
       { id: "gpt-5", name: "GPT 5" },
       { id: "gpt-5-codex", name: "GPT 5 Codex" },
@@ -1451,6 +1510,8 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
       { id: "glm-5.1", name: "GLM-5.1" },
 
       // ── MiniMax ────────────────────────────────────────────────
+      // #3110: MiniMax M3 — frontier coding model with 1M context
+      { id: "minimax-m3", name: "MiniMax M3", contextLength: 1048576 },
       { id: "minimax-m2.5", name: "MiniMax M2.5" },
       { id: "minimax-m2.7", name: "MiniMax M2.7" },
 
@@ -2132,6 +2193,8 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
     },
     models: [
       // T12/T28: MiniMax default upgraded from M2.5 to M2.7
+      // #3110: MiniMax M3 — frontier coding model with 1M context
+      { id: "MiniMax-M3", name: "MiniMax M3", contextLength: 1048576 },
       { id: "MiniMax-M2.7", name: "MiniMax M2.7" },
       { id: "MiniMax-M2.7-highspeed", name: "MiniMax M2.7 Highspeed" },
       { id: "MiniMax-M2.5", name: "MiniMax M2.5" },
@@ -2153,6 +2216,8 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
     },
     models: [
       // Keep parity with minimax to ensure model discovery works for minimax-cn connections.
+      // #3110: MiniMax M3 — frontier coding model with 1M context
+      { id: "MiniMax-M3", name: "MiniMax M3", contextLength: 1048576 },
       { id: "MiniMax-M2.7", name: "MiniMax M2.7" },
       { id: "MiniMax-M2.7-highspeed", name: "MiniMax M2.7 Highspeed" },
       { id: "MiniMax-M2.5", name: "MiniMax M2.5" },
@@ -2282,8 +2347,13 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
     authType: "apikey",
     authHeader: "bearer",
     models: [
-      { id: "meta-llama/llama-4-scout-17b-16e-instruct", name: "Llama 4 Scout" },
-      { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B" },
+      // Non-reasoning Llama models: Groq returns HTTP 400 if reasoning_effort is sent (#3258).
+      {
+        id: "meta-llama/llama-4-scout-17b-16e-instruct",
+        name: "Llama 4 Scout",
+        supportsReasoning: false,
+      },
+      { id: "llama-3.3-70b-versatile", name: "Llama 3.3 70B", supportsReasoning: false },
       { id: "openai/gpt-oss-120b", name: "GPT-OSS 120B" },
       { id: "openai/gpt-oss-20b", name: "GPT-OSS 20B" },
       { id: "qwen/qwen3-32b", name: "Qwen3 32B" },
@@ -2346,7 +2416,6 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
     models: [{ id: "auto", name: "Auto" }],
   },
 
-
   kluster: {
     id: "kluster",
     alias: "kluster",
@@ -2379,7 +2448,6 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
     authHeader: "bearer",
     models: [{ id: "liquid-lfm-40b", name: "Liquid LFM 40B" }],
   },
-
 
   monsterapi: {
     id: "monsterapi",
@@ -2417,7 +2485,6 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
       { id: "claude-3.5-sonnet", name: "Claude 3.5 Sonnet (via Phind)" },
     ],
   },
-
 
   chutes: {
     id: "chutes",
@@ -2608,6 +2675,8 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
       { id: "glm-5", name: "GLM 5" },
       { id: "mimo-v2.5-pro", name: "MiMo-V2.5-Pro" },
       { id: "mimo-v2.5", name: "MiMo-V2.5" },
+      // #3110: MiniMax M3 via OpenCode Zen
+      { id: "minimax-m3", name: "MiniMax M3", contextLength: 1048576 },
       { id: "minimax-m2.7", name: "MiniMax M2.7" },
       { id: "minimax-m2.5", name: "MiniMax M2.5" },
       { id: "llama-4-maverick", name: "Llama 4 Maverick" },
@@ -3098,6 +3167,8 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
       { id: "deepseek-v4-flash", name: "DeepSeek V4 Flash", supportsReasoning: true },
       { id: "kimi-k2.6", name: "Kimi K2.6" },
       { id: "glm-5.1", name: "GLM 5.1" },
+      // #3110: MiniMax M3 via Ollama
+      { id: "minimax-m3", name: "MiniMax M3", contextLength: 1048576 },
       { id: "minimax-m2.7", name: "MiniMax M2.7" },
       { id: "gemma4:31b", name: "Gemma 4 31B" },
       { id: "nemotron-3-super", name: "NVIDIA Nemotron 3 Super" },
@@ -3143,6 +3214,8 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
     authHeader: "bearer",
     models: [
       { id: "z-ai/glm-5.1", name: "GLM 5.1" },
+      // #3110: MiniMax M3 via NVIDIA
+      { id: "minimaxai/minimax-m3", name: "MiniMax M3", contextLength: 1048576 },
       { id: "minimaxai/minimax-m2.7", name: "MiniMax M2.7" },
       { id: "google/gemma-4-31b-it", name: "Gemma 4 31B" },
       { id: "mistralai/mistral-small-4-119b-2603", name: "Mistral Small 4 2603" },
@@ -3586,7 +3659,6 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
       { id: "gemma4:31b", name: "Gemma 4 31B (🆓 Free)" },
     ],
   },
-
 
   hackclub: {
     id: "hackclub",
@@ -4215,6 +4287,44 @@ const _REGISTRY_EAGER: Record<string, RegistryEntry> = {
         contextLength: 128000,
       },
     ],
+  },
+
+  theoldllm: {
+    id: "theoldllm",
+    alias: "tllm",
+    format: "openai",
+    executor: "theoldllm",
+    // Playwright-backed executor — no standard auth; uses embedded browser for token generation
+    baseUrl: "https://theoldllm.vercel.app/api/chatgpt",
+    baseUrls: ["https://theoldllm.vercel.app/api/chatgpt"],
+    authType: "none",
+    authHeader: "none",
+    models: [
+      { id: "GPT_5_4", name: "GPT-5.4 (The Old LLM 🆓)" },
+      { id: "GPT_4o", name: "GPT-4o (The Old LLM 🆓)" },
+      { id: "claude_opus_4", name: "Claude Opus 4 (The Old LLM 🆓)" },
+      { id: "claude_sonnet_4", name: "Claude Sonnet 4 (The Old LLM 🆓)" },
+      { id: "claude_haiku_3_5", name: "Claude Haiku 3.5 (The Old LLM 🆓)" },
+      { id: "deepseek_v4", name: "DeepSeek V4 (The Old LLM 🆓)" },
+      { id: "gemini_3_flash", name: "Gemini 3 Flash (The Old LLM 🆓)" },
+      { id: "gemini_3_pro", name: "Gemini 3 Pro (The Old LLM 🆓)" },
+    ],
+    passthroughModels: true,
+  },
+
+  chipotle: {
+    id: "chipotle",
+    alias: "pepper",
+    format: "openai",
+    executor: "chipotle",
+    baseUrl: "https://amelia.chipotle.com",
+    baseUrls: ["https://amelia.chipotle.com"],
+    authType: "none",
+    authHeader: "none",
+    models: [
+      { id: "pepper-1", name: "Pepper (Chipotle AI 🌯)" },
+    ],
+    passthroughModels: true,
   },
 };
 

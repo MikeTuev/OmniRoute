@@ -58,6 +58,36 @@ export const NOAUTH_PROVIDERS = {
     freeNote: "Free — anonymous access to multiple AI models via DuckDuckGo.",
     authHint: "No credentials required — DuckDuckGo AI Chat is anonymous and free.",
   },
+  theoldllm: {
+    id: "theoldllm",
+    alias: "tllm",
+    name: "The Old LLM (Free)",
+    icon: "auto_awesome",
+    color: "#8B5CF6",
+    textIcon: "TL",
+    website: "https://theoldllm.vercel.app",
+    noAuth: true,
+    hasFree: true,
+    freeNote:
+      "Free — GPT-5.4, Claude 4.6 Opus/Sonnet/Haiku, + more. No API key — tokens auto-generated via browser.",
+    authHint:
+      "No credentials required. The executor auto-generates access tokens via an embedded Playwright browser instance.",
+  },
+  chipotle: {
+    id: "chipotle",
+    alias: "pepper",
+    name: "Chipotle Pepper AI (Free)",
+    icon: "restaurant",
+    color: "#C41230",
+    textIcon: "🌯",
+    website: "https://amelia.chipotle.com",
+    noAuth: true,
+    hasFree: true,
+    freeNote:
+      "Free — Chipotle's Pepper AI (IPsoft Amelia). Anonymous sessions, no API key. Rate-limited.",
+    authHint:
+      "No credentials required. Uses Chipotle's public support chatbot via reverse-engineered SockJS/STOMP protocol.",
+  },
   "veoaifree-web": {
     id: "veoaifree-web",
     alias: "veo-free",
@@ -138,6 +168,7 @@ export const OAUTH_PROVIDERS = {
     subscriptionRisk: true,
     riskNoticeVariant: "deprecated",
     hasFree: true,
+    freeNote: "Free tier: 50 credits/month (~25K–100K tokens). ⚠️ Kiro ToS prohibits third-party proxy/harness use.",
   },
   "amazon-q": {
     id: "amazon-q",
@@ -536,7 +567,7 @@ export const WEB_COOKIE_PROVIDERS = {
       "Open chat.qwen.ai, log in, then open DevTools → Application → Local Storage → " +
       'copy the "token" value (or use tongyi_sso_ticket cookie as Bearer token).',
   },
-};
+  };
 
 // API Key Providers
 export const APIKEY_PROVIDERS = {
@@ -975,7 +1006,7 @@ export const APIKEY_PROVIDERS = {
     textIcon: "CB",
     website: "https://inference.cerebras.ai",
     hasFree: true,
-    freeNote: "Free: 1M tokens/day, 60K TPM — world's fastest inference",
+    freeNote: "Free Trial: 1M tokens/day, 30K TPM, 5 RPM — no credit card.",
   },
   cohere: {
     id: "cohere",
@@ -1158,8 +1189,7 @@ export const APIKEY_PROVIDERS = {
     textIcon: "LC",
     website: "https://longcat.chat/platform/docs",
     hasFree: true,
-    freeNote:
-      "50M tokens/day (Flash-Lite) + 500K/day (Chat/Thinking) — 100% free while public beta",
+    freeNote: "Free: 5M tokens/day on LongCat-2.0-Preview (Flash models retired 2026-05-29); up to 120M/day via feedback.",
   },
   pollinations: {
     id: "pollinations",
