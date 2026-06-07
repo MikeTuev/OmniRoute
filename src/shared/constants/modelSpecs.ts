@@ -42,6 +42,15 @@ export const MODEL_SPECS: Record<string, ModelSpec> = {
     supportsVision: true,
   },
 
+  "gpt-5.4": {
+    maxOutputTokens: 131072,
+    contextWindow: 409600,
+    supportsThinking: true,
+    supportsTools: true,
+    supportsVision: true,
+    aliases: ["openai/gpt-5.4"],
+  },
+
   // ── GPT-4o family ──────────────────────────────────────────────
   "gpt-4o-mini": {
     maxOutputTokens: 16384,
@@ -58,6 +67,22 @@ export const MODEL_SPECS: Record<string, ModelSpec> = {
     supportsTools: true,
     supportsVision: true,
     aliases: ["openai/gpt-4o"],
+  },
+
+  // ── Gemini 2.5 and 3.5 Flash series ──────────────────────────────
+  "gemini-2.5-flash": {
+    maxOutputTokens: 65536,
+    contextWindow: 1048576,
+    supportsThinking: false,
+    supportsTools: true,
+    supportsVision: true,
+  },
+  "gemini-3.5-flash-low": {
+    maxOutputTokens: 65536,
+    contextWindow: 1048576,
+    supportsThinking: false,
+    supportsTools: true,
+    supportsVision: true,
   },
 
   // ── Gemini 3 Flash series ───────────────────────────────────────

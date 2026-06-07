@@ -32,6 +32,10 @@ import {
 import { requireManagementAuth } from "@/lib/api/requireManagementAuth";
 import { isManagedProviderConnectionId } from "@/lib/providers/catalog";
 import { isApiKeyRevealEnabled, maskStoredApiKey } from "@/lib/apiKeyExposure";
+import {
+  buildModelSyncInternalHeaders,
+  getModelSyncInternalBaseUrl,
+} from "@/shared/services/modelSyncScheduler";
 
 // GET /api/providers - List all connections
 export async function GET(request: Request) {
@@ -122,6 +126,7 @@ export async function POST(request: Request) {
         nodeName: node.name,
         ...(node.chatPath ? { chatPath: node.chatPath } : {}),
         ...(node.modelsPath ? { modelsPath: node.modelsPath } : {}),
+        ...(node.customHeaders ? { customHeaders: node.customHeaders } : {}),
       };
     } else if (isAnthropicCompatibleProvider(provider)) {
       const node: any = await getProviderNodeById(provider);
@@ -146,6 +151,7 @@ export async function POST(request: Request) {
         nodeName: node.name,
         ...(node.chatPath ? { chatPath: node.chatPath } : {}),
         ...(node.modelsPath ? { modelsPath: node.modelsPath } : {}),
+        ...(node.customHeaders ? { customHeaders: node.customHeaders } : {}),
       };
     }
 
@@ -163,6 +169,53 @@ export async function POST(request: Request) {
       isActive: true,
       testStatus: testStatus || "unknown",
     });
+
+    // Auto-trigger model discovery for the newly created connection.
+    // Fire-and-forget: model sync can take seconds and should NOT block the
+    // POST response. If it fails, we log and move on — the connection itself
+    // is already persisted and the user can manually trigger a sync later.
+    // We use a self-fetch against our own /sync-models route, forwarding the
+    // incoming cookies (preserves management auth) plus the internal sync
+    // auth header (defense in depth) and an X-Internal-Auto-Sync marker for
+    // log correlation.
+    try {
+      // SECURITY: use the trusted loopback/env-pinned origin, NOT
+      // `new URL(request.url).origin` — the latter comes from the client-
+      // controlled Host header, which would let a caller redirect this
+      // credential-bearing internal self-fetch to an arbitrary host
+      // (SSRF + internal-auth-header exfiltration; CodeQL js/request-forgery).
+      const internalOrigin = getModelSyncInternalBaseUrl();
+      const cookieHeader = request.headers.get("cookie") || "";
+      const syncHeaders: Record<string, string> = {
+        "Content-Type": "application/json",
+        "X-Internal-Auto-Sync": "true",
+        ...(cookieHeader ? { cookie: cookieHeader } : {}),
+        ...buildModelSyncInternalHeaders(),
+      };
+      const syncUrl = `${internalOrigin}/api/providers/${encodeURIComponent(newConnection.id)}/sync-models?mode=import`;
+      // Intentionally not awaited: this is async/non-blocking work.
+      void fetch(syncUrl, { method: "POST", headers: syncHeaders })
+        .then((syncRes) => {
+          if (!syncRes.ok) {
+            console.log(
+              `[providers] Auto-sync failed for ${newConnection.id}: ${syncRes.status}`
+            );
+          }
+        })
+        .catch((err) => {
+          console.log(
+            `[providers] Auto-sync error for ${newConnection.id}:`,
+            err?.message || err
+          );
+        });
+    } catch (syncSetupError) {
+      // Defensive: if URL parsing or header construction itself throws, do
+      // not let it break the (already successful) POST response.
+      console.log(
+        `[providers] Auto-sync setup failed for ${newConnection.id}:`,
+        syncSetupError?.message || syncSetupError
+      );
+    }
 
     // Note: Gemini model sync is now triggered client-side with progress dialog
 

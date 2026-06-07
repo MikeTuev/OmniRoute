@@ -25,10 +25,12 @@ import {
 } from "./streamPayloadCollector.ts";
 import { STREAM_IDLE_TIMEOUT_MS, FETCH_BODY_TIMEOUT_MS, HTTP_STATUS } from "../config/constants.ts";
 import {
+  OMIT_STREAMING_CHUNK_MARKER,
   sanitizeStreamingChunk,
   extractThinkingFromContent,
 } from "../handlers/responseSanitizer.ts";
 import { buildErrorBody } from "./error.ts";
+import { parseTextualToolCallCandidate, isValidToolCallHeaderPrefix } from "./textualToolCall.ts";
 import { recordToolLatency } from "../services/toolLatencyTracker.ts";
 import {
   generateSessionId,
@@ -187,57 +189,6 @@ function appendBoundedText(current: string, next: string): string {
   return combined.slice(-STREAM_SUMMARY_TEXT_LIMIT);
 }
 
-function stripZeroWidth(value: unknown): unknown {
-  if (typeof value === "string") {
-    return value.replace(/[\u200B-\u200D\uFEFF]/g, "");
-  }
-  if (Array.isArray(value)) {
-    return value.map((item) => stripZeroWidth(item));
-  }
-  if (value && typeof value === "object") {
-    return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>).map(([key, item]) => [
-        key,
-        stripZeroWidth(item),
-      ])
-    );
-  }
-  return value;
-}
-
-function parseTextualToolCallCandidate(
-  text: unknown
-): { kind: "complete"; name: string; args: unknown } | { kind: "partial" } | null {
-  if (typeof text !== "string") return null;
-  const normalized = text.replace(/[\u200B-\u200D\uFEFF]/g, "");
-  const toolCallIndex = normalized.lastIndexOf("[Tool call:");
-  if (toolCallIndex < 0) return null;
-  const candidate = normalized.slice(toolCallIndex);
-  const headerMatch = candidate.match(/^\[Tool call:\s*([^\]\n]+)\]\s*\nArguments:\s*/);
-  if (!headerMatch) return { kind: "partial" };
-  const name = headerMatch[1]?.trim();
-  const rawArgs = candidate.slice(headerMatch[0].length).trim();
-  if (!name || !rawArgs) return { kind: "partial" };
-  const decoders = [
-    (value: string) => value,
-    (value: string) => {
-      if (value.startsWith('"') && value.endsWith('"')) {
-        const decoded = JSON.parse(value);
-        return typeof decoded === "string" ? decoded : value;
-      }
-      return value;
-    },
-  ];
-  for (const decode of decoders) {
-    try {
-      const decoded = decode(rawArgs);
-      const parsed = JSON.parse(decoded);
-      return { kind: "complete", name, args: stripZeroWidth(parsed) };
-    } catch {}
-  }
-  return { kind: "partial" };
-}
-
 function parseTextualToolCallFromContent(text: unknown): { name: string; args: unknown } | null {
   const candidate = parseTextualToolCallCandidate(text);
   return candidate?.kind === "complete" ? { name: candidate.name, args: candidate.args } : null;
@@ -247,9 +198,33 @@ function containsTextualToolCallCandidate(text: unknown): boolean {
   return parseTextualToolCallCandidate(text) !== null;
 }
 
-function containsMalformedTextualToolCall(text: unknown): boolean {
+function containsMalformedTextualToolCall(
+  text: unknown,
+  allowedToolNames?: Set<string> | null
+): boolean {
   if (typeof text !== "string") return false;
-  return text.replace(/[\u200B-\u200D\uFEFF]/g, "").includes("[Tool call:");
+  const normalized = text.replace(/[\u200B-\u200D\uFEFF]/g, "");
+
+  let searchIdx = 0;
+  while (true) {
+    const idx = normalized.indexOf("[Tool call:", searchIdx);
+    if (idx === -1) break;
+
+    const candidate = normalized.slice(idx);
+    if (isValidToolCallHeaderPrefix(candidate)) {
+      const parsed = parseTextualToolCallFromContent(candidate);
+      if (parsed) {
+        if (allowedToolNames?.size && !allowedToolNames.has(parsed.name)) {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    }
+
+    searchIdx = idx + 1;
+  }
+  return false;
 }
 
 function extractAllowedToolNames(body: unknown): Set<string> | null {
@@ -902,6 +877,10 @@ export function createSSEStream(options: StreamOptions = {}) {
           textualToolCallConverted = true;
           delta.content = "";
         } else {
+          if (passthroughBufferedTextualToolCallContent) {
+            delta.content = passthroughBufferedTextualToolCallContent + incomingContent;
+            textualToolCallConverted = true;
+          }
           passthroughAccumulatedContent = appendBoundedText(
             passthroughAccumulatedContent,
             passthroughBufferedTextualToolCallContent + incomingContent
@@ -1398,6 +1377,11 @@ export function createSSEStream(options: StreamOptions = {}) {
                         output = `data: ${JSON.stringify(parsed)}\n`;
                         injectedUsage = true;
                       } else {
+                        if (passthroughBufferedTextualToolCallContent) {
+                          parsed.delta = passthroughBufferedTextualToolCallContent + incomingDelta;
+                          output = `data: ${JSON.stringify(parsed)}\n`;
+                          injectedUsage = true;
+                        }
                         passthroughAccumulatedContent = appendBoundedText(
                           passthroughAccumulatedContent,
                           passthroughBufferedTextualToolCallContent + incomingDelta
@@ -1600,6 +1584,36 @@ export function createSSEStream(options: StreamOptions = {}) {
                 } else {
                   // Chat Completions: full sanitization pipeline
 
+                  // Hardening: detect upstream returning empty choices array
+                  // which breaks OpenAI-compatible clients (e.g. Copilot Chat)
+                  if (Array.isArray(parsed.choices) && parsed.choices.length === 0) {
+                    console.warn(
+                      `[STREAM] Upstream returned empty choices array (${provider || "provider"}:${model || "unknown"}) — emitting error chunk`
+                    );
+                    const errorChunk = {
+                      id: parsed.id || `omniroute-empty-choices-${Date.now()}`,
+                      object: "chat.completion.chunk",
+                      created: parsed.created || Math.floor(Date.now() / 1000),
+                      model: parsed.model || model || "unknown",
+                      choices: [
+                        {
+                          index: 0,
+                          delta: {
+                            role: "assistant",
+                            content: "[OmniRoute] Upstream returned an empty response. Please retry.",
+                          },
+                          finish_reason: "stop",
+                        },
+                      ],
+                    };
+                    output = `data: ${JSON.stringify(errorChunk)}\n`;
+                    injectedUsage = true;
+                    clientPayload = errorChunk;
+                    reqLogger?.appendConvertedChunk?.(output);
+                    controller.enqueue(encoder.encode(output));
+                    continue;
+                  }
+
                   // Detect reasoning alias before sanitization strips it
                   const hadReasoningAlias = !!(
                     parsed.choices?.[0]?.delta?.reasoning &&
@@ -1608,6 +1622,14 @@ export function createSSEStream(options: StreamOptions = {}) {
                   );
 
                   parsed = sanitizeStreamingChunk(parsed);
+                  if (
+                    parsed &&
+                    typeof parsed === "object" &&
+                    !Array.isArray(parsed) &&
+                    (parsed as Record<string, unknown>)[OMIT_STREAMING_CHUNK_MARKER] === true
+                  ) {
+                    continue;
+                  }
 
                   const idFixed = fixInvalidId(parsed);
 
@@ -2049,6 +2071,54 @@ export function createSSEStream(options: StreamOptions = {}) {
             }
             clearPendingPassthroughEvent();
 
+            if (
+              passthroughBufferedTextualToolCallContent &&
+              !passthroughBufferedTextualToolCallContent.includes("Arguments:")
+            ) {
+              let flushOutput = "";
+              if (clientExpectsResponsesStream) {
+                const syntheticChunk = {
+                  type: "response.output_text.delta",
+                  delta: passthroughBufferedTextualToolCallContent,
+                };
+                flushOutput = `data: ${JSON.stringify(syntheticChunk)}\n\n`;
+              } else if (clientExpectsClaudeStream) {
+                const syntheticChunk = {
+                  type: "content_block_delta",
+                  index: 0,
+                  delta: {
+                    type: "text_delta",
+                    text: passthroughBufferedTextualToolCallContent,
+                  },
+                };
+                flushOutput = `data: ${JSON.stringify(syntheticChunk)}\n\n`;
+              } else {
+                const syntheticChunk = {
+                  id: passthroughResponsesId || `chatcmpl-${Date.now()}`,
+                  object: "chat.completion.chunk",
+                  created: Math.floor(Date.now() / 1000),
+                  model: model || "unknown",
+                  choices: [
+                    {
+                      index: 0,
+                      delta: {
+                        content: passthroughBufferedTextualToolCallContent,
+                      },
+                      finish_reason: null,
+                    },
+                  ],
+                };
+                flushOutput = `data: ${JSON.stringify(syntheticChunk)}\n\n`;
+              }
+              reqLogger?.appendConvertedChunk?.(flushOutput);
+              controller.enqueue(encoder.encode(flushOutput));
+              passthroughAccumulatedContent = appendBoundedText(
+                passthroughAccumulatedContent,
+                passthroughBufferedTextualToolCallContent
+              );
+              passthroughBufferedTextualToolCallContent = "";
+            }
+
             // Estimate usage if provider didn't return valid usage
             if (!hasValidUsage(usage) && totalContentLength > 0) {
               usage = estimateUsage(body, totalContentLength, sourceFormat || FORMATS.OPENAI);
@@ -2102,7 +2172,7 @@ export function createSSEStream(options: StreamOptions = {}) {
                 ) {
                   passthroughHasToolCalls = true;
                   content = "";
-                } else if (containsMalformedTextualToolCall(content)) {
+                } else if (containsMalformedTextualToolCall(content, allowedToolNames)) {
                   content = "";
                 }
                 const message: Record<string, unknown> = {
@@ -2118,6 +2188,14 @@ export function createSSEStream(options: StreamOptions = {}) {
                     (a, b) => a.index - b.index
                   );
                 }
+                // Hardening: log empty assistant response after tool completion
+                // for observability — helps diagnose Copilot "Sorry, no response was returned"
+                if (passthroughHasToolCalls && !content.trim() && !reasoning.trim()) {
+                  console.warn(
+                    `[STREAM] Empty assistant response after tool_calls completion (${provider || "provider"}:${model || "unknown"}) — sessionId=${sessionId}`
+                  );
+                }
+
                 const responseBody = {
                   choices: [
                     {
@@ -2345,7 +2423,7 @@ export function createSSEStream(options: StreamOptions = {}) {
                   },
                 });
                 content = "";
-              } else if (containsMalformedTextualToolCall(content)) {
+              } else if (containsMalformedTextualToolCall(content, allowedToolNames)) {
                 content = "";
               }
               const message: Record<string, unknown> = {
