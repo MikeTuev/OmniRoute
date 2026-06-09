@@ -355,6 +355,23 @@ export const bulkCreateProviderSchema = z
     }
   });
 
+// ──── Bulk Web-Session Import Schema ────
+
+export const bulkWebSessionImportSchema = z.object({
+  provider: z.string().min(1).max(100),
+  entries: z
+    .array(
+      z.object({
+        name: z.string().min(1).max(200),
+        credential: z.string().min(1).max(64 * 1024, "Credential must be under 64 KB"),
+      })
+    )
+    .min(1, "entries must contain at least 1 item")
+    .max(50, "entries must contain at most 50 items"),
+  priority: z.number().int().min(1).max(100).optional(),
+  globalPriority: z.number().int().min(1).max(100).nullable().optional(),
+});
+
 // ──── Codex Import Schema ────
 
 export const importCodexAuthSchema = z.object({
@@ -734,6 +751,7 @@ export const updateSettingsSchema = z.object({
   pinProviderQuotaToHome: z.boolean().optional(),
   showQuickStartOnHome: z.boolean().optional(),
   showProviderTopologyOnHome: z.boolean().optional(),
+  showTokenSaverOnEndpoint: z.boolean().optional(),
   bruteForceProtection: z.boolean().optional(),
   hiddenSidebarItems: z.array(z.enum(HIDEABLE_SIDEBAR_ITEM_IDS)).optional(),
   comboConfigMode: z.enum(COMBO_CONFIG_MODES).optional(),
