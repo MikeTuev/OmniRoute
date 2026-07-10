@@ -17,6 +17,8 @@ import { getPool } from "@/lib/localDb";
 import { getQuotaStore } from "@/lib/quota/QuotaStore";
 import { resolvePlan } from "@/lib/quota/planResolver";
 import { resolveConnectionProvider } from "@/lib/quota/connectionProvider";
+import { getSaturation } from "@/lib/quota/saturationSignals";
+import { applyPercentSaturation } from "@/lib/quota/poolUsageSaturation";
 import type { PoolUsageSnapshot } from "@/lib/quota/types";
 
 export const dynamic = "force-dynamic";
@@ -49,6 +51,20 @@ export async function GET(request: Request, { params }: RouteParams): Promise<Re
     let snapshot: PoolUsageSnapshot;
     if (plan.dimensions.length > 0) {
       snapshot = await store.poolUsageWithDimensions(id, plan.dimensions);
+
+      // percent dimensions are never written to quota_consumption (enforce.ts
+      // costForUnit returns 0), so overlay them with the same saturation
+      // signal enforcement acts on — across ALL member connections, matching
+      // the enforce.ts accountCount semantics for multi-connection pools.
+      const connectionIds =
+        Array.isArray(pool.connectionIds) && pool.connectionIds.length > 0
+          ? pool.connectionIds
+          : [pool.connectionId];
+      snapshot = await applyPercentSaturation(snapshot, {
+        connectionIds,
+        provider,
+        getSaturation,
+      });
     } else {
       // Fallback: no plan dimensions configured — return minimal snapshot
       snapshot = await store.poolUsage(id);
