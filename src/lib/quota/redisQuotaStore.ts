@@ -16,10 +16,7 @@
  * Part of: Group B — Quota Sharing Engine (plan 22, frente F6).
  */
 
-import {
-  getPool,
-  listAllocationsForApiKey,
-} from "@/lib/localDb";
+import { getPool, listAllocationsForApiKey } from "@/lib/localDb";
 import { WINDOW_MS, dimensionKeyToString } from "./dimensions";
 import type { DimensionKey } from "./dimensions";
 import type { QuotaStore, PoolUsageSnapshot } from "./types";
@@ -307,6 +304,23 @@ export class RedisQuotaStore implements QuotaStore {
         tokensPerSecond: rateResult.tokensPerSecond,
         timeToExhaustionMs: rateResult.timeToExhaustionMs,
       };
+    } else {
+      // Fallback (parity with SqliteQuotaStore): percent-only plans have no
+      // tokens dimension — read the display-only tokens/5h telemetry bucket
+      // recordConsumption writes for every pool-matched request. No token
+      // limit exists to project against → timeToExhaustionMs stays null.
+      const telemetryTokens = await this.poolConsumedTotal(poolId, {
+        poolId,
+        unit: "tokens",
+        window: "5h",
+      }).catch(() => 0);
+      if (telemetryTokens > 0) {
+        const rateResult = computeBurnRateFromWindow(telemetryTokens, WINDOW_MS["5h"]);
+        burnRate = {
+          tokensPerSecond: rateResult.tokensPerSecond,
+          timeToExhaustionMs: null,
+        };
+      }
     }
 
     return {

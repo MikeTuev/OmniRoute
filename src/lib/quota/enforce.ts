@@ -30,6 +30,14 @@ import { getModelCap } from "@/lib/db/quotaModelCaps";
 const SATURATION_THRESHOLD = Number(process.env.QUOTA_SATURATION_THRESHOLD ?? "0.5");
 
 /**
+ * Window used for the display-only telemetry buckets recordConsumption writes
+ * for units the plan does not cover (see the TELEMETRY comment there). 5h
+ * matches the shortest catalog plan window so the dashboard's log and burn
+ * rate reflect recent activity.
+ */
+const TELEMETRY_WINDOW = "5h" as const;
+
+/**
  * Units for which the store tracks a real pool-wide aggregate (sum of per-key
  * consumption via quota_consumption rows). For these units, globalUsedPercent
  * (the saturation signal from the upstream provider) is always 0 because no
@@ -336,6 +344,26 @@ export async function recordConsumption(input: RecordConsumptionInput): Promise<
       await store.consume(input.apiKeyId, dimKey, cost).catch(() => {
         // Fail-open per B29 — drift expected; teto global do fetcher corrige
       });
+    }
+  }
+
+  // TELEMETRY buckets (display-only). percent-only plans (claude/codex) write
+  // nothing above — costForUnit returns 0 for the `percent` unit — leaving the
+  // dashboard usage log and burn rate permanently empty. Record requests and
+  // tokens telemetry for every pool-matched request so those cards have data.
+  // Enforcement is unaffected: enforceQuotaShare reads only the PLAN's
+  // dimensions, never these keys. Skipped when the plan itself already covers
+  // the same unit+window (no double-write).
+  const planCovers = new Set(plan.dimensions.map((d) => `${d.unit}:${d.window}`));
+  for (const unit of ["requests", "tokens"] as const) {
+    if (planCovers.has(`${unit}:${TELEMETRY_WINDOW}`)) continue;
+    const cost = costForUnit(input.cost, unit);
+    if (cost > 0) {
+      await store
+        .consume(input.apiKeyId, { poolId, unit, window: TELEMETRY_WINDOW }, cost)
+        .catch(() => {
+          // Fail-open per B29 — telemetry is best-effort
+        });
     }
   }
 

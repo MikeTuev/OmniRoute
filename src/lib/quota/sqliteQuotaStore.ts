@@ -231,6 +231,23 @@ export class SqliteQuotaStore implements QuotaStore {
         tokensPerSecond: rateResult.tokensPerSecond,
         timeToExhaustionMs: rateResult.timeToExhaustionMs,
       };
+    } else {
+      // Fallback: percent-only plans (claude/codex) have no tokens dimension.
+      // recordConsumption writes a display-only tokens/5h telemetry bucket for
+      // every pool-matched request — use it so the burn-rate card has data.
+      // There is no token limit to project against → timeToExhaustionMs null.
+      const telemetryTokens = await this.poolConsumedTotal(poolId, {
+        poolId,
+        unit: "tokens",
+        window: "5h",
+      }).catch(() => 0);
+      if (telemetryTokens > 0) {
+        const rateResult = computeBurnRateFromWindow(telemetryTokens, WINDOW_MS["5h"]);
+        burnRate = {
+          tokensPerSecond: rateResult.tokensPerSecond,
+          timeToExhaustionMs: null,
+        };
+      }
     }
 
     return {
