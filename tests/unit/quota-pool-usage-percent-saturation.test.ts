@@ -138,3 +138,40 @@ test("usage route overlays percent dimensions via applyPercentSaturation", () =>
     "route must pass ALL pool member connections (not only the primary)"
   );
 });
+
+// ── Per-key attribution in the snapshot (Consumed column / Slices) ──────────
+
+test("percent perKey entries get consumed/deficit from token-share attribution", async () => {
+  const snapshot = makeSnapshot();
+  const result = await applyPercentSaturation(snapshot, {
+    connectionIds: ["conn-a"],
+    provider: "claude",
+    getSaturation: async (_c, _p, dim) => (dim.window === "5h" ? 0.8 : 0),
+    // k1 owns 90% of the pool's token telemetry in every window.
+    getTokenShare: async (apiKeyId, _window) => (apiKeyId === "k1" ? 0.9 : 0.1),
+  });
+
+  const fiveH = result.dimensions.find((d) => d.unit === "percent" && d.window === "5h");
+  const k1 = fiveH!.perKey.find((p) => p.apiKeyId === "k1");
+  assert.ok(k1, "expected k1 perKey entry");
+  // consumedTotal = 0.8×100 = 80; k1 share 0.9 → consumed 72; fairShare 50 → deficit 22, borrowing.
+  assert.ok(Math.abs(k1!.consumed - 72) < 1e-9, `expected 72, got ${k1!.consumed}`);
+  assert.ok(Math.abs(k1!.deficit - 22) < 1e-9, `expected deficit 22, got ${k1!.deficit}`);
+  assert.equal(k1!.borrowing, true, "k1 must be flagged as borrowing");
+});
+
+test("without getTokenShare the perKey entries stay untouched (back-compat)", async () => {
+  const snapshot = makeSnapshot();
+  const result = await applyPercentSaturation(snapshot, {
+    connectionIds: ["conn-a"],
+    provider: "claude",
+    getSaturation: async () => 0.8,
+  });
+  const fiveH = result.dimensions.find((d) => d.unit === "percent" && d.window === "5h");
+  assert.equal(fiveH!.perKey[0].consumed, 0, "no share source → perKey untouched");
+});
+
+test("usage route wires getTokenShare via poolTokenShare (perKey attribution)", () => {
+  assert.ok(routeSrc.includes("poolTokenShare"), "route must wire poolTokenShare");
+  assert.ok(routeSrc.includes("getTokenShare"), "route must pass getTokenShare to the overlay");
+});

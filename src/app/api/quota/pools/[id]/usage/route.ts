@@ -19,6 +19,7 @@ import { resolvePlan } from "@/lib/quota/planResolver";
 import { resolveConnectionProvider } from "@/lib/quota/connectionProvider";
 import { getSaturation } from "@/lib/quota/saturationSignals";
 import { applyPercentSaturation } from "@/lib/quota/poolUsageSaturation";
+import { poolTokenShare } from "@/lib/quota/percentAttribution";
 import type { PoolUsageSnapshot } from "@/lib/quota/types";
 
 export const dynamic = "force-dynamic";
@@ -64,6 +65,9 @@ export async function GET(request: Request, { params }: RouteParams): Promise<Re
         connectionIds,
         provider,
         getSaturation,
+        // Same attribution the enforcement gate uses: split the account-level
+        // percent across keys by their token-telemetry share.
+        getTokenShare: (apiKeyId, window) => poolTokenShare(store, id, apiKeyId, window),
       });
     } else {
       // Fallback: no plan dimensions configured — return minimal snapshot

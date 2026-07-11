@@ -17,6 +17,7 @@ import type { EnforceDecision, EnforceInput, RecordConsumptionInput } from "./ty
 import type { QuotaUnit } from "./dimensions";
 import { dimensionKeyToString } from "./dimensions";
 import { decideFairShare } from "./fairShare";
+import { poolTokenShare } from "./percentAttribution";
 import { resolvePlan } from "./planResolver";
 import { getSaturation } from "./saturationSignals";
 import { getQuotaStore } from "./QuotaStore";
@@ -206,9 +207,6 @@ export async function enforceQuotaShare(input: EnforceInput): Promise<EnforceDec
     const dimKey = { poolId: pool.id, unit: dim.unit, window: dim.window };
     const dimKeyStr = dimensionKeyToString(dimKey);
 
-    const consumedThisKey = await store.peek(input.apiKeyId, dimKey).catch(() => 0);
-    consumedByThisKey[dimKeyStr] = consumedThisKey;
-
     // Global saturation signal — fail-open: 0 (generous mode)
     const globalUsedPercent = await getSaturation(input.connectionId, input.provider, dim).catch(
       () => 0
@@ -226,13 +224,23 @@ export async function enforceQuotaShare(input: EnforceInput): Promise<EnforceDec
     //   - percent dimensions: the saturation signal IS the consumed signal (the upstream
     //     provider returns a utilisation percentage, not raw counts).
     let consumedTotal: number;
+    let consumedThisKey: number;
     if (COUNTABLE_UNITS.has(dim.unit)) {
+      consumedThisKey = await store.peek(input.apiKeyId, dimKey).catch(() => 0);
       // Real pool-wide aggregate (sum of per-key consumption across all apiKeyIds).
       consumedTotal = await store.poolConsumedTotal(pool.id, dimKey).catch(() => 0);
     } else {
       // percent (account-quota window): the saturation signal is authoritative.
       consumedTotal = globalUsedPercent * effectiveLimit;
+      // Per-key percent is not reported by the provider (only the account
+      // total); nothing is written locally for the percent unit either, so a
+      // store.peek here would pin consumed at 0 forever — hard/soft policies
+      // and weights would never engage. Attribute the account total to keys
+      // proportionally to their share of the pool's token telemetry instead.
+      const share = await poolTokenShare(store, pool.id, input.apiKeyId, dim.window);
+      consumedThisKey = consumedTotal * share;
     }
+    consumedByThisKey[dimKeyStr] = consumedThisKey;
 
     dimensionsInfo.push({
       key: dimKey,
@@ -347,23 +355,28 @@ export async function recordConsumption(input: RecordConsumptionInput): Promise<
     }
   }
 
-  // TELEMETRY buckets (display-only). percent-only plans (claude/codex) write
-  // nothing above — costForUnit returns 0 for the `percent` unit — leaving the
-  // dashboard usage log and burn rate permanently empty. Record requests and
-  // tokens telemetry for every pool-matched request so those cards have data.
-  // Enforcement is unaffected: enforceQuotaShare reads only the PLAN's
-  // dimensions, never these keys. Skipped when the plan itself already covers
-  // the same unit+window (no double-write).
+  // TELEMETRY buckets. percent-only plans (claude/codex) write nothing above —
+  // costForUnit returns 0 for the `percent` unit — leaving the dashboard usage
+  // log and burn rate permanently empty. Record requests and tokens telemetry
+  // for every pool-matched request so those cards have data. The tokens
+  // buckets additionally feed the percent ATTRIBUTION (poolTokenShare in
+  // enforceQuotaShare): the account-level percent is split across keys by
+  // their token share, so one bucket per percent WINDOW of the plan is kept
+  // (5h baseline + e.g. weekly for claude). Skipped when the plan itself
+  // already covers the same unit+window (no double-write).
   const planCovers = new Set(plan.dimensions.map((d) => `${d.unit}:${d.window}`));
+  const telemetryWindows = new Set<import("./dimensions").QuotaWindow>([TELEMETRY_WINDOW]);
+  for (const dim of plan.dimensions) {
+    if (dim.unit === "percent") telemetryWindows.add(dim.window);
+  }
   for (const unit of ["requests", "tokens"] as const) {
-    if (planCovers.has(`${unit}:${TELEMETRY_WINDOW}`)) continue;
     const cost = costForUnit(input.cost, unit);
-    if (cost > 0) {
-      await store
-        .consume(input.apiKeyId, { poolId, unit, window: TELEMETRY_WINDOW }, cost)
-        .catch(() => {
-          // Fail-open per B29 — telemetry is best-effort
-        });
+    if (!(cost > 0)) continue;
+    for (const window of telemetryWindows) {
+      if (planCovers.has(`${unit}:${window}`)) continue;
+      await store.consume(input.apiKeyId, { poolId, unit, window }, cost).catch(() => {
+        // Fail-open per B29 — telemetry is best-effort
+      });
     }
   }
 

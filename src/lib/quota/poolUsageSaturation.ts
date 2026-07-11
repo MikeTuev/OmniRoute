@@ -30,6 +30,13 @@ export interface ApplyPercentSaturationOptions {
   provider: string;
   /** Saturation reader (0..1) — injectable for tests; production passes getSaturation. */
   getSaturation: (connectionId: string, provider: string, dim: SaturationDim) => Promise<number>;
+  /**
+   * Optional per-key token share (0..1) for a window — same attribution the
+   * enforcement path uses (poolTokenShare): the account-level percent is split
+   * across keys by their share of the pool's token telemetry. When absent the
+   * perKey entries are left at their stored values (0 for percent).
+   */
+  getTokenShare?: (apiKeyId: string, window: QuotaWindow) => Promise<number>;
 }
 
 /**
@@ -66,10 +73,39 @@ export async function applyPercentSaturation(
 
       if (!anySignal) return dim;
 
+      const scaledLimit = dim.limit * connectionIds.length;
+
+      // Per-key attribution (mirrors enforce.ts): split the account-level
+      // percent across keys by their token-telemetry share, so the Consumed /
+      // Deficit columns and the per-key slices reflect the same numbers the
+      // fair-share gate acts on. fairShare stays weight-based (weight% of the
+      // per-account limit, matching poolUsageWithDimensions).
+      let perKey = dim.perKey;
+      if (options.getTokenShare && Array.isArray(perKey) && perKey.length > 0) {
+        perKey = await Promise.all(
+          perKey.map(async (entry) => {
+            try {
+              const share = await options.getTokenShare!(entry.apiKeyId, dim.window);
+              if (!Number.isFinite(share) || share <= 0) return entry;
+              const consumed = consumedTotal * Math.min(1, share);
+              return {
+                ...entry,
+                consumed,
+                deficit: consumed - entry.fairShare,
+                borrowing: consumed > entry.fairShare,
+              };
+            } catch {
+              return entry; // fail-open per B16
+            }
+          })
+        );
+      }
+
       return {
         ...dim,
-        limit: dim.limit * connectionIds.length,
+        limit: scaledLimit,
         consumedTotal,
+        perKey,
       };
     })
   );
