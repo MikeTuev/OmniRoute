@@ -23,7 +23,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 
 const satMod = await import("../../src/lib/quota/saturationSignals.ts");
-const { getSaturation, _clearSaturationCache, __setAnthropicSaturationDepsForTests } = satMod;
+const {
+  getSaturation,
+  _clearSaturationCache,
+  _clearLastGoodSaturation,
+  __setAnthropicSaturationDepsForTests,
+} = satMod;
 
 // usage.ts shape: getClaudeUsage maps five_hour.utilization → quotas["session (5h)"].used
 // and seven_day.utilization → quotas["weekly (7d)"].used (used = % used, 0..100).
@@ -157,6 +162,10 @@ test("no connection found → fails open (0), no throw", async () => {
 
 test("oauth/usage fetch throws → fails open (0), no throw", async () => {
   _clearSaturationCache();
+  // Stale-while-error would otherwise serve the last good value recorded by
+  // the earlier tests for this same connection+dim — this test asserts the
+  // NO-prior-good baseline specifically.
+  _clearLastGoodSaturation();
   __setAnthropicSaturationDepsForTests({
     loadConnection: async () => ({ ...OAUTH_CONN }),
     fetchUsage: async () => {

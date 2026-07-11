@@ -355,10 +355,11 @@ async function fetchBailianSaturation(connectionId: string, dim: DimensionSpec):
  * plan-window utilization is unavailable (e.g. API-key Claude connections that
  * have no /api/oauth/usage data). This signal reflects TPM/RPM bursts, NOT the
  * 5h/weekly plan window, so it is a weak last resort.
+ * Returns null when no fresh header data exists (= "no signal", NOT zero).
  */
-function anthropicHeaderSaturation(connectionId: string): number {
+function anthropicHeaderSaturation(connectionId: string): number | null {
   const entry = _rateLimitHeaders.get(`anthropic:${connectionId}`);
-  if (!entry || Date.now() - entry.ts > RL_HEADER_TTL_MS) return 0;
+  if (!entry || Date.now() - entry.ts > RL_HEADER_TTL_MS) return null;
 
   const used = entry.limit - entry.remaining;
   return Math.min(1, Math.max(0, used / entry.limit));
@@ -439,12 +440,16 @@ function planUtilizationFromUsage(usage: unknown, window: QuotaWindow): number |
   return Math.min(1, Math.max(0, used / 100));
 }
 
-async function fetchAnthropicSaturation(connectionId: string, dim: DimensionSpec): Promise<number> {
+async function fetchAnthropicSaturation(
+  connectionId: string,
+  dim: DimensionSpec
+): Promise<number | null> {
   // Try the REAL plan-window utilization first (5h / weekly), via the same
   // /api/oauth/usage path usage.ts already uses. This is the signal fairShare
   // actually needs for Claude Pro/Max — the per-minute request headers do not
-  // reflect the plan window. Any failure here falls back to the header path,
-  // and ultimately fails open (0).
+  // reflect the plan window. Any failure here falls back to the header path;
+  // null = "no signal available right now" (getSaturation may serve the last
+  // good value, stale-while-error), which is distinct from a real 0.
   try {
     const deps = _anthropicDepsOverride ?? (await defaultAnthropicDeps());
     const conn = await deps.loadConnection(connectionId);
@@ -529,12 +534,29 @@ async function fetchGenericSaturation(connectionId: string, provider: string): P
 // ---------------------------------------------------------------------------
 
 /**
+ * Last GOOD (successfully fetched) saturation per cache key. Served when a
+ * fresh fetch yields no signal (upstream 429 cooldown on the claude oauth/usage
+ * endpoint, transient fetch error, no header data) so the value degrades to
+ * "slightly stale" instead of flapping to 0 — the dashboard percent bars and
+ * the strict/generous fair-share switch both read this. A real fetched 0
+ * (window reset) still overwrites it. Unbounded only by active pool
+ * connections × dimensions (few dozen keys).
+ */
+const _lastGood = new Map<string, number>();
+
+/** Test-only: clear the stale-while-error memory. */
+export function _clearLastGoodSaturation(): void {
+  _lastGood.clear();
+}
+
+/**
  * Return the current global saturation signal (0..1) for a connection+dim.
  *
  * A value of 0 means "no saturation detected" (generous/borrowing mode allowed).
  * A value >= saturationThreshold triggers strict mode in fairShare.ts.
  *
- * Always fail-open: returns 0 on any error.
+ * Fail-open with stale-while-error: on a failed/empty fetch, serve the last
+ * good value for this key if one exists, otherwise 0.
  */
 export async function getSaturation(
   connectionId: string,
@@ -548,29 +570,39 @@ export async function getSaturation(
     return cached.value;
   }
 
-  let value = 0;
+  // null = "no signal available" (distinct from a real 0)
+  let fetched: number | null = null;
   try {
     switch (provider) {
       case "codex":
-        value = await fetchCodexSaturation(connectionId, dim, connection);
+        fetched = await fetchCodexSaturation(connectionId, dim, connection);
         break;
       case "bailian":
-        value = await fetchBailianSaturation(connectionId, dim);
+        fetched = await fetchBailianSaturation(connectionId, dim);
         break;
       case "anthropic":
       case "claude":
-        value = await fetchAnthropicSaturation(connectionId, dim);
+        fetched = await fetchAnthropicSaturation(connectionId, dim);
         break;
       default:
-        value = await fetchGenericSaturation(connectionId, provider);
+        fetched = await fetchGenericSaturation(connectionId, provider);
         break;
     }
   } catch (err) {
     log.warn(
       { err: (err as Error)?.message, connectionId, provider },
-      "saturation fetch failed — failing open with 0"
+      "saturation fetch failed — serving last good value (or 0)"
     );
-    value = 0;
+    fetched = null;
+  }
+
+  let value: number;
+  if (fetched !== null && Number.isFinite(fetched)) {
+    value = fetched;
+    _lastGood.set(key, value);
+  } else {
+    // Stale-while-error: prefer the last good value over a false 0.
+    value = _lastGood.get(key) ?? 0;
   }
 
   _cache.set(key, { value, ts: Date.now() });
