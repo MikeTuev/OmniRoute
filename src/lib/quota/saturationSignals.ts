@@ -375,19 +375,26 @@ interface AnthropicSaturationDeps {
   loadConnection: (connectionId: string) => Promise<Record<string, unknown> | null>;
   /** Fetch usage for the connection (delegates to getUsageForProvider). */
   fetchUsage: (conn: Record<string, unknown>) => Promise<unknown>;
+  /**
+   * Read the persistent provider-limits cache entry for the connection (the
+   * same data the dashboard's Account-quota row shows). Fallback when the live
+   * oauth/usage fetch yields no plan windows (e.g. 429 cooldown).
+   */
+  loadCachedLimits?: (connectionId: string) => { quotas?: unknown } | null;
 }
 
 let _anthropicDepsOverride: AnthropicSaturationDeps | null = null;
 
-/** Test-only: inject ({loadConnection, fetchUsage}); pass null to restore. */
+/** Test-only: inject ({loadConnection, fetchUsage, loadCachedLimits}); pass null to restore. */
 export function __setAnthropicSaturationDepsForTests(deps: AnthropicSaturationDeps | null): void {
   _anthropicDepsOverride = deps;
 }
 
 async function defaultAnthropicDeps(): Promise<AnthropicSaturationDeps> {
-  const [providersMod, usageMod] = await Promise.all([
+  const [providersMod, usageMod, limitsMod] = await Promise.all([
     import("@/lib/db/providers"),
     import("@omniroute/open-sse/services/usage"),
+    import("@/lib/db/providerLimits"),
   ]);
   return {
     loadConnection: (connectionId) =>
@@ -397,6 +404,7 @@ async function defaultAnthropicDeps(): Promise<AnthropicSaturationDeps> {
       > | null>,
     fetchUsage: (conn) =>
       usageMod.getUsageForProvider(conn as Parameters<typeof usageMod.getUsageForProvider>[0]),
+    loadCachedLimits: (connectionId) => limitsMod.getProviderLimitsCache(connectionId),
   };
 }
 
@@ -450,8 +458,9 @@ async function fetchAnthropicSaturation(
   // reflect the plan window. Any failure here falls back to the header path;
   // null = "no signal available right now" (getSaturation may serve the last
   // good value, stale-while-error), which is distinct from a real 0.
+  const deps = _anthropicDepsOverride ?? (await defaultAnthropicDeps());
+
   try {
-    const deps = _anthropicDepsOverride ?? (await defaultAnthropicDeps());
     const conn = await deps.loadConnection(connectionId);
     // Only OAuth connections have plan-window usage; API-key Claude does not.
     const hasOauthToken =
@@ -475,11 +484,23 @@ async function fetchAnthropicSaturation(
   } catch (err) {
     log.warn(
       { err: (err as Error)?.message, connectionId },
-      "anthropic oauth/usage saturation failed — falling back to rate-limit headers"
+      "anthropic oauth/usage saturation failed — falling back to cached limits"
     );
   }
 
-  // Fallback: per-minute REQUEST rate-limit headers (weak, TPM/RPM only).
+  // Fallback 1: the persistent provider-limits cache — the same per-window
+  // utilization the dashboard's Account-quota row displays. Populated by the
+  // provider-limits sync, so it survives the oauth/usage 429 cooldown that
+  // just made the live fetch return no windows.
+  try {
+    const cached = deps.loadCachedLimits?.(connectionId);
+    const util = planUtilizationFromUsage(cached, dim.window);
+    if (util !== null) return util;
+  } catch {
+    // cache read is best-effort
+  }
+
+  // Fallback 2: per-minute REQUEST rate-limit headers (weak, TPM/RPM only).
   return anthropicHeaderSaturation(connectionId);
 }
 
