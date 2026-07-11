@@ -303,6 +303,8 @@ export class RedisQuotaStore implements QuotaStore {
       burnRate = {
         tokensPerSecond: rateResult.tokensPerSecond,
         timeToExhaustionMs: rateResult.timeToExhaustionMs,
+        windowTokens: tokenDim.consumedTotal,
+        windowLimit: tokenDim.limit,
       };
     } else {
       // Fallback (parity with SqliteQuotaStore): percent-only plans have no
@@ -319,6 +321,8 @@ export class RedisQuotaStore implements QuotaStore {
         burnRate = {
           tokensPerSecond: rateResult.tokensPerSecond,
           timeToExhaustionMs: null,
+          windowTokens: telemetryTokens,
+          windowLimit: null,
         };
       }
     }

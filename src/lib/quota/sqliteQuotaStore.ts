@@ -230,6 +230,8 @@ export class SqliteQuotaStore implements QuotaStore {
       burnRate = {
         tokensPerSecond: rateResult.tokensPerSecond,
         timeToExhaustionMs: rateResult.timeToExhaustionMs,
+        windowTokens: tokenDim.consumedTotal,
+        windowLimit: tokenDim.limit,
       };
     } else {
       // Fallback: percent-only plans (claude/codex) have no tokens dimension.
@@ -246,6 +248,8 @@ export class SqliteQuotaStore implements QuotaStore {
         burnRate = {
           tokensPerSecond: rateResult.tokensPerSecond,
           timeToExhaustionMs: null,
+          windowTokens: telemetryTokens,
+          windowLimit: null,
         };
       }
     }

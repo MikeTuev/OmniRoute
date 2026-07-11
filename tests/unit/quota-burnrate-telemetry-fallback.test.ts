@@ -99,3 +99,68 @@ test("plan WITH a tokens dimension keeps the plan-based burnRate (with exhaustio
     "plan-based burnRate must project exhaustion against the plan limit"
   );
 });
+
+// ── windowTokens/windowLimit anchor for the chart (unit-mismatch fix) ────────
+
+test("telemetry-fallback burnRate carries windowTokens and a null windowLimit", async () => {
+  const pool = poolsDb.createPool({
+    connectionId: "conn-br-4",
+    name: "Anchor Pool",
+    allocations: [{ apiKeyId: API_KEY_ID, weight: 100, policy: "hard" }],
+  });
+
+  const store = getSqliteQuotaStore();
+  await store.consume(API_KEY_ID, { poolId: pool.id, unit: "tokens", window: "5h" }, 70_000);
+
+  const snapshot = await store.poolUsageWithDimensions(pool.id, PERCENT_ONLY_DIMS);
+  assert.ok(snapshot.burnRate, "expected burnRate");
+  assert.ok(
+    Math.abs((snapshot.burnRate!.windowTokens ?? 0) - 70_000) < 1,
+    `windowTokens must carry the telemetry tokens, got ${snapshot.burnRate!.windowTokens}`
+  );
+  assert.equal(
+    snapshot.burnRate!.windowLimit,
+    null,
+    "percent-only plan has no token limit → windowLimit null"
+  );
+});
+
+test("plan-based burnRate carries windowTokens and the plan token limit", async () => {
+  const pool = poolsDb.createPool({
+    connectionId: "conn-br-5",
+    name: "Anchor Tokens Pool",
+    allocations: [{ apiKeyId: API_KEY_ID, weight: 100, policy: "hard" }],
+  });
+
+  const store = getSqliteQuotaStore();
+  await store.consume(API_KEY_ID, { poolId: pool.id, unit: "tokens", window: "5h" }, 10_000);
+
+  const snapshot = await store.poolUsageWithDimensions(pool.id, [
+    { unit: "tokens", window: "5h", limit: 1_000_000 },
+  ]);
+  assert.ok(snapshot.burnRate);
+  assert.ok(Math.abs((snapshot.burnRate!.windowTokens ?? 0) - 10_000) < 1);
+  assert.equal(snapshot.burnRate!.windowLimit, 1_000_000);
+});
+
+// ── BurnRateChart must anchor on tokens, not dimensions[0] (structural) ─────
+
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+test("BurnRateChart anchors the projection on burnRate tokens, not dimensions[0]", () => {
+  const src = readFileSync(
+    join(
+      import.meta.dirname,
+      "../..",
+      "src/app/(dashboard)/dashboard/costs/quota-share/components/BurnRateChart.tsx"
+    ),
+    "utf8"
+  );
+  assert.ok(
+    !src.includes("dimensions?.[0]") && !src.includes("dimensions[0]"),
+    "must NOT anchor on the first dimension (percent limit 100 clamps a tokens/sec projection)"
+  );
+  assert.ok(src.includes("windowTokens"), "must anchor on burnRate.windowTokens");
+  assert.ok(src.includes("windowLimit"), "must clamp only against the token limit when present");
+});

@@ -47,19 +47,23 @@ export default function BurnRateChart({ usage }: BurnRateChartProps) {
     );
   }
 
-  const { tokensPerSecond, timeToExhaustionMs } = burnRate;
+  const { tokensPerSecond, timeToExhaustionMs, windowTokens, windowLimit } = burnRate;
 
   // Build a simple 6-point projection line
   const pointCount = 6;
   const intervalMs = timeToExhaustionMs ? timeToExhaustionMs / pointCount : 60_000 * 60;
 
-  const primaryDim = usage?.dimensions?.[0];
-  const currentConsumed = primaryDim?.consumedTotal ?? 0;
-  const limit = primaryDim?.limit ?? 0;
+  // Anchor the projection on the burn-rate's OWN token counters — never on
+  // the first snapshot dimension: for percent-only plans (claude/codex) that
+  // is a 0..100 percent scale, so clamping a tokens/sec projection against it
+  // instantly flatlined the chart at the ceiling (~100).
+  const currentConsumed = windowTokens ?? 0;
+  const tokenLimit = typeof windowLimit === "number" && windowLimit > 0 ? windowLimit : null;
 
   const data = Array.from({ length: pointCount + 1 }, (_, i) => {
     const t2 = nowMs + i * intervalMs;
-    const projected = Math.min(currentConsumed + tokensPerSecond * ((i * intervalMs) / 1000), limit);
+    const raw = currentConsumed + tokensPerSecond * ((i * intervalMs) / 1000);
+    const projected = tokenLimit !== null ? Math.min(raw, tokenLimit) : raw;
     return {
       time: new Date(t2).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" }),
       consumed: Math.round(projected),
@@ -79,7 +83,12 @@ export default function BurnRateChart({ usage }: BurnRateChartProps) {
       <div className="h-24">
         <RechartsResponsiveContainer width="100%" height="100%">
           <RechartsLineChart data={data}>
-            <RechartsXAxis dataKey="time" tick={{ fontSize: 9 }} tickLine={false} axisLine={false} />
+            <RechartsXAxis
+              dataKey="time"
+              tick={{ fontSize: 9 }}
+              tickLine={false}
+              axisLine={false}
+            />
             <RechartsYAxis hide />
             <RechartsTooltip
               contentStyle={{

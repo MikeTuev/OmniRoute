@@ -19,6 +19,14 @@ export interface PoolUsageSnapshot {
   burnRate?: {
     tokensPerSecond: number;
     timeToExhaustionMs: number | null;
+    /**
+     * Tokens consumed in the source window — the anchor for chart projections.
+     * The chart must NOT anchor on dimensions[0]: for percent-only plans that
+     * is a 0..100 scale, which clamps a tokens/sec projection to the ceiling.
+     */
+    windowTokens?: number;
+    /** Token limit of the source window; null when none exists (telemetry fallback). */
+    windowLimit?: number | null;
   };
 }
 
