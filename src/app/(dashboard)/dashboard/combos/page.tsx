@@ -85,7 +85,10 @@ import {
 import { getComboStepTarget } from "@/lib/combos/steps";
 import { DEAD_COMBO_CONFIG_KEYS } from "@/lib/combos/deadConfigKeys";
 import { modelFamily } from "@/lib/combos/invariants";
-import { resolveCanonicalProviderModel } from "@omniroute/open-sse/services/model.ts";
+// Client-safe import: services/model.ts dynamically imports server-only DB modules
+// (@/lib/db/models/activeSyncedCatalog), which drags ioredis/playwright/node builtins
+// into the browser bundle and breaks `next build`. Only the provider alias is needed here.
+import { resolveProviderAlias } from "@omniroute/open-sse/services/providerAlias.ts";
 import { resolveServerErrorMessage } from "@/lib/api/serverErrorMessage";
 import { useTranslations } from "next-intl";
 
@@ -680,8 +683,8 @@ function computeAllowedRestrictionSync(
       .map((m) => {
         if (m.providerId) return m.providerId;
         if (typeof m.model !== "string" || !m.model.includes("/")) return "";
-        const [aliasOrProvider, ...rest] = m.model.split("/");
-        return resolveCanonicalProviderModel(aliasOrProvider, rest.join("/")).provider || "";
+        const [aliasOrProvider] = m.model.split("/");
+        return resolveProviderAlias(aliasOrProvider) || "";
       })
       .filter((p): p is string => Boolean(p));
     result.allowedProviders = Array.from(new Set([...existingProviders, ...stepProviders]));
@@ -702,7 +705,6 @@ function computeAllowedRestrictionSync(
 
   return result;
 }
-
 
 function getModelString(entry) {
   if (typeof entry === "string") return entry;
