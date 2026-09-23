@@ -107,7 +107,16 @@ const ASM_KV_SERVER_MESSAGE = 4; // AgentServerMessage.kv_server_message
 // this functions as our end-of-response marker.
 
 const ESM_ID = 1; // ExecServerMessage.id
-const ESM_EXEC_ID = 15; // ExecServerMessage.exec_id
+const ESM_EXEC_ID = 15; // ExecServerMessage.exec_id (legacy placement)
+// Cursor moved the correlation ids into a metadata envelope on field 19:
+//   { 1: conversation id (32 hex), 2: exec id (16 hex), 3: 0 }
+// Only the exec id is consumed; the conversation id is already tracked by the
+// session layer.
+// Field 15 is no longer emitted at all, so an exec_id read from it is always
+// empty and every ExecClientMessage we send back becomes uncorrelatable —
+// which is what left tool-calling turns hanging until the safety timeout.
+const ESM_METADATA = 19;
+const ESM_METADATA_EXEC_ID = 2;
 const ESM_REQUEST_CONTEXT_ARGS = 10; // ExecServerMessage.request_context_args
 
 const IU_TEXT_DELTA = 1; // InteractionUpdate.text_delta
@@ -152,6 +161,10 @@ const ESM_READ_ARGS = 7;
 const ESM_LS_ARGS = 8;
 const ESM_DIAGNOSTICS_ARGS = 9;
 const ESM_MCP_ARGS = 11;
+// The MCP provider handshake ("which tools does provider X expose?") arrives on
+// field 36 carrying only { 1: providerIdentifier }. It is a BLOCKING request:
+// until it is answered the server emits nothing but heartbeats.
+const ESM_MCP_PROVIDER_ARGS = 36;
 const ESM_SHELL_STREAM_ARGS = 14;
 const ESM_BACKGROUND_SHELL_SPAWN = 16;
 const ESM_FETCH_ARGS = 20;
@@ -803,6 +816,12 @@ export function decodeKvServerEvent(payload: Buffer): KvServerEvent | null {
 
 export type ExecServerEvent =
   | { kind: "exec_request_context"; execMsgId: number; execId: string }
+  | {
+      kind: "exec_mcp_list_tools";
+      execMsgId: number;
+      execId: string;
+      providerIdentifier: string;
+    }
   | { kind: "exec_read"; execMsgId: number; execId: string; path: string }
   | { kind: "exec_write"; execMsgId: number; execId: string; path: string }
   | { kind: "exec_delete"; execMsgId: number; execId: string; path: string }
@@ -967,7 +986,50 @@ const EXEC_EVENT_DECODERS: Partial<Record<number, ExecEventDecoder>> = {
     execId,
   }),
   [ESM_MCP_ARGS]: decodeMcpExecEvent,
+  [ESM_MCP_PROVIDER_ARGS]: (context) => ({
+    kind: "exec_mcp_list_tools" as const,
+    execMsgId: context.execMsgId,
+    execId: context.execId,
+    providerIdentifier:
+      findLengthDelimitedField(
+        decodeFields(context.variantBytes),
+        MCP_PROVIDER_IDENTIFIER
+      )?.toString("utf8") ?? "",
+  }),
 };
+
+// McpProviderArgs.provider_identifier
+const MCP_PROVIDER_IDENTIFIER = 1;
+
+/**
+ * Field numbers that carry an event variant. The envelope also contains the id
+ * (1), the metadata envelope (19) and assorted scalars, so the variant can NOT
+ * be guessed as "the first length-delimited field" — field 19 always won that
+ * race and the real variant was dropped.
+ */
+const EXEC_VARIANT_FIELDS: ReadonlySet<number> = new Set(
+  Object.keys(EXEC_EVENT_DECODERS).map(Number)
+);
+
+/**
+ * Resolve the exec id, preferring the current metadata envelope (field 19
+ * sub-field 2) and falling back to the legacy standalone field 15.
+ */
+function resolveExecId(fields: ReturnType<typeof decodeFields>): string {
+  // Field 15 wins when present: built-in tool execs (shell/read/write/…) still
+  // carry their own exec_id there, and it is the id their result must echo.
+  // Only the newer envelope-only frames (request_context, the MCP provider
+  // handshake) omit it, and for those the id lives in the metadata envelope.
+  const direct = findLengthDelimitedField(fields, ESM_EXEC_ID);
+  if (direct?.length) return direct.toString("utf8");
+
+  const metadata = findLengthDelimitedField(fields, ESM_METADATA);
+  if (metadata) {
+    const execId = findLengthDelimitedField(decodeFields(metadata), ESM_METADATA_EXEC_ID);
+    if (execId?.length) return execId.toString("utf8");
+  }
+  return "";
+}
 
 function decodeExecEventContext(
   payload: Buffer
@@ -977,13 +1039,25 @@ function decodeExecEventContext(
 
   const fields = decodeFields(top.bytes);
   const idField = findField(fields, ESM_ID);
-  const variant = fields.find(
-    (field) => field.wireType === WT_LEN && field.fieldNumber !== ESM_EXEC_ID
-  );
+
+  // Prefer a known variant tag; only then fall back to "some other LEN field"
+  // so an unrecognised future variant is still surfaced to the caller (which
+  // can log it) instead of silently decoding as null.
+  const variant =
+    fields.find(
+      (field) => field.wireType === WT_LEN && EXEC_VARIANT_FIELDS.has(field.fieldNumber)
+    ) ??
+    fields.find(
+      (field) =>
+        field.wireType === WT_LEN &&
+        field.fieldNumber !== ESM_EXEC_ID &&
+        field.fieldNumber !== ESM_METADATA
+    );
   if (!variant || variant.wireType !== WT_LEN) return null;
+
   return {
     execMsgId: idField?.wireType === WT_VARINT ? Number(idField.varint) : 0,
-    execId: findLengthDelimitedField(fields, ESM_EXEC_ID)?.toString("utf8") ?? "",
+    execId: resolveExecId(fields),
     variantField: variant.fieldNumber,
     variantBytes: variant.bytes,
   };
@@ -1030,6 +1104,50 @@ export function encodeRequestContextResponse(
 // RequestContext.tools field number — multiple tool defs are repeated within
 // the inner RequestContext message.
 const RCS_TOOLS = 2;
+
+// ExecClientMessage.mcp_provider_result — mirrors ESM_MCP_PROVIDER_ARGS (36).
+const ECM_MCP_PROVIDER_RESULT = 36;
+// McpProviderResult.success
+const MPR_SUCCESS = 1;
+
+/**
+ * Answer the blocking MCP-provider handshake (ExecServerMessage field 36).
+ *
+ * Cursor asks which tools the named MCP provider exposes and emits nothing but
+ * heartbeats until it gets a reply, so a missing answer stalls every
+ * tool-calling turn until the stream safety timeout.
+ *
+ * Wire shape (pinned empirically against the live server — the alternatives,
+ * bare repeated tools and success-wrapped on field 1, were both ignored):
+ *
+ *   AgentClientMessage {
+ *     exec_client_message (2) {
+ *       id (1), exec_id (15),
+ *       mcp_provider_result (36) { success (1) { tools (2): McpToolDefinition… } }
+ *     }
+ *   }
+ *
+ * `tools (2)` mirrors RequestContext.tools, which uses the same field number
+ * for the same payload.
+ */
+export function encodeMcpProviderToolsResponse(
+  id: number,
+  execId: string,
+  tools: McpToolDefinition[]
+): Buffer {
+  const toolParts = tools.map((tool) =>
+    encodeMessage(RCS_TOOLS, [encodeMcpToolDefinitionBody(tool)])
+  );
+  const result = encodeMessage(ECM_MCP_PROVIDER_RESULT, [encodeMessage(MPR_SUCCESS, toolParts)]);
+
+  return wrapConnectFrame(
+    encodeMessage(ACM_EXEC_CLIENT_MESSAGE, [
+      encodeUInt32Field(ECM_ID, id),
+      encodeString(ECM_EXEC_ID, execId),
+      result,
+    ])
+  );
+}
 
 // ─── ExecClientMessage wrapper ──────────────────────────────────────────────
 

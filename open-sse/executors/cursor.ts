@@ -19,6 +19,7 @@ import {
   decodeExecServerEvent,
   decodeKvServerEvent,
   encodeRequestContextResponse,
+  encodeMcpProviderToolsResponse,
   encodeKvGetBlobResult,
   encodeKvSetBlobResult,
   encodeExecReadRejected,
@@ -85,6 +86,12 @@ import {
 } from "./cursor/composer.ts";
 import { CursorServerConfigError, resolveCursorAgentUrl } from "./cursor/agentEndpoint.ts";
 import {
+  createProxyTunnelSocket,
+  parseH2Authority,
+  resolveCursorH2ProxyUrl,
+  tlsConnectOverTunnel,
+} from "./cursor/h2ProxyConnect.ts";
+import {
   classifyCursorError,
   isCursorBenignCancelError,
   resolveCursorEmptyTurnError,
@@ -139,6 +146,8 @@ function buildExecRejection(event: ExecServerEvent): Buffer | null {
   switch (event.kind) {
     case "exec_request_context":
     case "exec_mcp":
+    // Answered by the dedicated MCP-provider handshake path, not by a rejection.
+    case "exec_mcp_list_tools":
       return null;
     case "exec_read":
       return encodeExecReadRejected(
@@ -614,6 +623,21 @@ export function processFrame(
           console.debug(`[CURSOR] request_context ack write failed:`, e);
         }
       }
+    } else if (event.kind === "exec_mcp_list_tools") {
+      // Blocking handshake: the server asks which tools our MCP provider
+      // exposes and emits nothing but heartbeats until it is answered.
+      if (opts.h2Req) {
+        try {
+          opts.h2Req.write(
+            encodeMcpProviderToolsResponse(event.execMsgId, event.execId, opts.mcpTools ?? [])
+          );
+          debugLog(
+            `[cursor-agent] answered mcp provider handshake provider=${event.providerIdentifier} tools=${(opts.mcpTools ?? []).length} execId=${event.execId}`
+          );
+        } catch (e) {
+          console.debug(`[CURSOR] mcp provider ack write failed:`, e);
+        }
+      }
     } else if (event.kind === "exec_mcp") {
       // Phase 5: surface the model-invoked MCP tool as an OpenAI tool_calls
       // SSE delta. Two chunks are emitted per call: an init chunk with the
@@ -657,6 +681,18 @@ export function processFrame(
         emitStructuredToolCall(ctx, bridge.toolName, bridge.arguments);
         ctx.requiresColdResume = true;
         ctx.endReason = "tool_calls";
+      } else if (rejection) {
+        // Fail-closed rejection with no bridge (e.g. a shell exec carrying
+        // timeout/hard-timeout semantics the declared tool cannot express —
+        // builtinToolBridge.ts returns null on purpose). Cursor answers such a
+        // rejection with nothing but kv checkpoints and heartbeats: it never
+        // sends turn_ended, so waiting here burned the full stream safety
+        // timeout and surfaced as a 502 "stream timed out" instead of the text
+        // the model had already produced. End the turn on the rejection.
+        debugLog(
+          `[cursor-agent] built-in exec ${event.kind} rejected without a bridge — ending turn`
+        );
+        ctx.endReason = "turn_ended";
       }
     }
   }
@@ -1033,9 +1069,37 @@ export class CursorExecutor extends BaseExecutor {
   }> {
     if (!http2) throw new Error("http2 module not available");
 
+    // `http2.connect()` opens its own TCP/TLS socket, so neither the global
+    // fetch proxy patch nor the undici dispatcher applies here: without this
+    // the provider proxy configured in the dashboard (and HTTPS_PROXY) was
+    // silently ignored and Cursor traffic egressed on the host IP. Establish
+    // the CONNECT/SOCKS tunnel first, then hand the socket to http2 via
+    // `createConnection` (TLS with ALPN "h2" on top of the tunnel).
+    const proxyUrl = resolveCursorH2ProxyUrl(url);
+    let tunnelSocket: import("node:net").Socket | null = null;
+    if (proxyUrl) {
+      const { host, port } = parseH2Authority(url);
+      tunnelSocket = await createProxyTunnelSocket({
+        targetHost: host,
+        targetPort: port,
+        proxyUrl,
+        signal,
+      });
+    }
+
     return new Promise((resolve, reject) => {
       const urlObj = new URL(url);
-      const client = http2!.connect(`https://${urlObj.host}`);
+      const client = http2!.connect(
+        `https://${urlObj.host}`,
+        tunnelSocket
+          ? {
+              createConnection: () =>
+                tlsConnectOverTunnel(tunnelSocket!, urlObj.hostname) as unknown as ReturnType<
+                  NonNullable<import("http2").SecureClientSessionOptions["createConnection"]>
+                >,
+            }
+          : undefined
+      );
       const earlyChunks: Buffer[] = [];
       let resolved = false;
 
