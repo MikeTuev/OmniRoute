@@ -226,19 +226,59 @@ test("background-marked shell_stream requests never use a synchronous shell tool
   assert.equal(result?.toolName, "pty_spawn");
 });
 
-test("fails closed rather than dropping Cursor timeout semantics", () => {
-  assert.equal(
-    bridgeCursorBuiltinTool(shellEvent({ timeout: 5_000 }), defs([bashTool(), ptySpawn]), "posix"),
-    null
+/**
+ * Cursor populates `timeout` (30s) and `hardTimeout` (24h) on EVERY shell exec
+ * it emits, so refusing to bridge whenever either is set made the shell bridge
+ * unreachable in practice: the client harness got narration and no tool call,
+ * and the run stalled.
+ *
+ * Dropping the guard does not broaden execution. The command is executed by the
+ * CLIENT under its own limits — exactly as with every other provider, where a
+ * tool_call carries no server-side timeout at all. OmniRoute never runs it.
+ * When the declared tool exposes a numeric timeout property we map Cursor's
+ * value onto it so the intent is preserved; when it does not, the client's own
+ * default applies.
+ */
+test("bridges a shell exec that carries Cursor timeout semantics", () => {
+  const result = bridgeCursorBuiltinTool(
+    shellEvent({ timeout: 5_000 }),
+    defs([bashTool(), ptySpawn]),
+    "posix"
   );
+  assert.equal(result?.toolName, "bash");
   assert.equal(
-    bridgeCursorBuiltinTool(
-      shellEvent({ hardTimeout: 7_000 }),
-      defs([bashTool(), ptySpawn]),
-      "posix"
-    ),
-    null
+    (result?.arguments as Record<string, unknown>).command,
+    "mktemp -d /tmp/file-tools-test-XXXXXX"
   );
+});
+
+test("maps the Cursor timeout onto a declared numeric timeout property", () => {
+  const toolWithTimeout = bashTool({
+    type: "object",
+    properties: {
+      command: { type: "string" },
+      workdir: { type: "string" },
+      timeout: { type: "integer" },
+    },
+    required: ["command"],
+    additionalProperties: false,
+  });
+  const result = bridgeCursorBuiltinTool(
+    shellEvent({ timeout: 5_000 }),
+    defs([toolWithTimeout, ptySpawn]),
+    "posix"
+  );
+  assert.equal((result?.arguments as Record<string, unknown>).timeout, 5_000);
+});
+
+test("omits the timeout when the declared tool has no compatible property", () => {
+  const result = bridgeCursorBuiltinTool(
+    shellEvent({ hardTimeout: 7_000 }),
+    defs([bashTool(), ptySpawn]),
+    "posix"
+  );
+  assert.equal(result?.toolName, "bash");
+  assert.equal("timeout" in (result?.arguments as Record<string, unknown>), false);
 });
 
 test("bridges exec_read to a schema-compatible read tool", () => {

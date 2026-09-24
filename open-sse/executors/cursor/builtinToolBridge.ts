@@ -135,12 +135,19 @@ function hasAllRequired(schema: JsonSchema, args: Record<string, unknown>): bool
  * valid. Any validation keyword we do not implement (pattern, format, length,
  * conditionals, refs, dependentRequired, and so on) fails closed.
  */
-function propertySupports(value: unknown, expected: "string" | "boolean" | "string[]"): boolean {
+type SupportedPropertyType = "string" | "boolean" | "string[]" | "number";
+
+function propertySupports(value: unknown, expected: SupportedPropertyType): boolean {
   if (!isRecord(value)) return false;
   if (expected === "string[]") {
     if (!hasOnlyKeys(value, ARRAY_PROPERTY_KEYS)) return false;
     if (value.type !== "array" || !isRecord(value.items)) return false;
     return hasOnlyKeys(value.items, SCALAR_PROPERTY_KEYS) && value.items.type === "string";
+  }
+  if (expected === "number") {
+    // JSON Schema spells a millisecond field either way; both accept an integer.
+    if (!hasOnlyKeys(value, SCALAR_PROPERTY_KEYS)) return false;
+    return value.type === "integer" || value.type === "number";
   }
   return hasOnlyKeys(value, SCALAR_PROPERTY_KEYS) && value.type === expected;
 }
@@ -168,7 +175,7 @@ function selectProperty(
   schema: JsonSchema,
   properties: Record<string, unknown>,
   names: string[],
-  expected: "string" | "boolean" | "string[]"
+  expected: SupportedPropertyType
 ): string | undefined {
   const required = new Set(requiredKeys(schema));
   return (
@@ -196,6 +203,17 @@ function directShellBridge(
       "string"
     );
     if (cwdKey && event.workingDir) args[cwdKey] = event.workingDir;
+    // Cursor stamps a timeout (and a 24h hard timeout) on every shell exec it
+    // emits. Refusing to bridge whenever either was set made this path
+    // unreachable in practice — the harness got narration and no tool call.
+    // Dropping them does not broaden execution: the command runs on the CLIENT
+    // under its own limits, exactly like a tool_call from any other provider,
+    // which carries no server-side timeout either. Map the value when the
+    // declared tool can express it so the intent survives; otherwise the
+    // client's own default applies.
+    const timeoutKey = selectProperty(schema, properties, ["timeout"], "number");
+    const timeoutMs = event.timeout > 0 ? event.timeout : 0;
+    if (timeoutKey && timeoutMs > 0) args[timeoutKey] = timeoutMs;
     if (propertySupports(properties.description, "string")) {
       args.description = BRIDGE_DESCRIPTION;
     }
@@ -415,10 +433,6 @@ export function bridgeCursorBuiltinTool(
     return null;
   }
   if (!event.command.trim()) return null;
-  // The external schemas supported here do not expose Cursor's timeout or
-  // hard-timeout semantics. Dropping either limit could broaden execution, so
-  // preserve the native typed rejection instead of emitting an unsafe call.
-  if (event.timeout > 0 || event.hardTimeout > 0) return null;
   const background = event.kind === "exec_bg_shell" || event.isBackground;
   if (background) return ptySpawnBridge(event, tools, platform);
   return directShellBridge(event, tools) ?? ptySpawnBridge(event, tools, platform);

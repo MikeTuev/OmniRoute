@@ -19,6 +19,8 @@ import {
   decodeExecServerEvent,
   decodeKvServerEvent,
   encodeRequestContextResponse,
+  encodeMcpStateResponse,
+  OMNIROUTE_MCP_SERVER_IDENTIFIER,
   encodeKvGetBlobResult,
   encodeKvSetBlobResult,
   encodeExecReadRejected,
@@ -139,6 +141,8 @@ function buildExecRejection(event: ExecServerEvent): Buffer | null {
   switch (event.kind) {
     case "exec_request_context":
     case "exec_mcp":
+    // Answered on the dedicated mcp_state path, not by a rejection.
+    case "exec_mcp_state":
       return null;
     case "exec_read":
       return encodeExecReadRejected(
@@ -606,12 +610,39 @@ export function processFrame(
     if (event.kind === "exec_request_context") {
       if (opts.h2Req) {
         try {
-          // Cursor receives tools via AgentRunRequest.mcp_tools (request body)
-          // — sending them again in the request_context ack causes the
-          // server to stall silently. Empty ack only.
-          opts.h2Req.write(encodeRequestContextResponse(event.execMsgId, event.execId));
+          // The ack carries the tool set on RequestContext.tools (field 7) plus
+          // the McpMetaToolOptions descriptors that make it discoverable through
+          // Cursor's GetDynamicTools meta tool. An empty ack was previously
+          // required only because the tools were being written to field 2
+          // (`rules`), which the server silently stalled on.
+          opts.h2Req.write(
+            encodeRequestContextResponse(event.execMsgId, event.execId, opts.mcpTools ?? [])
+          );
         } catch (e) {
           console.debug(`[CURSOR] request_context ack write failed:`, e);
+        }
+      }
+    } else if (event.kind === "exec_mcp_state") {
+      // mcp_state_exec_args (field 36) is a blocking request: the server asks
+      // which MCP servers exist and emits only heartbeats until it is answered.
+      if (opts.h2Req) {
+        try {
+          const serverIdentifier =
+            event.serverIdentifiers.find((id) => id.trim().length > 0) ??
+            OMNIROUTE_MCP_SERVER_IDENTIFIER;
+          opts.h2Req.write(
+            encodeMcpStateResponse(
+              event.execMsgId,
+              event.execId,
+              serverIdentifier,
+              opts.mcpTools ?? []
+            )
+          );
+          debugLog(
+            `[cursor-agent] answered mcp_state server=${serverIdentifier} tools=[${(opts.mcpTools ?? []).map((t) => t.name).join(",")}]`
+          );
+        } catch (e) {
+          console.debug(`[CURSOR] mcp_state ack write failed:`, e);
         }
       }
     } else if (event.kind === "exec_mcp") {
@@ -657,6 +688,17 @@ export function processFrame(
         emitStructuredToolCall(ctx, bridge.toolName, bridge.arguments);
         ctx.requiresColdResume = true;
         ctx.endReason = "tool_calls";
+      } else if (rejection) {
+        // A built-in exec that no declared client tool can serve (no
+        // schema-compatible shell/read tool) is rejected. Cursor answers such a
+        // rejection with nothing but kv checkpoints and heartbeats and never
+        // sends turn_ended, so waiting here burned the full stream safety
+        // timeout and surfaced as a 502 "stream timed out" instead of the text
+        // the model had already produced. End the turn on the rejection.
+        debugLog(
+          `[cursor-agent] built-in exec ${event.kind} rejected without a bridge — ending turn`
+        );
+        ctx.endReason = "turn_ended";
       }
     }
   }

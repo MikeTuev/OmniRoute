@@ -59,8 +59,8 @@ const ARR_MODEL_DETAILS = 3; // AgentRunRequest.model_details (ModelDetails, msg
 const ARR_CONVERSATION_ID = 5; // AgentRunRequest.conversation_id
 const ARR_MCP_TOOLS = 4; // AgentRunRequest.mcp_tools (empty placeholder required)
 const ARR_REQUESTED_MODEL = 9; // AgentRunRequest.requested_model
-const ARR_UNKNOWN_12 = 12; // observed varint=0 in cursor-agent traffic
-const ARR_REQUEST_ID = 16; // observed UUID, same value as conversation_id
+const ARR_EXCLUDE_WORKSPACE_CONTEXT = 12; // AgentRunRequest.exclude_workspace_context
+const ARR_CONVERSATION_GROUP_ID = 16; // AgentRunRequest.conversation_group_id
 
 const CSS_ROOT_PROMPT = 1; // ConversationStateStructure.root_prompt_messages_json
 
@@ -108,6 +108,10 @@ const ASM_KV_SERVER_MESSAGE = 4; // AgentServerMessage.kv_server_message
 
 const ESM_ID = 1; // ExecServerMessage.id
 const ESM_EXEC_ID = 15; // ExecServerMessage.exec_id
+// ExecServerMessage.span_context (OpenTelemetry: trace_id / span_id / flags).
+// Purely diagnostic — it must never be mistaken for the event variant, which
+// is what happened while the variant was guessed as "the first LEN field".
+const ESM_SPAN_CONTEXT = 19;
 const ESM_REQUEST_CONTEXT_ARGS = 10; // ExecServerMessage.request_context_args
 
 const IU_TEXT_DELTA = 1; // InteractionUpdate.text_delta
@@ -152,6 +156,10 @@ const ESM_READ_ARGS = 7;
 const ESM_LS_ARGS = 8;
 const ESM_DIAGNOSTICS_ARGS = 9;
 const ESM_MCP_ARGS = 11;
+// ExecServerMessage.mcp_state_exec_args — McpStateExecArgs{1: server_identifiers,
+// 2: kick_only}. A BLOCKING request: until it is answered the server emits
+// nothing but heartbeats.
+const ESM_MCP_STATE_ARGS = 36;
 const ESM_SHELL_STREAM_ARGS = 14;
 const ESM_BACKGROUND_SHELL_SPAWN = 16;
 const ESM_FETCH_ARGS = 20;
@@ -514,15 +522,30 @@ export type { EncodedImage };
  * the tools as available.
  */
 export function openAIToolsToMcpDefs(tools: OpenAITool[]): McpToolDefinition[] {
-  return tools.map((t) => {
-    const params = t.function?.parameters ?? { type: "object", properties: {} };
-    return {
-      name: t.function.name,
-      description: t.function.description ?? "",
-      inputSchemaBytes: jsonSchemaToProtobufValue(params),
-      providerIdentifier: "omniroute",
-      toolName: t.function.name,
+  return tools.flatMap((t): McpToolDefinition[] => {
+    // Chat Completions nests the definition under `function`; the Responses
+    // API keeps it flat ({ type, name, description, parameters }). A request
+    // that arrives on /v1/responses therefore produced tools whose name was
+    // undefined — Cursor accepted the frame and then exposed a nameless,
+    // uncallable namespace, so the model never invoked anything.
+    const fn = (t as { function?: OpenAITool["function"] }).function;
+    const flat = t as unknown as {
+      name?: string;
+      description?: string;
+      parameters?: unknown;
     };
+    const name = (fn?.name ?? flat.name ?? "").trim();
+    if (!name) return [];
+    const params = fn?.parameters ?? flat.parameters ?? { type: "object", properties: {} };
+    return [
+      {
+        name,
+        description: fn?.description ?? flat.description ?? "",
+        inputSchemaBytes: jsonSchemaToProtobufValue(params),
+        providerIdentifier: OMNIROUTE_MCP_SERVER_IDENTIFIER,
+        toolName: name,
+      },
+    ];
   });
 }
 
@@ -616,8 +639,8 @@ export function encodeAgentRunRequest(input: AgentRunInput): Buffer {
     mcpToolsBlock,
     encodeString(ARR_CONVERSATION_ID, conversationId),
     requestedModel,
-    Buffer.concat([encodeTag(ARR_UNKNOWN_12, WT_VARINT), encodeVarint(0)]),
-    encodeString(ARR_REQUEST_ID, conversationId),
+    Buffer.concat([encodeTag(ARR_EXCLUDE_WORKSPACE_CONTEXT, WT_VARINT), encodeVarint(0)]),
+    encodeString(ARR_CONVERSATION_GROUP_ID, conversationId),
   ];
 
   // AgentClientMessage { run_request }
@@ -803,6 +826,12 @@ export function decodeKvServerEvent(payload: Buffer): KvServerEvent | null {
 
 export type ExecServerEvent =
   | { kind: "exec_request_context"; execMsgId: number; execId: string }
+  | {
+      kind: "exec_mcp_state";
+      execMsgId: number;
+      execId: string;
+      serverIdentifiers: string[];
+    }
   | { kind: "exec_read"; execMsgId: number; execId: string; path: string }
   | { kind: "exec_write"; execMsgId: number; execId: string; path: string }
   | { kind: "exec_delete"; execMsgId: number; execId: string; path: string }
@@ -967,7 +996,46 @@ const EXEC_EVENT_DECODERS: Partial<Record<number, ExecEventDecoder>> = {
     execId,
   }),
   [ESM_MCP_ARGS]: decodeMcpExecEvent,
+  [ESM_MCP_STATE_ARGS]: (context) => ({
+    kind: "exec_mcp_state" as const,
+    execMsgId: context.execMsgId,
+    execId: context.execId,
+    // McpStateExecArgs.server_identifiers is `repeated string`; Cursor asks for
+    // a specific server on the first probe and with an empty list afterwards
+    // (meaning "every server you have").
+    serverIdentifiers: decodeFields(context.variantBytes).flatMap((field) =>
+      field.fieldNumber === MSA_SERVER_IDENTIFIERS && field.wireType === WT_LEN
+        ? [field.bytes.toString("utf8")]
+        : []
+    ),
+  }),
 };
+
+// McpStateExecArgs.server_identifiers
+const MSA_SERVER_IDENTIFIERS = 1;
+
+/** The MCP server name OmniRoute declares to Cursor for the client's tools. */
+export const OMNIROUTE_MCP_SERVER_IDENTIFIER = "omniroute";
+
+/**
+ * Field numbers that carry an event variant. The envelope also contains the id
+ * (1), the metadata envelope (19) and assorted scalars, so the variant can NOT
+ * be guessed as "the first length-delimited field" — field 19 always won that
+ * race and the real variant was dropped.
+ */
+const EXEC_VARIANT_FIELDS: ReadonlySet<number> = new Set(
+  Object.keys(EXEC_EVENT_DECODERS).map(Number)
+);
+
+/**
+ * Resolve the exec id, preferring the current metadata envelope (field 19
+ * sub-field 2) and falling back to the legacy standalone field 15.
+ */
+function resolveExecId(fields: ReturnType<typeof decodeFields>): string {
+  // exec_id is field 15 and nothing else. Frames that do not carry one
+  // (request_context, mcp_state) are correlated by `id` (field 1) instead.
+  return findLengthDelimitedField(fields, ESM_EXEC_ID)?.toString("utf8") ?? "";
+}
 
 function decodeExecEventContext(
   payload: Buffer
@@ -977,13 +1045,25 @@ function decodeExecEventContext(
 
   const fields = decodeFields(top.bytes);
   const idField = findField(fields, ESM_ID);
-  const variant = fields.find(
-    (field) => field.wireType === WT_LEN && field.fieldNumber !== ESM_EXEC_ID
-  );
+
+  // Prefer a known variant tag; only then fall back to "some other LEN field"
+  // so an unrecognised future variant is still surfaced to the caller (which
+  // can log it) instead of silently decoding as null.
+  const variant =
+    fields.find(
+      (field) => field.wireType === WT_LEN && EXEC_VARIANT_FIELDS.has(field.fieldNumber)
+    ) ??
+    fields.find(
+      (field) =>
+        field.wireType === WT_LEN &&
+        field.fieldNumber !== ESM_EXEC_ID &&
+        field.fieldNumber !== ESM_SPAN_CONTEXT
+    );
   if (!variant || variant.wireType !== WT_LEN) return null;
+
   return {
     execMsgId: idField?.wireType === WT_VARINT ? Number(idField.varint) : 0,
-    execId: findLengthDelimitedField(fields, ESM_EXEC_ID)?.toString("utf8") ?? "",
+    execId: resolveExecId(fields),
     variantField: variant.fieldNumber,
     variantBytes: variant.bytes,
   };
@@ -1016,6 +1096,14 @@ export function encodeRequestContextResponse(
     for (const tool of tools) {
       rcParts.push(encodeMessage(RCS_TOOLS, [encodeMcpToolDefinitionBody(tool)]));
     }
+    rcParts.push(
+      encodeMessage(RCS_MCP_META_TOOL_OPTIONS, [
+        encodeBoolField(MMTO_ENABLED, true),
+        encodeMessage(MMTO_DESCRIPTORS, [
+          encodeMcpDescriptor(OMNIROUTE_MCP_SERVER_IDENTIFIER, tools),
+        ]),
+      ])
+    );
   }
   const requestContext = encodeMessage(RCS_REQUEST_CONTEXT, rcParts);
   const success = encodeMessage(RCR_SUCCESS, [requestContext]);
@@ -1027,9 +1115,100 @@ export function encodeRequestContextResponse(
   return wrapConnectFrame(ecm);
 }
 
-// RequestContext.tools field number — multiple tool defs are repeated within
-// the inner RequestContext message.
-const RCS_TOOLS = 2;
+// RequestContext.tools — field 7, verified against the Cursor Agent CLI's own
+// schema (agent.v1.RequestContext). Field 2 is `rules`: sending the tool set
+// there meant the model never saw the declared MCP namespace at all
+// ("Omniroute namespace is unavailable" in its reasoning) and fell back to
+// Cursor's built-in tools.
+const RCS_TOOLS = 7;
+// RequestContext.mcp_meta_tool_options — McpMetaToolOptions{1: enabled,
+// 2: mcp_descriptors}. Cursor always drives MCP through its meta tools
+// (GetDynamicTools / CallDynamicTool), and the catalogue those return is built
+// from these descriptors. Declaring the tools only in RequestContext.tools is
+// not enough: without a descriptor the model sees an empty namespace, reports
+// it as unavailable and falls back to Cursor's built-in tools.
+const RCS_MCP_META_TOOL_OPTIONS = 34;
+const MMTO_ENABLED = 1; // McpMetaToolOptions.enabled
+const MMTO_DESCRIPTORS = 2; // McpMetaToolOptions.mcp_descriptors
+const MD_SERVER_NAME = 1; // McpDescriptor.server_name
+const MD_SERVER_IDENTIFIER = 2; // McpDescriptor.server_identifier
+const MD_TOOLS = 5; // McpDescriptor.tools
+const MTDESC_TOOL_NAME = 1; // McpToolDescriptor.tool_name
+const MTDESC_DESCRIPTION = 3; // McpToolDescriptor.description
+const MTDESC_INPUT_SCHEMA = 4; // McpToolDescriptor.input_schema
+
+/** Build the McpDescriptor that makes the tools discoverable via GetDynamicTools. */
+function encodeMcpDescriptor(serverIdentifier: string, tools: McpToolDefinition[]): Buffer {
+  return Buffer.concat([
+    encodeString(MD_SERVER_NAME, serverIdentifier),
+    encodeString(MD_SERVER_IDENTIFIER, serverIdentifier),
+    ...tools.map((tool) =>
+      encodeMessage(MD_TOOLS, [
+        Buffer.concat([
+          encodeString(MTDESC_TOOL_NAME, tool.toolName || tool.name),
+          encodeString(MTDESC_DESCRIPTION, tool.description),
+          encodeBytes(MTDESC_INPUT_SCHEMA, tool.inputSchemaBytes),
+        ]),
+      ])
+    ),
+  ]);
+}
+
+// ExecClientMessage.mcp_state_exec_result — mirrors ESM_MCP_STATE_ARGS (36).
+const ECM_MCP_STATE_RESULT = 36;
+const MSR_SUCCESS = 1; // McpStateExecResult.success
+const MSS_SERVERS = 1; // McpStateSuccess.servers
+const MST_SERVER_NAME = 1; // McpStateServer.server_name
+const MST_SERVER_IDENTIFIER = 2; // McpStateServer.server_identifier
+const MST_TOOLS = 5; // McpStateServer.tools
+const MST_STATUS = 7; // McpStateServer.status
+const MCP_SERVER_STATUS_READY = "ready";
+
+/**
+ * Answer the blocking MCP state handshake (ExecServerMessage.mcp_state_exec_args,
+ * field 36) by declaring OmniRoute as one MCP server exposing the client's tools.
+ *
+ * Until this is answered Cursor emits nothing but heartbeats, and if the server
+ * entry is missing the model reports the namespace as unavailable and silently
+ * falls back to its own built-in tools.
+ *
+ * Shape (agent.v1, taken from the Cursor Agent CLI's own schema):
+ *
+ *   ExecClientMessage {
+ *     id (1), exec_id (15),
+ *     mcp_state_exec_result (36) {
+ *       success (1) {
+ *         servers (1): McpStateServer {
+ *           server_name (1), server_identifier (2), tools (5), status (7)
+ *         }
+ *       }
+ *     }
+ *   }
+ */
+export function encodeMcpStateResponse(
+  id: number,
+  execId: string,
+  serverIdentifier: string,
+  tools: McpToolDefinition[]
+): Buffer {
+  const server = encodeMessage(MSS_SERVERS, [
+    Buffer.concat([
+      encodeString(MST_SERVER_NAME, serverIdentifier),
+      encodeString(MST_SERVER_IDENTIFIER, serverIdentifier),
+      ...tools.map((tool) => encodeMessage(MST_TOOLS, [encodeMcpToolDefinitionBody(tool)])),
+      encodeString(MST_STATUS, MCP_SERVER_STATUS_READY),
+    ]),
+  ]);
+  const result = encodeMessage(ECM_MCP_STATE_RESULT, [encodeMessage(MSR_SUCCESS, [server])]);
+
+  return wrapConnectFrame(
+    encodeMessage(ACM_EXEC_CLIENT_MESSAGE, [
+      encodeUInt32Field(ECM_ID, id),
+      encodeString(ECM_EXEC_ID, execId),
+      result,
+    ])
+  );
+}
 
 // ─── ExecClientMessage wrapper ──────────────────────────────────────────────
 
