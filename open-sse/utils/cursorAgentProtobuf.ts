@@ -218,6 +218,19 @@ const FERR_ERROR = 2; // FetchError.error
 // Result-message variant discriminators (oneof). field 1 = success/accepted,
 // field 2 = rejected/error. Matches existing RCR_SUCCESS=1 pattern.
 const RES_REJECTED = 2; // rejected variant for read/write/delete/ls/shell/bg_shell
+// Success variants (agent.v1). Returning a REAL result instead of a rejection
+// is what stops the model from retrying the same built-in tool forever: a
+// rejected exec reads to the model as "my tool did not run".
+const RES_SUCCESS = 1; // ReadResult.success / ShellResult.success / WriteResult.success
+const READ_SUCCESS_PATH = 1; // ReadSuccess.path
+const READ_SUCCESS_CONTENT = 2; // ReadSuccess.content
+const READ_SUCCESS_TOTAL_LINES = 3; // ReadSuccess.total_lines
+const SHELL_SUCCESS_COMMAND = 1; // ShellSuccess.command
+const SHELL_SUCCESS_WORKING_DIR = 2; // ShellSuccess.working_directory
+const SHELL_SUCCESS_EXIT_CODE = 3; // ShellSuccess.exit_code
+const SHELL_SUCCESS_STDOUT = 5; // ShellSuccess.stdout
+const WRITE_SUCCESS_PATH = 1; // WriteSuccess.path
+const WRITE_SUCCESS_LINES_CREATED = 2; // WriteSuccess.lines_created
 
 // McpToolDefinition
 const MTD_NAME = 1;
@@ -1371,6 +1384,65 @@ export function encodeExecWriteShellStdinError(
   const stdinError = encodeString(ERR_MESSAGE, errMsg);
   const errorVariant = encodeMessage(RES_REJECTED, [stdinError]);
   return wrapExecClientMessage(execMsgId, execId, ECM_WRITE_SHELL_STDIN_RESULT, errorVariant);
+}
+
+/**
+ * Real results for Cursor's built-in tools, carrying what the CLIENT produced.
+ *
+ * These exist because bridging a built-in exec to a declared client tool while
+ * telling Cursor the exec was *rejected* makes the model believe its own tool
+ * never ran: it retries the same step on the next turn, which is how an agent
+ * ends up reading a missing file in a loop. Feeding the client's output back as
+ * the exec's success closes the loop the way Cursor's own CLI does.
+ */
+export function encodeExecReadSuccess(
+  execMsgId: number,
+  execId: string,
+  path: string,
+  content: string
+): Buffer {
+  const success = encodeMessage(RES_SUCCESS, [
+    Buffer.concat([
+      encodeString(READ_SUCCESS_PATH, path),
+      encodeString(READ_SUCCESS_CONTENT, content),
+      encodeUInt32Field(READ_SUCCESS_TOTAL_LINES, content ? content.split("\n").length : 0),
+    ]),
+  ]);
+  return wrapExecClientMessage(execMsgId, execId, ECM_READ_RESULT, success);
+}
+
+export function encodeExecShellSuccess(
+  execMsgId: number,
+  execId: string,
+  command: string,
+  workingDir: string,
+  stdout: string,
+  exitCode = 0
+): Buffer {
+  const success = encodeMessage(RES_SUCCESS, [
+    Buffer.concat([
+      encodeString(SHELL_SUCCESS_COMMAND, command),
+      encodeString(SHELL_SUCCESS_WORKING_DIR, workingDir),
+      encodeUInt32Field(SHELL_SUCCESS_EXIT_CODE, exitCode),
+      encodeString(SHELL_SUCCESS_STDOUT, stdout),
+    ]),
+  ]);
+  return wrapExecClientMessage(execMsgId, execId, ECM_SHELL_RESULT, success);
+}
+
+export function encodeExecWriteSuccess(
+  execMsgId: number,
+  execId: string,
+  path: string,
+  linesCreated: number
+): Buffer {
+  const success = encodeMessage(RES_SUCCESS, [
+    Buffer.concat([
+      encodeString(WRITE_SUCCESS_PATH, path),
+      encodeUInt32Field(WRITE_SUCCESS_LINES_CREATED, linesCreated),
+    ]),
+  ]);
+  return wrapExecClientMessage(execMsgId, execId, ECM_WRITE_RESULT, success);
 }
 
 export function encodeExecDiagnosticsResult(execMsgId: number, execId: string): Buffer {

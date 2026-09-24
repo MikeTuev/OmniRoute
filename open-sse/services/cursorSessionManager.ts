@@ -31,7 +31,12 @@
  */
 
 import type { ClientHttp2Session, ClientHttp2Stream } from "node:http2";
-import { encodeExecMcpResult } from "../utils/cursorAgentProtobuf.ts";
+import {
+  encodeExecMcpResult,
+  encodeExecReadSuccess,
+  encodeExecShellSuccess,
+  encodeExecWriteSuccess,
+} from "../utils/cursorAgentProtobuf.ts";
 
 const DEFAULT_IDLE_TTL_MS = 5 * 60 * 1000;
 
@@ -41,6 +46,24 @@ export type CursorSession = {
   h2Req: ClientHttp2Stream;
   blobStore: Map<string, Buffer>;
   pendingToolCalls: Map<string, { execMsgId: number; execId: string; toolName: string }>;
+  /**
+   * Built-in Cursor execs (Read / Shell / Write) that were bridged to a declared
+   * client tool and are still awaiting that client's output. They are answered
+   * with a typed SUCCESS carrying the client's result — answering with a
+   * rejection instead makes the model believe its own tool never ran and retry
+   * the same step forever.
+   */
+  pendingBuiltinExecs: Map<
+    string,
+    {
+      execMsgId: number;
+      execId: string;
+      kind: "read" | "shell" | "write";
+      path: string;
+      command: string;
+      workingDir: string;
+    }
+  >;
   state: "running" | "awaiting_tool_result" | "closed";
   lastActivityTs: number;
   idleTimer?: ReturnType<typeof setTimeout>;
@@ -90,6 +113,7 @@ export class CursorSessionManager {
       h2Req,
       blobStore,
       pendingToolCalls: new Map(),
+      pendingBuiltinExecs: new Map(),
       state: "running",
       lastActivityTs: Date.now(),
     };
@@ -128,6 +152,7 @@ export class CursorSessionManager {
     // Drop any unanswered tool-call mappings so a closed session doesn't pin
     // their (small) entries for the lifetime of the lingering object.
     session.pendingToolCalls.clear();
+    session.pendingBuiltinExecs.clear();
     this.sessions.delete(session.conversationId);
   }
 
@@ -142,6 +167,35 @@ export class CursorSessionManager {
     content: string,
     isError: boolean
   ): boolean {
+    const builtin = session.pendingBuiltinExecs.get(openAIToolCallId);
+    if (builtin) {
+      try {
+        const frame =
+          builtin.kind === "read"
+            ? encodeExecReadSuccess(builtin.execMsgId, builtin.execId, builtin.path, content)
+            : builtin.kind === "write"
+              ? encodeExecWriteSuccess(
+                  builtin.execMsgId,
+                  builtin.execId,
+                  builtin.path,
+                  content ? content.split("\n").length : 0
+                )
+              : encodeExecShellSuccess(
+                  builtin.execMsgId,
+                  builtin.execId,
+                  builtin.command,
+                  builtin.workingDir,
+                  content
+                );
+        session.h2Req.write(frame);
+        session.pendingBuiltinExecs.delete(openAIToolCallId);
+        session.lastActivityTs = Date.now();
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
     const pending = session.pendingToolCalls.get(openAIToolCallId);
     if (!pending) return false;
     try {
@@ -204,7 +258,10 @@ export class CursorSessionManager {
     this.evictExpired();
     for (const id of toolCallIds) {
       for (const session of this.sessions.values()) {
-        if (session.state === "awaiting_tool_result" && session.pendingToolCalls.has(id)) {
+        if (
+          session.state === "awaiting_tool_result" &&
+          (session.pendingToolCalls.has(id) || session.pendingBuiltinExecs.has(id))
+        ) {
           this.clearIdleTimer(session);
           session.state = "running";
           session.lastActivityTs = Date.now();

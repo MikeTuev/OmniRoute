@@ -137,6 +137,17 @@ const TOOL_COMMIT_DIRECTIVE = [
  * to inject MCP tools in Phase 3) and for exec_mcp (model is invoking a
  * declared MCP tool — Phase 5 surfaces this as an OpenAI tool_calls delta).
  */
+/**
+ * Built-in execs whose result can be expressed as a typed success once the
+ * client answers. Everything else keeps the fail-closed rejection.
+ */
+function heldExecKind(kind: ExecServerEvent["kind"]): "read" | "shell" | "write" | null {
+  if (kind === "exec_read") return "read";
+  if (kind === "exec_write") return "write";
+  if (kind === "exec_shell" || kind === "exec_shell_stream") return "shell";
+  return null;
+}
+
 function buildExecRejection(event: ExecServerEvent): Buffer | null {
   switch (event.kind) {
     case "exec_request_context":
@@ -335,6 +346,17 @@ export type StreamCtx = {
   // role:"tool" message can be answered on the open h2 stream via
   // encodeExecMcpResult.
   pendingToolCalls: Map<string, { execMsgId: number; execId: string; toolName: string }>;
+  pendingBuiltinExecs: Map<
+    string,
+    {
+      execMsgId: number;
+      execId: string;
+      kind: "read" | "shell" | "write";
+      path: string;
+      command: string;
+      workingDir: string;
+    }
+  >;
   // Built-in Cursor tools are bridged to external OpenAI tool calls by first
   // rejecting the native request. Their result therefore cannot resume on the
   // same h2 stream and must use the existing full-history cold-resume path.
@@ -376,6 +398,7 @@ export function newStreamCtx(model: string, emit: (chunk: string) => void): Stre
     emittedToolCallIndex: 0,
     toolCalls: [],
     pendingToolCalls: new Map(),
+    pendingBuiltinExecs: new Map(),
     requiresColdResume: false,
     composerVisibleEmittedLength: 0,
     composerToolParserState: isComposerModel(model) ? createStreamingState() : null,
@@ -676,7 +699,8 @@ export function processFrame(
       // We still send the typed rejection upstream, then close this h2 stream;
       // the role:"tool" follow-up is resumed cold from the full history.
       const bridge = bridgeCursorBuiltinTool(event, opts.mcpTools ?? [], opts.clientPlatform);
-      const rejection = buildExecRejection(event);
+      const heldKind = bridge ? heldExecKind(event.kind) : null;
+      const rejection = heldKind ? null : buildExecRejection(event);
       if (rejection && opts.h2Req) {
         try {
           opts.h2Req.write(rejection);
@@ -685,8 +709,24 @@ export function processFrame(
         }
       }
       if (bridge) {
-        emitStructuredToolCall(ctx, bridge.toolName, bridge.arguments);
-        ctx.requiresColdResume = true;
+        const openAIToolCallId = emitStructuredToolCall(ctx, bridge.toolName, bridge.arguments);
+        if (heldKind) {
+          // Hold the exec open: the client's output comes back as a
+          // role:"tool" message and is returned to Cursor as this exec's
+          // SUCCESS. Telling Cursor the exec was rejected instead makes the
+          // model believe its own tool never ran, so it retries the same step
+          // forever (observed: an agent re-reading a missing file in a loop).
+          ctx.pendingBuiltinExecs.set(openAIToolCallId, {
+            execMsgId: event.execMsgId,
+            execId: event.execId,
+            kind: heldKind,
+            path: "path" in event ? event.path : "",
+            command: "command" in event ? event.command : "",
+            workingDir: "workingDir" in event ? event.workingDir : "",
+          });
+        } else {
+          ctx.requiresColdResume = true;
+        }
         ctx.endReason = "tool_calls";
       } else if (rejection) {
         // A built-in exec that no declared client tool can serve (no
@@ -1504,7 +1544,7 @@ export class CursorExecutor extends BaseExecutor {
       for (const msg of messages) {
         if (msg.role !== "tool") continue;
         const id = msg.tool_call_id ?? "";
-        if (!session.pendingToolCalls.has(id)) continue;
+        if (!session.pendingToolCalls.has(id) && !session.pendingBuiltinExecs.has(id)) continue;
         const content = typeof msg.content === "string" ? msg.content : "";
         if (cursorSessionManager.sendToolResult(session, id, content, false)) {
           matched++;
@@ -1588,6 +1628,11 @@ export class CursorExecutor extends BaseExecutor {
       // Persist any new pendingToolCalls from this turn into the session.
       for (const [id, info] of ctx.pendingToolCalls) {
         sessionToUse.pendingToolCalls.set(id, info);
+      }
+      // Held built-in execs must survive into the session too, or the client's
+      // role:"tool" follow-up has nothing to answer and the exec stays open.
+      for (const [id, info] of ctx.pendingBuiltinExecs) {
+        sessionToUse.pendingBuiltinExecs.set(id, info);
       }
       if (errored || ctx.endReason !== "tool_calls" || ctx.requiresColdResume) {
         cursorSessionManager.close(sessionToUse);
