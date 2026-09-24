@@ -614,3 +614,126 @@ test("fails closed when no declared tool matches the built-in event", () => {
     null
   );
 });
+
+/**
+ * Cursor routes work onto its own built-ins (Grep, Ls, Write, Fetch) even when
+ * the client declared equivalents. Every unbridged variant ended the turn with
+ * a typed rejection and no tool call, so opencode saw an empty answer and
+ * retried the same step forever — the "reads a missing file in a loop" report.
+ */
+function grepEvent(over: Record<string, unknown> = {}): ExecServerEvent {
+  return {
+    kind: "exec_grep",
+    execMsgId: 1,
+    execId: "e",
+    pattern: "snake",
+    path: "/tmp/12",
+    glob: "*.cpp",
+    ...over,
+  } as ExecServerEvent;
+}
+function tool(name: string, properties: Record<string, unknown>, required: string[] = []) {
+  return {
+    type: "function",
+    function: {
+      name,
+      parameters: { type: "object", properties, required, additionalProperties: false },
+    },
+  } as OpenAITool;
+}
+
+test("bridges Cursor Grep onto a declared grep tool, carrying path and include", () => {
+  const result = bridgeCursorBuiltinTool(
+    grepEvent(),
+    defs([
+      tool(
+        "grep",
+        {
+          pattern: { type: "string" },
+          path: { type: "string" },
+          include: { type: "string" },
+        },
+        ["pattern"]
+      ),
+    ]),
+    "posix"
+  );
+  assert.deepEqual(result, {
+    toolName: "grep",
+    arguments: { pattern: "snake", path: "/tmp/12", include: "*.cpp" },
+  });
+});
+
+test("Grep without a pattern is not bridged", () => {
+  const result = bridgeCursorBuiltinTool(
+    grepEvent({ pattern: "  " }),
+    defs([tool("grep", { pattern: { type: "string" } }, ["pattern"])]),
+    "posix"
+  );
+  assert.equal(result, null);
+});
+
+test("bridges Cursor Ls onto a glob tool, supplying the required pattern", () => {
+  const event = { kind: "exec_ls", execMsgId: 1, execId: "e", path: "/tmp/12" } as ExecServerEvent;
+  const result = bridgeCursorBuiltinTool(
+    event,
+    defs([tool("glob", { pattern: { type: "string" }, path: { type: "string" } }, ["pattern"])]),
+    "posix"
+  );
+  assert.deepEqual(result, { toolName: "glob", arguments: { path: "/tmp/12", pattern: "*" } });
+});
+
+test("bridges Cursor Write with the file contents it sent", () => {
+  const event = {
+    kind: "exec_write",
+    execMsgId: 1,
+    execId: "e",
+    path: "/tmp/12/snake.cpp",
+    fileText: "int main(){}",
+  } as ExecServerEvent;
+  const result = bridgeCursorBuiltinTool(
+    event,
+    defs([
+      tool("write", { filePath: { type: "string" }, content: { type: "string" } }, [
+        "filePath",
+        "content",
+      ]),
+    ]),
+    "posix"
+  );
+  assert.deepEqual(result, {
+    toolName: "write",
+    arguments: { filePath: "/tmp/12/snake.cpp", content: "int main(){}" },
+  });
+});
+
+test("a Write with no schema-compatible content property stays rejected", () => {
+  const event = {
+    kind: "exec_write",
+    execMsgId: 1,
+    execId: "e",
+    path: "/tmp/a",
+    fileText: "x",
+  } as ExecServerEvent;
+  const result = bridgeCursorBuiltinTool(
+    event,
+    defs([tool("write", { filePath: { type: "string" } }, ["filePath"])]),
+    "posix"
+  );
+  assert.equal(result, null);
+});
+
+test("bridges Cursor Fetch onto a declared webfetch tool", () => {
+  const event = {
+    kind: "exec_fetch",
+    execMsgId: 1,
+    execId: "e",
+    url: "https://example.com",
+  } as ExecServerEvent;
+  const result = bridgeCursorBuiltinTool(
+    event,
+    defs([tool("webfetch", { url: { type: "string" } }, ["url"])]),
+    "posix"
+  );
+  assert.deepEqual(result, { toolName: "webfetch", arguments: { url: "https://example.com" } });
+});

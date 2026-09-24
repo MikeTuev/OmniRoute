@@ -32,6 +32,10 @@ type JsonSchema = {
 
 const DIRECT_SHELL_TOOL_NAMES = ["bash", "shell", "run_terminal_cmd"];
 const TODO_WRITE_TOOL_NAMES = ["todowrite", "todo_write"];
+const GREP_TOOL_NAMES = ["grep", "search", "ripgrep", "grep_search"];
+const LS_TOOL_NAMES = ["glob", "ls", "list", "list_dir", "list_directory"];
+const WRITE_TOOL_NAMES = ["write", "write_file", "create_file"];
+const FETCH_TOOL_NAMES = ["webfetch", "web_fetch", "fetch"];
 const BRIDGE_DESCRIPTION = "Run Cursor-requested shell command";
 const ROOT_SCHEMA_KEYS = new Set([
   "$schema",
@@ -278,6 +282,105 @@ function readBridge(
 }
 
 /**
+ * Cursor routes work onto its own built-in tools (Grep, Ls, Write, Fetch) even
+ * when the client declared equivalents. Each unbridged variant used to end the
+ * turn with a typed rejection and no tool call, so a harness like opencode saw
+ * an empty answer and retried the same step forever.
+ *
+ * Every bridge below fails closed: it emits a call only when a declared tool
+ * can express the request, and never invents arguments Cursor did not send.
+ */
+function grepBridge(
+  event: Extract<ExecServerEvent, { kind: "exec_grep" }>,
+  tools: McpToolDefinition[]
+): CursorBuiltinToolBridge | null {
+  if (!event.pattern.trim()) return null;
+  for (const tool of namedTools(tools, GREP_TOOL_NAMES)) {
+    const schema = schemaFor(tool);
+    if (!schema) continue;
+    const properties = schemaProperties(schema);
+    const patternKey = selectProperty(schema, properties, ["pattern", "query", "regex"], "string");
+    if (!patternKey) continue;
+
+    const args: Record<string, unknown> = { [patternKey]: event.pattern };
+    const pathKey = selectProperty(schema, properties, ["path", "dir", "directory"], "string");
+    if (pathKey && event.path) args[pathKey] = event.path;
+    const globKey = selectProperty(
+      schema,
+      properties,
+      ["include", "glob", "filePattern"],
+      "string"
+    );
+    if (globKey && event.glob) args[globKey] = event.glob;
+    if (hasAllRequired(schema, args)) return { toolName: tool.name, arguments: args };
+  }
+  return null;
+}
+
+function lsBridge(
+  event: Extract<ExecServerEvent, { kind: "exec_ls" }>,
+  tools: McpToolDefinition[]
+): CursorBuiltinToolBridge | null {
+  if (!event.path.trim()) return null;
+  for (const tool of namedTools(tools, LS_TOOL_NAMES)) {
+    const schema = schemaFor(tool);
+    if (!schema) continue;
+    const properties = schemaProperties(schema);
+    const pathKey = selectProperty(schema, properties, ["path", "dir", "directory"], "string");
+    if (!pathKey) continue;
+
+    const args: Record<string, unknown> = { [pathKey]: event.path };
+    // opencode's `glob` requires a pattern; list everything under the path.
+    const patternKey = selectProperty(schema, properties, ["pattern", "glob"], "string");
+    if (patternKey) args[patternKey] = "*";
+    if (hasAllRequired(schema, args)) return { toolName: tool.name, arguments: args };
+  }
+  return null;
+}
+
+function writeBridge(
+  event: Extract<ExecServerEvent, { kind: "exec_write" }>,
+  tools: McpToolDefinition[]
+): CursorBuiltinToolBridge | null {
+  if (!event.path.trim()) return null;
+  for (const tool of namedTools(tools, WRITE_TOOL_NAMES)) {
+    const schema = schemaFor(tool);
+    if (!schema) continue;
+    const properties = schemaProperties(schema);
+    const pathKey = selectProperty(schema, properties, ["filePath", "path", "file_path"], "string");
+    const contentKey = selectProperty(
+      schema,
+      properties,
+      ["content", "contents", "text", "file_text"],
+      "string"
+    );
+    if (!pathKey || !contentKey) continue;
+
+    const args: Record<string, unknown> = { [pathKey]: event.path, [contentKey]: event.fileText };
+    if (hasAllRequired(schema, args)) return { toolName: tool.name, arguments: args };
+  }
+  return null;
+}
+
+function fetchBridge(
+  event: Extract<ExecServerEvent, { kind: "exec_fetch" }>,
+  tools: McpToolDefinition[]
+): CursorBuiltinToolBridge | null {
+  if (!event.url.trim()) return null;
+  for (const tool of namedTools(tools, FETCH_TOOL_NAMES)) {
+    const schema = schemaFor(tool);
+    if (!schema) continue;
+    const properties = schemaProperties(schema);
+    const urlKey = selectProperty(schema, properties, ["url", "uri", "link"], "string");
+    if (!urlKey) continue;
+
+    const args: Record<string, unknown> = { [urlKey]: event.url };
+    if (hasAllRequired(schema, args)) return { toolName: tool.name, arguments: args };
+  }
+  return null;
+}
+
+/**
  * Recover priorities from the latest structured external TodoWrite call in
  * OpenAI history. Cursor's native TodoItem wire schema has no priority field,
  * so the bridge may preserve a prior declared value but must never invent one.
@@ -425,6 +528,10 @@ export function bridgeCursorBuiltinTool(
   platform?: CursorClientPlatform
 ): CursorBuiltinToolBridge | null {
   if (event.kind === "exec_read") return readBridge(event, tools);
+  if (event.kind === "exec_grep") return grepBridge(event, tools);
+  if (event.kind === "exec_ls") return lsBridge(event, tools);
+  if (event.kind === "exec_write") return writeBridge(event, tools);
+  if (event.kind === "exec_fetch") return fetchBridge(event, tools);
   if (
     event.kind !== "exec_shell" &&
     event.kind !== "exec_shell_stream" &&

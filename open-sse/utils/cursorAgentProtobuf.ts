@@ -173,6 +173,13 @@ const ARG_SHELL_TIMEOUT = 3; // ShellArgs.timeout
 const ARG_SHELL_IS_BACKGROUND = 11; // ShellArgs.is_background
 const ARG_SHELL_HARD_TIMEOUT = 14; // ShellArgs.hard_timeout
 const ARG_FETCH_URL = 1; // FetchArgs.url
+// GrepArgs / WriteArgs (agent.v1). Only the parts a declared client tool can
+// express are decoded; the rest (sort, head_limit, sandbox_policy…) stay
+// unread because no external schema carries them.
+const ARG_GREP_PATTERN = 1; // GrepArgs.pattern
+const ARG_GREP_PATH = 2; // GrepArgs.path
+const ARG_GREP_GLOB = 3; // GrepArgs.glob
+const ARG_WRITE_FILE_TEXT = 2; // WriteArgs.file_text
 
 // KvServerMessage / KvClientMessage
 const KSM_ID = 1;
@@ -833,10 +840,17 @@ export type ExecServerEvent =
       serverIdentifiers: string[];
     }
   | { kind: "exec_read"; execMsgId: number; execId: string; path: string }
-  | { kind: "exec_write"; execMsgId: number; execId: string; path: string }
+  | { kind: "exec_write"; execMsgId: number; execId: string; path: string; fileText: string }
   | { kind: "exec_delete"; execMsgId: number; execId: string; path: string }
   | { kind: "exec_ls"; execMsgId: number; execId: string; path: string }
-  | { kind: "exec_grep"; execMsgId: number; execId: string }
+  | {
+      kind: "exec_grep";
+      execMsgId: number;
+      execId: string;
+      pattern: string;
+      path: string;
+      glob: string;
+    }
   | { kind: "exec_diagnostics"; execMsgId: number; execId: string }
   | {
       kind: "exec_shell";
@@ -915,7 +929,7 @@ type ExecEventContext = {
 };
 
 type ExecEventDecoder = (context: ExecEventContext) => ExecServerEvent;
-type PathExecKind = "exec_read" | "exec_write" | "exec_delete" | "exec_ls";
+type PathExecKind = "exec_read" | "exec_delete" | "exec_ls";
 type ShellExecKind = "exec_shell" | "exec_shell_stream" | "exec_bg_shell";
 
 function createPathExecEvent(kind: PathExecKind, context: ExecEventContext): ExecServerEvent {
@@ -972,10 +986,23 @@ const EXEC_EVENT_DECODERS: Partial<Record<number, ExecEventDecoder>> = {
     execId,
   }),
   [ESM_READ_ARGS]: (context) => createPathExecEvent("exec_read", context),
-  [ESM_WRITE_ARGS]: (context) => createPathExecEvent("exec_write", context),
+  [ESM_WRITE_ARGS]: (context) => ({
+    kind: "exec_write" as const,
+    execMsgId: context.execMsgId,
+    execId: context.execId,
+    path: decodeStringField(context.variantBytes, ARG_PATH),
+    fileText: decodeStringField(context.variantBytes, ARG_WRITE_FILE_TEXT),
+  }),
   [ESM_DELETE_ARGS]: (context) => createPathExecEvent("exec_delete", context),
   [ESM_LS_ARGS]: (context) => createPathExecEvent("exec_ls", context),
-  [ESM_GREP_ARGS]: ({ execMsgId, execId }) => ({ kind: "exec_grep", execMsgId, execId }),
+  [ESM_GREP_ARGS]: (context) => ({
+    kind: "exec_grep" as const,
+    execMsgId: context.execMsgId,
+    execId: context.execId,
+    pattern: decodeStringField(context.variantBytes, ARG_GREP_PATTERN),
+    path: decodeStringField(context.variantBytes, ARG_GREP_PATH),
+    glob: decodeStringField(context.variantBytes, ARG_GREP_GLOB),
+  }),
   [ESM_DIAGNOSTICS_ARGS]: ({ execMsgId, execId }) => ({
     kind: "exec_diagnostics",
     execMsgId,

@@ -81,11 +81,19 @@ test("decodeExecServerEvent recognizes read_args (field 7) with path", () => {
   });
 });
 
-test("decodeExecServerEvent recognizes write_args (field 3)", () => {
-  const variant = stringField(1, "/tmp/x");
+test("decodeExecServerEvent recognizes write_args (field 3) with path and file_text", () => {
+  // WriteArgs { 1 path, 2 file_text } — the contents are what lets the bridge
+  // forward the write to a declared client tool instead of rejecting it.
+  const variant = Buffer.concat([stringField(1, "/tmp/x"), stringField(2, "int main(){}")]);
   const esm = buildExecServerMessage(3, "exec-w", 3, variant);
   const event = decodeExecServerEvent(buildAgentServerMessage(esm));
-  assert.deepEqual(event, { kind: "exec_write", execMsgId: 3, execId: "exec-w", path: "/tmp/x" });
+  assert.deepEqual(event, {
+    kind: "exec_write",
+    execMsgId: 3,
+    execId: "exec-w",
+    path: "/tmp/x",
+    fileText: "int main(){}",
+  });
 });
 
 test("decodeExecServerEvent recognizes delete_args (field 4)", () => {
@@ -102,11 +110,24 @@ test("decodeExecServerEvent recognizes ls_args (field 8)", () => {
   assert.deepEqual(event, { kind: "exec_ls", execMsgId: 5, execId: "exec-l", path: "/home" });
 });
 
-test("decodeExecServerEvent recognizes grep_args (field 5)", () => {
-  const variant = stringField(1, "pattern");
+test("decodeExecServerEvent recognizes grep_args (field 5) with pattern, path and glob", () => {
+  // GrepArgs { 1 pattern, 2 path, 3 glob } — decoding only the envelope left
+  // the bridge with nothing to forward, so every Cursor Grep ended the turn.
+  const variant = Buffer.concat([
+    stringField(1, "pattern"),
+    stringField(2, "/tmp/12"),
+    stringField(3, "*.cpp"),
+  ]);
   const esm = buildExecServerMessage(6, "exec-g", 5, variant);
   const event = decodeExecServerEvent(buildAgentServerMessage(esm));
-  assert.deepEqual(event, { kind: "exec_grep", execMsgId: 6, execId: "exec-g" });
+  assert.deepEqual(event, {
+    kind: "exec_grep",
+    execMsgId: 6,
+    execId: "exec-g",
+    pattern: "pattern",
+    path: "/tmp/12",
+    glob: "*.cpp",
+  });
 });
 
 test("decodeExecServerEvent recognizes diagnostics_args (field 9)", () => {
