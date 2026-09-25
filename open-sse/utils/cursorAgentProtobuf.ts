@@ -11,15 +11,23 @@
  *   - Cross-checked against router-for-me/CLIProxyAPI's reference Go impl
  *     and KooshaPari/cliproxyapi-plusplus's hand-rolled field tables
  *
- * The endpoint is a Connect-RPC client-streaming RPC. We send one frame
- * (AgentClientMessage with a RunRequest) and end the stream; the server
- * streams back an AgentServerMessage per chunk.
+ * The endpoint is a bidirectional Connect-RPC stream. The RunRequest stays
+ * open so client-side exec results can be returned on the same connection.
  */
 
 import zlib from "node:zlib";
 import crypto from "node:crypto";
 import { decodeNativeTodoWriteCompletion } from "./cursorAgentProtobuf/nativeTodoWrite.ts";
-import { scrubKimiNarrationText } from "./kimiToolCallNarration.ts";
+import {
+  EXTRA_EXEC_SERVER_FIELDS,
+  decodeExtraExecEvent,
+  type ExtraExecEvent,
+} from "./cursorAgentProtobuf/extraExec.ts";
+import {
+  PI_EXEC_SERVER_FIELDS,
+  decodePiExecEvent,
+  type PiExecEvent,
+} from "./cursorAgentProtobuf/pi.ts";
 import {
   cursorImageAttachmentPath,
   encodeSelectedImageBody,
@@ -27,6 +35,7 @@ import {
 } from "./cursorAgentProtobuf/imageEncoding.ts";
 import {
   CURSOR_EFFORT_SUFFIXES,
+  applyCursorReasoningEffort,
   resolveOneMillionContextModel,
 } from "./cursorAgentProtobuf/requestedModelParameters.ts";
 import {
@@ -48,6 +57,36 @@ import {
   decodeVarintField,
   type Field,
 } from "./cursorAgentProtobuf/wire.ts";
+
+export {
+  encodeExecReadRejected,
+  encodeExecWriteRejected,
+  encodeExecDeleteRejected,
+  encodeExecLsRejected,
+  encodeExecShellRejected,
+  encodeExecShellStreamRejected,
+  encodeExecListMcpResourcesResult,
+  encodeExecBackgroundShellSpawnRejected,
+  encodeExecGrepError,
+  encodeExecFetchError,
+  encodeExecFetchSuccess,
+  encodeExecWriteShellStdinError,
+  encodeExecReadSuccess,
+  encodeExecReadFileNotFound,
+  looksLikeFileNotFound,
+  encodeExecGrepSuccess,
+  encodeExecLsSuccess,
+  encodeExecShellSuccess,
+  encodeExecShellStreamResult,
+  encodeExecWriteSuccess,
+  encodeExecWriteError,
+  encodeExecDiagnosticsResult,
+  encodeExecMcpResult,
+  encodeExecMcpError,
+  ECM_MINI_SWE_BASH_RESULT,
+} from "./cursorAgentProtobuf/execResults.ts";
+export { flattenMessages, messageContentToText } from "./cursorAgentProtobuf/messageHistory.ts";
+export type { ChatMessage } from "./cursorAgentProtobuf/messageHistory.ts";
 
 // ─── Field numbers (from agent.proto descriptor) ───────────────────────────
 
@@ -112,6 +151,7 @@ const ESM_EXEC_ID = 15; // ExecServerMessage.exec_id
 // Purely diagnostic — it must never be mistaken for the event variant, which
 // is what happened while the variant was guessed as "the first LEN field".
 const ESM_SPAN_CONTEXT = 19;
+const ESM_MACHINE_ID = 57; // ExecServerMessage.machine_id, not an exec variant
 const ESM_REQUEST_CONTEXT_ARGS = 10; // ExecServerMessage.request_context_args
 
 const IU_TEXT_DELTA = 1; // InteractionUpdate.text_delta
@@ -125,27 +165,10 @@ const IU_TURN_ENDED = 14;
 
 const TDU_TEXT = 1; // TextDeltaUpdate.text
 
-// ─── Phase 1+: tool-use field numbers ──────────────────────────────────────
-// Field numbers in result-message oneof discriminators (RES_*) are best-known
-// values; verified against wire-tap captures during integration testing.
-
 const ACM_KV_CLIENT_MESSAGE = 3; // AgentClientMessage.kv_client_message
 
 // CSS_ROOT_PROMPT and CSS_TURNS already declared above (lines 34-35)
 // CSS_TURNS_OLD = 2 is deprecated; CSS_TURNS = 8 is current.
-
-// ExecClientMessage payload variants (mirror ESM_*)
-const ECM_SHELL_RESULT = 2;
-const ECM_WRITE_RESULT = 3;
-const ECM_DELETE_RESULT = 4;
-const ECM_GREP_RESULT = 5;
-const ECM_READ_RESULT = 7;
-const ECM_LS_RESULT = 8;
-const ECM_DIAGNOSTICS_RESULT = 9;
-const ECM_MCP_RESULT = 11;
-const ECM_BACKGROUND_SHELL_SPAWN_RES = 16;
-const ECM_FETCH_RESULT = 20;
-const ECM_WRITE_SHELL_STDIN_RESULT = 23;
 
 // ExecServerMessage variant tags (used by exec router in Phase 2)
 const ESM_SHELL_ARGS = 2;
@@ -160,8 +183,10 @@ const ESM_MCP_ARGS = 11;
 // 2: kick_only}. A BLOCKING request: until it is answered the server emits
 // nothing but heartbeats.
 const ESM_MCP_STATE_ARGS = 36;
+const ESM_LIST_MCP_RESOURCES_ARGS = 17; // ExecServerMessage.list_mcp_resources_exec_args
 const ESM_SHELL_STREAM_ARGS = 14;
 const ESM_BACKGROUND_SHELL_SPAWN = 16;
+const ESM_MINI_SWE_BASH_ARGS = 52; // Shares ShellArgs with shell_args (field 2)
 const ESM_FETCH_ARGS = 20;
 const ESM_WRITE_SHELL_STDIN_ARGS = 23;
 
@@ -179,6 +204,7 @@ const ARG_FETCH_URL = 1; // FetchArgs.url
 const ARG_GREP_PATTERN = 1; // GrepArgs.pattern
 const ARG_GREP_PATH = 2; // GrepArgs.path
 const ARG_GREP_GLOB = 3; // GrepArgs.glob
+const ARG_GREP_OUTPUT_MODE = 4; // GrepArgs.output_mode
 const ARG_WRITE_FILE_TEXT = 2; // WriteArgs.file_text
 
 // KvServerMessage / KvClientMessage
@@ -201,37 +227,6 @@ const SBA_BLOB_ID = 1; // SetBlobArgs.blob_id (bytes)
 const SBA_BLOB_DATA = 2; // SetBlobArgs.blob_data (bytes)
 const GBR_BLOB_DATA = 1; // GetBlobResult.blob_data (bytes) — verified by wire test (cursor parses field 1 as JSON)
 
-// Rejection sub-messages (path-based: read/write/delete/ls)
-const REJ_PATH = 1;
-const REJ_REASON = 2;
-
-// ShellRejected (command + working_dir + reason)
-const SREJ_COMMAND = 1;
-const SREJ_WORKING_DIR = 2;
-const SREJ_REASON = 3;
-
-// Generic error sub-messages
-const ERR_MESSAGE = 1; // GrepError.error / WriteShellStdinError.error
-const FERR_URL = 1; // FetchError.url
-const FERR_ERROR = 2; // FetchError.error
-
-// Result-message variant discriminators (oneof). field 1 = success/accepted,
-// field 2 = rejected/error. Matches existing RCR_SUCCESS=1 pattern.
-const RES_REJECTED = 2; // rejected variant for read/write/delete/ls/shell/bg_shell
-// Success variants (agent.v1). Returning a REAL result instead of a rejection
-// is what stops the model from retrying the same built-in tool forever: a
-// rejected exec reads to the model as "my tool did not run".
-const RES_SUCCESS = 1; // ReadResult.success / ShellResult.success / WriteResult.success
-const READ_SUCCESS_PATH = 1; // ReadSuccess.path
-const READ_SUCCESS_CONTENT = 2; // ReadSuccess.content
-const READ_SUCCESS_TOTAL_LINES = 3; // ReadSuccess.total_lines
-const SHELL_SUCCESS_COMMAND = 1; // ShellSuccess.command
-const SHELL_SUCCESS_WORKING_DIR = 2; // ShellSuccess.working_directory
-const SHELL_SUCCESS_EXIT_CODE = 3; // ShellSuccess.exit_code
-const SHELL_SUCCESS_STDOUT = 5; // ShellSuccess.stdout
-const WRITE_SUCCESS_PATH = 1; // WriteSuccess.path
-const WRITE_SUCCESS_LINES_CREATED = 2; // WriteSuccess.lines_created
-
 // McpToolDefinition
 const MTD_NAME = 1;
 const MTD_DESCRIPTION = 2;
@@ -244,14 +239,6 @@ const MCA_NAME = 1;
 const MCA_ARGS = 2; // map<string, bytes>
 const MCA_TOOL_CALL_ID = 3;
 const MCA_TOOL_NAME = 5;
-
-// McpResult variants
-const MCR_SUCCESS = 1;
-const MCR_ERROR = 2;
-const MCS_CONTENT = 1; // McpSuccess.content (repeated McpToolResultContentItem)
-const MCS_IS_ERROR = 2;
-const MCC_TEXT = 1; // McpToolResultContentItem.text (oneof) -> McpTextContent
-const MTC_TEXT = 1; // McpTextContent.text
 
 // google.protobuf.Value (well-known type)
 const VAL_NULL = 1;
@@ -511,6 +498,7 @@ export type OpenAITool = {
 
 export type AgentRunInput = {
   modelId: string;
+  reasoningEffort?: string;
   userText: string;
   conversationId?: string;
   messageId?: string;
@@ -572,9 +560,10 @@ export function openAIToolsToMcpDefs(tools: OpenAITool[]): McpToolDefinition[] {
 export function encodeAgentRunRequest(input: AgentRunInput): Buffer {
   const conversationId = input.conversationId || crypto.randomUUID();
   const messageId = input.messageId || crypto.randomUUID();
-  const { modelId, parameters } = resolveRequestedModel(input.modelId, {
-    liveCatalogIds: input.liveCatalogIds,
-  });
+  const { modelId, parameters } = applyCursorReasoningEffort(
+    resolveRequestedModel(input.modelId, { liveCatalogIds: input.liveCatalogIds }),
+    input.reasoningEffort
+  );
 
   // UserMessage { text, message_id, selected_context, mode=1 }.
   // selected_context is normally an empty placeholder (required by the server
@@ -683,7 +672,7 @@ export type DecodedDelta =
   | { kind: "thinking"; text: string }
   | { kind: "thinking_complete" }
   | { kind: "token_delta"; tokens: number }
-  | { kind: "turn_ended" }
+  | { kind: "turn_ended"; usage?: CursorTurnUsage }
   | { kind: "heartbeat" }
   | { kind: "tool_call_started" }
   | { kind: "tool_call_completed" }
@@ -698,6 +687,32 @@ export type DecodedDelta =
     }
   | { kind: "kv_server_message" }
   | { kind: "unknown"; field: number };
+
+export type CursorTurnUsage = {
+  inputTokens?: number;
+  outputTokens?: number;
+  cacheReadTokens?: number;
+  cacheWriteTokens?: number;
+  reasoningTokens?: number;
+};
+
+function decodeTurnUsage(bytes: Buffer): CursorTurnUsage | undefined {
+  const fields = decodeFields(bytes);
+  const read = (number: number) => {
+    const field = fields.find((item) => item.fieldNumber === number && item.wireType === 0);
+    return field?.wireType === 0 && field.varint <= BigInt(Number.MAX_SAFE_INTEGER)
+      ? Number(field.varint)
+      : undefined;
+  };
+  const usage: CursorTurnUsage = {
+    inputTokens: read(1),
+    outputTokens: read(2),
+    cacheReadTokens: read(3),
+    cacheWriteTokens: read(4),
+    reasoningTokens: read(5),
+  };
+  return Object.values(usage).some((value) => value !== undefined) ? usage : undefined;
+}
 
 type InteractionUpdateDecoder = (field: Field) => DecodedDelta[];
 
@@ -726,7 +741,12 @@ const INTERACTION_UPDATE_DECODERS: Partial<Record<number, InteractionUpdateDecod
       ? [{ kind: "token_delta", tokens: decodeVarintField(field.bytes, 1) }]
       : [],
   [IU_HEARTBEAT]: () => [{ kind: "heartbeat" }],
-  [IU_TURN_ENDED]: () => [{ kind: "turn_ended" }],
+  [IU_TURN_ENDED]: (field) => [
+    {
+      kind: "turn_ended",
+      usage: field.wireType === WT_LEN ? decodeTurnUsage(field.bytes) : undefined,
+    },
+  ],
 };
 
 function decodeInteractionUpdate(field: Field): DecodedDelta[] {
@@ -846,6 +866,19 @@ export function decodeKvServerEvent(payload: Buffer): KvServerEvent | null {
 
 export type ExecServerEvent =
   | { kind: "exec_request_context"; execMsgId: number; execId: string }
+  | { kind: "exec_list_mcp_resources"; execMsgId: number; execId: string }
+  | {
+      /**
+       * An exec variant this build has no handler for. Surfaced instead of
+       * being silently dropped: an unhandled variant used to stall the turn
+       * until CURSOR_STREAM_TIMEOUT_MS with nothing in the logs naming it, so
+       * every new field Cursor introduces cost a 5-minute hang to diagnose.
+       */
+      kind: "exec_unknown";
+      execMsgId: number;
+      execId: string;
+      variantField: number;
+    }
   | {
       kind: "exec_mcp_state";
       execMsgId: number;
@@ -853,7 +886,16 @@ export type ExecServerEvent =
       serverIdentifiers: string[];
     }
   | { kind: "exec_read"; execMsgId: number; execId: string; path: string }
-  | { kind: "exec_write"; execMsgId: number; execId: string; path: string; fileText: string }
+  | {
+      kind: "exec_write";
+      execMsgId: number;
+      execId: string;
+      path: string;
+      fileText: string;
+      hasFileBytes?: boolean;
+      encodingHint?: string;
+      returnFileContentAfterWrite?: boolean;
+    }
   | { kind: "exec_delete"; execMsgId: number; execId: string; path: string }
   | { kind: "exec_ls"; execMsgId: number; execId: string; path: string }
   | {
@@ -863,6 +905,7 @@ export type ExecServerEvent =
       pattern: string;
       path: string;
       glob: string;
+      outputMode?: string;
     }
   | { kind: "exec_diagnostics"; execMsgId: number; execId: string }
   | {
@@ -895,6 +938,16 @@ export type ExecServerEvent =
       isBackground: boolean;
       hardTimeout: number;
     }
+  | {
+      kind: "exec_mini_swe_bash";
+      execMsgId: number;
+      execId: string;
+      command: string;
+      workingDir: string;
+      timeout: number;
+      isBackground: boolean;
+      hardTimeout: number;
+    }
   | { kind: "exec_fetch"; execMsgId: number; execId: string; url: string }
   | { kind: "exec_write_shell_stdin"; execMsgId: number; execId: string }
   | {
@@ -905,7 +958,9 @@ export type ExecServerEvent =
       toolCallId: string;
       // args populated by Phase 5 (decodeMcpArgs); empty {} until then.
       args: Record<string, unknown>;
-    };
+    }
+  | PiExecEvent
+  | ExtraExecEvent;
 
 type DecodedShellArgs = {
   command: string;
@@ -943,7 +998,7 @@ type ExecEventContext = {
 
 type ExecEventDecoder = (context: ExecEventContext) => ExecServerEvent;
 type PathExecKind = "exec_read" | "exec_delete" | "exec_ls";
-type ShellExecKind = "exec_shell" | "exec_shell_stream" | "exec_bg_shell";
+type ShellExecKind = "exec_shell" | "exec_shell_stream" | "exec_bg_shell" | "exec_mini_swe_bash";
 
 function createPathExecEvent(kind: PathExecKind, context: ExecEventContext): ExecServerEvent {
   return {
@@ -999,13 +1054,22 @@ const EXEC_EVENT_DECODERS: Partial<Record<number, ExecEventDecoder>> = {
     execId,
   }),
   [ESM_READ_ARGS]: (context) => createPathExecEvent("exec_read", context),
-  [ESM_WRITE_ARGS]: (context) => ({
-    kind: "exec_write" as const,
-    execMsgId: context.execMsgId,
-    execId: context.execId,
-    path: decodeStringField(context.variantBytes, ARG_PATH),
-    fileText: decodeStringField(context.variantBytes, ARG_WRITE_FILE_TEXT),
-  }),
+  [ESM_WRITE_ARGS]: (context) => {
+    const encodingHint = decodeStringField(context.variantBytes, 6);
+    const hasFileBytes = decodeFields(context.variantBytes).some(
+      (part) => part.fieldNumber === 5 && part.wireType === 2 && part.bytes.length > 0
+    );
+    return {
+      kind: "exec_write" as const,
+      execMsgId: context.execMsgId,
+      execId: context.execId,
+      path: decodeStringField(context.variantBytes, ARG_PATH),
+      fileText: decodeStringField(context.variantBytes, ARG_WRITE_FILE_TEXT),
+      ...(hasFileBytes ? { hasFileBytes: true } : {}),
+      ...(encodingHint ? { encodingHint } : {}),
+      ...(decodeVarintField(context.variantBytes, 4) ? { returnFileContentAfterWrite: true } : {}),
+    };
+  },
   [ESM_DELETE_ARGS]: (context) => createPathExecEvent("exec_delete", context),
   [ESM_LS_ARGS]: (context) => createPathExecEvent("exec_ls", context),
   [ESM_GREP_ARGS]: (context) => ({
@@ -1015,6 +1079,7 @@ const EXEC_EVENT_DECODERS: Partial<Record<number, ExecEventDecoder>> = {
     pattern: decodeStringField(context.variantBytes, ARG_GREP_PATTERN),
     path: decodeStringField(context.variantBytes, ARG_GREP_PATH),
     glob: decodeStringField(context.variantBytes, ARG_GREP_GLOB),
+    outputMode: decodeStringField(context.variantBytes, ARG_GREP_OUTPUT_MODE),
   }),
   [ESM_DIAGNOSTICS_ARGS]: ({ execMsgId, execId }) => ({
     kind: "exec_diagnostics",
@@ -1024,6 +1089,7 @@ const EXEC_EVENT_DECODERS: Partial<Record<number, ExecEventDecoder>> = {
   [ESM_SHELL_ARGS]: (context) => createShellExecEvent("exec_shell", context),
   [ESM_SHELL_STREAM_ARGS]: (context) => createShellExecEvent("exec_shell_stream", context),
   [ESM_BACKGROUND_SHELL_SPAWN]: (context) => createShellExecEvent("exec_bg_shell", context),
+  [ESM_MINI_SWE_BASH_ARGS]: (context) => createShellExecEvent("exec_mini_swe_bash", context),
   [ESM_FETCH_ARGS]: ({ execMsgId, execId, variantBytes }) => ({
     kind: "exec_fetch",
     execMsgId,
@@ -1036,6 +1102,11 @@ const EXEC_EVENT_DECODERS: Partial<Record<number, ExecEventDecoder>> = {
     execId,
   }),
   [ESM_MCP_ARGS]: decodeMcpExecEvent,
+  [ESM_LIST_MCP_RESOURCES_ARGS]: ({ execMsgId, execId }) => ({
+    kind: "exec_list_mcp_resources" as const,
+    execMsgId,
+    execId,
+  }),
   [ESM_MCP_STATE_ARGS]: (context) => ({
     kind: "exec_mcp_state" as const,
     execMsgId: context.execMsgId,
@@ -1050,6 +1121,13 @@ const EXEC_EVENT_DECODERS: Partial<Record<number, ExecEventDecoder>> = {
     ),
   }),
 };
+
+for (const field of PI_EXEC_SERVER_FIELDS) {
+  EXEC_EVENT_DECODERS[field] = (context) => decodePiExecEvent(field, context);
+}
+for (const field of EXTRA_EXEC_SERVER_FIELDS) {
+  EXEC_EVENT_DECODERS[field] = (context) => decodeExtraExecEvent(field, context);
+}
 
 // McpStateExecArgs.server_identifiers
 const MSA_SERVER_IDENTIFIERS = 1;
@@ -1097,7 +1175,8 @@ function decodeExecEventContext(
       (field) =>
         field.wireType === WT_LEN &&
         field.fieldNumber !== ESM_EXEC_ID &&
-        field.fieldNumber !== ESM_SPAN_CONTEXT
+        field.fieldNumber !== ESM_SPAN_CONTEXT &&
+        field.fieldNumber !== ESM_MACHINE_ID
     );
   if (!variant || variant.wireType !== WT_LEN) return null;
 
@@ -1113,7 +1192,13 @@ export function decodeExecServerEvent(payload: Buffer): ExecServerEvent | null {
   const context = decodeExecEventContext(payload);
   if (!context) return null;
   const decoder = EXEC_EVENT_DECODERS[context.variantField];
-  return decoder?.(context) ?? null;
+  if (decoder) return decoder(context);
+  return {
+    kind: "exec_unknown",
+    execMsgId: context.execMsgId,
+    execId: context.execId,
+    variantField: context.variantField,
+  };
 }
 
 /**
@@ -1248,229 +1333,6 @@ export function encodeMcpStateResponse(
       result,
     ])
   );
-}
-
-// ─── ExecClientMessage wrapper ──────────────────────────────────────────────
-
-/**
- * Build an ExecClientMessage frame:
- *   AgentClientMessage {
- *     exec_client_message (2): ExecClientMessage {
- *       id (1): execMsgId,
- *       exec_id (15): execId,
- *       <resultFieldNumber>: resultPayload,
- *     }
- *   }
- * Connect-RPC framed, ready to write to the h2 stream.
- *
- * `exec_id` is force-set even when empty (matches kaitranntt's behavior).
- */
-function wrapExecClientMessage(
-  execMsgId: number,
-  execId: string,
-  resultFieldNumber: number,
-  resultPayload: Buffer
-): Buffer {
-  const ecm = encodeMessage(ACM_EXEC_CLIENT_MESSAGE, [
-    encodeUInt32Field(ECM_ID, execMsgId),
-    encodeString(ECM_EXEC_ID, execId),
-    encodeMessage(resultFieldNumber, [resultPayload]),
-  ]);
-  return wrapConnectFrame(ecm);
-}
-
-// ─── Phase 1: built-in tool rejection encoders ─────────────────────────────
-// Cursor's model invokes built-in tools (read/write/shell/grep/etc.) which we
-// can't safely run inside the proxy. We respond with a typed rejection so the
-// model continues without that tool — matches kaitranntt's stance and avoids
-// stalling the h2 stream.
-
-function encodePathRejection(path: string, reason: string): Buffer {
-  return Buffer.concat([encodeString(REJ_PATH, path), encodeString(REJ_REASON, reason)]);
-}
-
-function encodeShellRejection(command: string, workingDir: string, reason: string): Buffer {
-  return Buffer.concat([
-    encodeString(SREJ_COMMAND, command),
-    encodeString(SREJ_WORKING_DIR, workingDir),
-    encodeString(SREJ_REASON, reason),
-  ]);
-}
-
-export function encodeExecReadRejected(
-  execMsgId: number,
-  execId: string,
-  path: string,
-  reason: string
-): Buffer {
-  const rejected = encodeMessage(RES_REJECTED, [encodePathRejection(path, reason)]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_READ_RESULT, rejected);
-}
-
-export function encodeExecWriteRejected(
-  execMsgId: number,
-  execId: string,
-  path: string,
-  reason: string
-): Buffer {
-  const rejected = encodeMessage(RES_REJECTED, [encodePathRejection(path, reason)]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_WRITE_RESULT, rejected);
-}
-
-export function encodeExecDeleteRejected(
-  execMsgId: number,
-  execId: string,
-  path: string,
-  reason: string
-): Buffer {
-  const rejected = encodeMessage(RES_REJECTED, [encodePathRejection(path, reason)]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_DELETE_RESULT, rejected);
-}
-
-export function encodeExecLsRejected(
-  execMsgId: number,
-  execId: string,
-  path: string,
-  reason: string
-): Buffer {
-  const rejected = encodeMessage(RES_REJECTED, [encodePathRejection(path, reason)]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_LS_RESULT, rejected);
-}
-
-export function encodeExecShellRejected(
-  execMsgId: number,
-  execId: string,
-  command: string,
-  workingDir: string,
-  reason: string
-): Buffer {
-  const rejected = encodeMessage(RES_REJECTED, [encodeShellRejection(command, workingDir, reason)]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_SHELL_RESULT, rejected);
-}
-
-export function encodeExecBackgroundShellSpawnRejected(
-  execMsgId: number,
-  execId: string,
-  command: string,
-  workingDir: string,
-  reason: string
-): Buffer {
-  const rejected = encodeMessage(RES_REJECTED, [encodeShellRejection(command, workingDir, reason)]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_BACKGROUND_SHELL_SPAWN_RES, rejected);
-}
-
-export function encodeExecGrepError(execMsgId: number, execId: string, errMsg: string): Buffer {
-  const grepError = encodeString(ERR_MESSAGE, errMsg);
-  const errorVariant = encodeMessage(RES_REJECTED, [grepError]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_GREP_RESULT, errorVariant);
-}
-
-export function encodeExecFetchError(
-  execMsgId: number,
-  execId: string,
-  url: string,
-  errMsg: string
-): Buffer {
-  const fetchError = Buffer.concat([encodeString(FERR_URL, url), encodeString(FERR_ERROR, errMsg)]);
-  const errorVariant = encodeMessage(RES_REJECTED, [fetchError]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_FETCH_RESULT, errorVariant);
-}
-
-export function encodeExecWriteShellStdinError(
-  execMsgId: number,
-  execId: string,
-  errMsg: string
-): Buffer {
-  const stdinError = encodeString(ERR_MESSAGE, errMsg);
-  const errorVariant = encodeMessage(RES_REJECTED, [stdinError]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_WRITE_SHELL_STDIN_RESULT, errorVariant);
-}
-
-/**
- * Real results for Cursor's built-in tools, carrying what the CLIENT produced.
- *
- * These exist because bridging a built-in exec to a declared client tool while
- * telling Cursor the exec was *rejected* makes the model believe its own tool
- * never ran: it retries the same step on the next turn, which is how an agent
- * ends up reading a missing file in a loop. Feeding the client's output back as
- * the exec's success closes the loop the way Cursor's own CLI does.
- */
-export function encodeExecReadSuccess(
-  execMsgId: number,
-  execId: string,
-  path: string,
-  content: string
-): Buffer {
-  const success = encodeMessage(RES_SUCCESS, [
-    Buffer.concat([
-      encodeString(READ_SUCCESS_PATH, path),
-      encodeString(READ_SUCCESS_CONTENT, content),
-      encodeUInt32Field(READ_SUCCESS_TOTAL_LINES, content ? content.split("\n").length : 0),
-    ]),
-  ]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_READ_RESULT, success);
-}
-
-export function encodeExecShellSuccess(
-  execMsgId: number,
-  execId: string,
-  command: string,
-  workingDir: string,
-  stdout: string,
-  exitCode = 0
-): Buffer {
-  const success = encodeMessage(RES_SUCCESS, [
-    Buffer.concat([
-      encodeString(SHELL_SUCCESS_COMMAND, command),
-      encodeString(SHELL_SUCCESS_WORKING_DIR, workingDir),
-      encodeUInt32Field(SHELL_SUCCESS_EXIT_CODE, exitCode),
-      encodeString(SHELL_SUCCESS_STDOUT, stdout),
-    ]),
-  ]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_SHELL_RESULT, success);
-}
-
-export function encodeExecWriteSuccess(
-  execMsgId: number,
-  execId: string,
-  path: string,
-  linesCreated: number
-): Buffer {
-  const success = encodeMessage(RES_SUCCESS, [
-    Buffer.concat([
-      encodeString(WRITE_SUCCESS_PATH, path),
-      encodeUInt32Field(WRITE_SUCCESS_LINES_CREATED, linesCreated),
-    ]),
-  ]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_WRITE_RESULT, success);
-}
-
-export function encodeExecDiagnosticsResult(execMsgId: number, execId: string): Buffer {
-  // DiagnosticsResult is empty — there's no rejection variant.
-  return wrapExecClientMessage(execMsgId, execId, ECM_DIAGNOSTICS_RESULT, Buffer.alloc(0));
-}
-
-// ─── Phase 1: MCP result encoders (used when WE invoke a tool on behalf
-// of the model — Phase 5 wires this to OpenAI tool_calls). ─────────────────
-
-export function encodeExecMcpResult(
-  execMsgId: number,
-  execId: string,
-  content: string,
-  isError: boolean
-): Buffer {
-  // McpTextContent { text } → McpToolResultContentItem.text
-  const textContent = encodeMessage(MCC_TEXT, [encodeString(MTC_TEXT, content)]);
-  const successFields: Buffer[] = [encodeMessage(MCS_CONTENT, [textContent])];
-  if (isError) successFields.push(encodeBoolField(MCS_IS_ERROR, true));
-  const success = encodeMessage(MCR_SUCCESS, successFields);
-  return wrapExecClientMessage(execMsgId, execId, ECM_MCP_RESULT, success);
-}
-
-export function encodeExecMcpError(execMsgId: number, execId: string, errMsg: string): Buffer {
-  const mcpError = encodeString(ERR_MESSAGE, errMsg);
-  const errorVariant = encodeMessage(MCR_ERROR, [mcpError]);
-  return wrapExecClientMessage(execMsgId, execId, ECM_MCP_RESULT, errorVariant);
 }
 
 // ─── Phase 1: KV blob handshake encoders ───────────────────────────────────
@@ -1721,90 +1583,4 @@ function encodeProtobufValue(value: unknown): Buffer {
   }
   // Fallback: encode as null
   return Buffer.concat([encodeTag(VAL_NULL, WT_VARINT), encodeVarint(0)]);
-}
-
-// ─── User message extractor (for chat-completions input) ───────────────────
-
-export type ChatMessage = {
-  role: "user" | "assistant" | "system" | "tool";
-  content?: string | Array<{ type: string; text?: string }> | null;
-  tool_calls?: Array<{
-    id: string;
-    type?: "function" | string;
-    function: { name: string; arguments: string };
-  }>;
-  tool_call_id?: string;
-};
-
-function messageContentToText(content: ChatMessage["content"]): string {
-  if (typeof content === "string") return content;
-  if (!Array.isArray(content)) return "";
-  return content
-    .map((part) => (typeof part?.text === "string" ? part.text : ""))
-    .filter(Boolean)
-    .join("\n");
-}
-
-function assistantMessageLines(message: ChatMessage, text: string): string[] {
-  // History hygiene (PR #12723 follow-up): scrub gateway-dialect constructs
-  // from prior assistant visible text. A previously leaked narration /
-  // "User: <tool_result>" block re-sent in history re-anchors model mimicry
-  // of the gateway's own serialization on every subsequent turn — this
-  // breaks the compounding loop at the carrier. Only ASSISTANT text is
-  // scrubbed: a user legitimately quoting a dialect line must reach the model.
-  const lines = text ? [`Assistant: ${scrubKimiNarrationText(text).content || text}`] : [];
-  for (const toolCall of message.tool_calls ?? []) {
-    const name = toolCall.function?.name ?? "(unknown)";
-    const args = toolCall.function?.arguments ?? "";
-    lines.push(`Assistant called tool ${name} (${toolCall.id}) with arguments: ${args}`);
-  }
-  return lines;
-}
-
-function chatMessageLines(message: ChatMessage): string[] {
-  const text = messageContentToText(message.content);
-  if (message.role === "user") return text ? [`User: ${text}`] : [];
-  if (message.role === "assistant") return assistantMessageLines(message, text);
-  if (message.role === "tool") {
-    return [`Tool result (${message.tool_call_id ?? "(unknown)"}): ${text}`];
-  }
-  return text ? [`${message.role}: ${text}`] : [];
-}
-
-function joinSystemText(systemTexts: string[], body: string): string {
-  return systemTexts.length > 0 ? `${systemTexts.join("\n\n")}\n\n${body}` : body;
-}
-
-/**
- * Flatten an OpenAI-shaped message list down to a single user-text string
- * suitable for cursor's UserMessage. The agent endpoint expects ONE user
- * message per Run; we concatenate prior conversation as context.
- *
- * Phase 6 cold-resume support: handles `role:"tool"` results and
- * `assistant.tool_calls` so that follow-up turns after an OpenAI tool call
- * round-trip coherently. Format follows kaitranntt's reference impl —
- * cursor's model has been observed to handle this layout reliably.
- */
-export function flattenMessages(messages: ChatMessage[]): string {
-  if (!Array.isArray(messages) || messages.length === 0) return "";
-
-  // System instructions go first as a labeled prefix. (The cursor executor
-  // routes system messages through the KV blob channel — see Phase 7 — but
-  // this branch is kept for non-cursor callers.)
-  const systemTexts = messages
-    .filter((m) => m.role === "system")
-    .map((m) => messageContentToText(m.content))
-    .filter(Boolean);
-
-  const turn = messages.filter((m) => m.role !== "system");
-
-  // Single-user-message fast path (no tool_calls, no labels).
-  if (turn.length === 1 && turn[0].role === "user" && !turn[0].tool_calls) {
-    return joinSystemText(systemTexts, messageContentToText(turn[0].content));
-  }
-
-  // Multi-turn / tool-using format. Each message is labeled. Tool calls
-  // and tool results get their own labeled lines.
-  const labelled = turn.flatMap(chatMessageLines).join("\n\n");
-  return joinSystemText(systemTexts, labelled);
 }

@@ -1,6 +1,9 @@
 import { providerUsesAuthoritativeLiveCatalog } from "@omniroute/open-sse/config/providerRegistry";
 import { PROVIDER_ID_TO_ALIAS } from "@omniroute/open-sse/config/providerModels.ts";
-import { ensureCursorAutoCatalogEntry } from "@/lib/providerModels/cursorAutoCatalog";
+import {
+  ensureCursorAutoCatalogEntry,
+  ensureCursorGrokEffortAliases,
+} from "@/lib/providerModels/cursorAutoCatalog";
 import {
   getCustomModels,
   getSyncedAvailableModels,
@@ -149,17 +152,18 @@ function collectModelsForConnections(
   return Array.from(models.values());
 }
 
-function enrichCursorCatalog(
+export function enrichCursorCatalog(
   providerId: string,
-  models: SyncedAvailableModel[]
+  models: SyncedAvailableModel[],
+  includeEffortAliases = true
 ): SyncedAvailableModel[] {
   // An empty sync means discovery has not completed (or failed). Do not let the
   // synthetic Cursor auto-router rows turn that empty state into an authoritative
   // catalog, otherwise every built-in model is incorrectly marked unavailable.
   if (models.length === 0) return models;
-  return providerId === "cursor" || providerId === "cursor-api"
-    ? ensureCursorAutoCatalogEntry(models)
-    : models;
+  if (providerId !== "cursor" && providerId !== "cursor-api") return models;
+  const withAuto = ensureCursorAutoCatalogEntry(models);
+  return includeEffortAliases ? ensureCursorGrokEffortAliases(withAuto) : withAuto;
 }
 
 /**
@@ -256,7 +260,8 @@ export async function getActiveSyncedCatalog(
     const discovered = unionModels(siblingCatalogs.map((catalog) => catalog.models));
     const models = enrichCursorCatalog(
       storedProviderId,
-      includeCustomModels ? await unionCustomModels(storedProviderId, discovered) : discovered
+      includeCustomModels ? await unionCustomModels(storedProviderId, discovered) : discovered,
+      includeCustomModels
     );
     if (models.length > 0) {
       // #12849: only gate on this catalog while at least one sibling connection
@@ -290,7 +295,8 @@ export async function getActiveSyncedCatalog(
               storedProviderId,
               await getSyncedAvailableModels(storedProviderId)
             )
-          : await getSyncedAvailableModels(storedProviderId)
+          : await getSyncedAvailableModels(storedProviderId),
+        includeCustomModels
       ),
     };
   } catch {

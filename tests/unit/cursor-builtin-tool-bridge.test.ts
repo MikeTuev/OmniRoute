@@ -673,6 +673,15 @@ test("Grep without a pattern is not bridged", () => {
   assert.equal(result, null);
 });
 
+test("Grep count mode bridges content search so results can be counted", () => {
+  const result = bridgeCursorBuiltinTool(
+    grepEvent({ outputMode: "count" }),
+    defs([tool("grep", { pattern: { type: "string" } }, ["pattern"])]),
+    "posix"
+  );
+  assert.deepEqual(result, { toolName: "grep", arguments: { pattern: "snake" } });
+});
+
 test("bridges Cursor Ls onto a glob tool, supplying the required pattern", () => {
   const event = { kind: "exec_ls", execMsgId: 1, execId: "e", path: "/tmp/12" } as ExecServerEvent;
   const result = bridgeCursorBuiltinTool(
@@ -721,6 +730,24 @@ test("a Write with no schema-compatible content property stays rejected", () => 
     "posix"
   );
   assert.equal(result, null);
+});
+
+test("binary writes and non-UTF-8 encoding hints cannot be forwarded as plain text", () => {
+  const event = {
+    kind: "exec_write",
+    execMsgId: 1,
+    execId: "e",
+    path: "/tmp/existing.bin",
+    fileText: "",
+  } as ExecServerEvent;
+  const tools = defs([
+    tool("write", { filePath: { type: "string" }, content: { type: "string" } }, [
+      "filePath",
+      "content",
+    ]),
+  ]);
+  assert.equal(bridgeCursorBuiltinTool({ ...event, hasFileBytes: true }, tools), null);
+  assert.equal(bridgeCursorBuiltinTool({ ...event, encodingHint: "utf16le" }, tools), null);
 });
 
 test("bridges Cursor Fetch onto a declared webfetch tool", () => {

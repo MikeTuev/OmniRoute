@@ -5,6 +5,8 @@ import {
   type ExecServerEvent,
   type McpToolDefinition,
 } from "../../utils/cursorAgentProtobuf.ts";
+import type { PiExecEvent } from "../../utils/cursorAgentProtobuf/pi.ts";
+import type { ExtraExecEvent } from "../../utils/cursorAgentProtobuf/extraExec.ts";
 
 export type CursorBuiltinToolBridge = {
   toolName: string;
@@ -189,7 +191,10 @@ function selectProperty(
 }
 
 function directShellBridge(
-  event: Extract<ExecServerEvent, { kind: "exec_shell" | "exec_shell_stream" }>,
+  event: Extract<
+    ExecServerEvent,
+    { kind: "exec_shell" | "exec_shell_stream" | "exec_mini_swe_bash" }
+  >,
   tools: McpToolDefinition[]
 ): CursorBuiltinToolBridge | null {
   for (const tool of namedTools(tools, DIRECT_SHELL_TOOL_NAMES)) {
@@ -227,7 +232,10 @@ function directShellBridge(
 }
 
 function ptySpawnBridge(
-  event: Extract<ExecServerEvent, { kind: "exec_shell" | "exec_shell_stream" | "exec_bg_shell" }>,
+  event: Extract<
+    ExecServerEvent,
+    { kind: "exec_shell" | "exec_shell_stream" | "exec_bg_shell" | "exec_mini_swe_bash" }
+  >,
   tools: McpToolDefinition[],
   platform: CursorClientPlatform | undefined
 ): CursorBuiltinToolBridge | null {
@@ -294,7 +302,28 @@ function grepBridge(
   event: Extract<ExecServerEvent, { kind: "exec_grep" }>,
   tools: McpToolDefinition[]
 ): CursorBuiltinToolBridge | null {
-  if (!event.pattern.trim()) return null;
+  if (event.outputMode && !["content", "files_with_matches", "count"].includes(event.outputMode))
+    return null;
+  // Cursor reuses the grep channel for FILE SEARCH: an empty pattern with a
+  // glob ("", "**/*") means "list matching files", not "search contents".
+  // Requiring a pattern left those execs unbridged, so the agent could never
+  // discover files and stalled on its very first exploration step.
+  if (!event.pattern.trim()) {
+    if (!event.glob.trim()) return null;
+    for (const tool of namedTools(tools, LS_TOOL_NAMES)) {
+      const schema = schemaFor(tool);
+      if (!schema) continue;
+      const properties = schemaProperties(schema);
+      const patternKey = selectProperty(schema, properties, ["pattern", "glob"], "string");
+      if (!patternKey) continue;
+
+      const args: Record<string, unknown> = { [patternKey]: event.glob };
+      const pathKey = selectProperty(schema, properties, ["path", "dir", "directory"], "string");
+      if (pathKey && event.path) args[pathKey] = event.path;
+      if (hasAllRequired(schema, args)) return { toolName: tool.name, arguments: args };
+    }
+    return null;
+  }
   for (const tool of namedTools(tools, GREP_TOOL_NAMES)) {
     const schema = schemaFor(tool);
     if (!schema) continue;
@@ -342,7 +371,12 @@ function writeBridge(
   event: Extract<ExecServerEvent, { kind: "exec_write" }>,
   tools: McpToolDefinition[]
 ): CursorBuiltinToolBridge | null {
-  if (!event.path.trim()) return null;
+  if (
+    !event.path.trim() ||
+    event.hasFileBytes ||
+    (event.encodingHint && !["utf8", "utf-8"].includes(event.encodingHint.toLowerCase()))
+  )
+    return null;
   for (const tool of namedTools(tools, WRITE_TOOL_NAMES)) {
     const schema = schemaFor(tool);
     if (!schema) continue;
@@ -375,6 +409,156 @@ function fetchBridge(
     if (!urlKey) continue;
 
     const args: Record<string, unknown> = { [urlKey]: event.url };
+    if (hasAllRequired(schema, args)) return { toolName: tool.name, arguments: args };
+  }
+  return null;
+}
+
+/** Bridge PI built-ins only when the declared client schema preserves their arguments. */
+export function bridgeCursorPiTool(
+  event: PiExecEvent,
+  tools: McpToolDefinition[]
+): CursorBuiltinToolBridge | null {
+  const base = { execMsgId: event.execMsgId, execId: event.execId };
+  switch (event.kind) {
+    case "exec_pi_read": {
+      if (!event.path.trim()) return null;
+      for (const tool of namedTools(tools, ["read", "read_file"])) {
+        const schema = schemaFor(tool);
+        if (!schema) continue;
+        const properties = schemaProperties(schema);
+        const pathKey = selectProperty(
+          schema,
+          properties,
+          ["filePath", "path", "file_path"],
+          "string"
+        );
+        if (!pathKey) continue;
+        const args: Record<string, unknown> = { [pathKey]: event.path };
+        let compatible = true;
+        for (const key of ["offset", "limit"] as const) {
+          if (event[key] <= 0) continue;
+          if (!propertySupports(properties[key], "number")) {
+            compatible = false;
+            break;
+          }
+          args[key] = event[key];
+        }
+        if (compatible && hasAllRequired(schema, args))
+          return { toolName: tool.name, arguments: args };
+      }
+      return null;
+    }
+    case "exec_pi_bash": {
+      const bridge = bridgeCursorBuiltinTool(
+        {
+          ...base,
+          kind: "exec_shell",
+          command: event.command,
+          workingDir: "",
+          timeout: event.timeout,
+          isBackground: false,
+          hardTimeout: 0,
+        },
+        tools
+      );
+      return event.timeout > 0 && bridge?.arguments.timeout === undefined ? null : bridge;
+    }
+    case "exec_pi_edit": {
+      if (!event.path.trim() || event.edits.length !== 1 || !event.edits[0].oldText) return null;
+      for (const tool of namedTools(tools, ["edit"])) {
+        const schema = schemaFor(tool);
+        if (!schema) continue;
+        const properties = schemaProperties(schema);
+        const pathKey = selectProperty(schema, properties, ["filePath", "path"], "string");
+        const oldKey = selectProperty(schema, properties, ["oldString", "old_text"], "string");
+        const newKey = selectProperty(schema, properties, ["newString", "new_text"], "string");
+        if (!pathKey || !oldKey || !newKey) continue;
+        const args = {
+          [pathKey]: event.path,
+          [oldKey]: event.edits[0].oldText,
+          [newKey]: event.edits[0].newText,
+        };
+        if (hasAllRequired(schema, args)) return { toolName: tool.name, arguments: args };
+      }
+      return null;
+    }
+    case "exec_pi_write":
+      return bridgeCursorBuiltinTool(
+        { ...base, kind: "exec_write", path: event.path, fileText: event.content },
+        tools
+      );
+    case "exec_pi_grep": {
+      if (event.ignoreCase || event.literal || event.context || event.limit) return null;
+      const bridge = bridgeCursorBuiltinTool(
+        {
+          ...base,
+          kind: "exec_grep",
+          pattern: event.pattern,
+          path: event.path,
+          glob: event.glob,
+          outputMode: "content",
+        },
+        tools
+      );
+      if (
+        event.glob &&
+        !["include", "glob", "filePattern"].some((key) => bridge?.arguments[key] === event.glob)
+      ) {
+        return null;
+      }
+      return bridge;
+    }
+    case "exec_pi_find":
+      return event.limit
+        ? null
+        : bridgeCursorBuiltinTool(
+            { ...base, kind: "exec_grep", pattern: "", path: event.path, glob: event.pattern },
+            tools
+          );
+    case "exec_pi_ls":
+      return event.limit
+        ? null
+        : bridgeCursorBuiltinTool({ ...base, kind: "exec_ls", path: event.path || "." }, tools);
+  }
+}
+
+/** Only the plain working-tree patch has a lossless client-side git equivalent. */
+export function bridgeCursorGitDiff(
+  event: Extract<ExtraExecEvent, { kind: "exec_git_diff" }>,
+  tools: McpToolDefinition[]
+): CursorBuiltinToolBridge | null {
+  if (
+    !event.cwd ||
+    event.ref ||
+    event.baseRef ||
+    event.outputFormat !== 3 ||
+    event.targetPaths.length ||
+    event.mergeBase ||
+    event.maxUntrackedFiles ||
+    event.submoduleRecurseDepth ||
+    event.includeSpaceChanges ||
+    event.committedOnly ||
+    event.computePatchId ||
+    event.returnHeadSha ||
+    event.hasAdvancedLimits
+  )
+    return null;
+  for (const tool of namedTools(tools, DIRECT_SHELL_TOOL_NAMES)) {
+    const schema = schemaFor(tool);
+    if (!schema) continue;
+    const properties = schemaProperties(schema);
+    const commandKey = selectProperty(schema, properties, ["command", "cmd"], "string");
+    const cwdKey = selectProperty(
+      schema,
+      properties,
+      ["workdir", "cwd", "workingDirectory", "working_directory"],
+      "string"
+    );
+    if (!commandKey || !cwdKey) continue;
+    const args: Record<string, unknown> = { [commandKey]: "git diff HEAD --", [cwdKey]: event.cwd };
+    if (propertySupports(properties.description, "string"))
+      args.description = "Inspect Cursor working-tree diff";
     if (hasAllRequired(schema, args)) return { toolName: tool.name, arguments: args };
   }
   return null;
@@ -535,6 +719,7 @@ export function bridgeCursorBuiltinTool(
   if (
     event.kind !== "exec_shell" &&
     event.kind !== "exec_shell_stream" &&
+    event.kind !== "exec_mini_swe_bash" &&
     event.kind !== "exec_bg_shell"
   ) {
     return null;

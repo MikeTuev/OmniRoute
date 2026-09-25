@@ -69,6 +69,27 @@ test("decodeExecServerEvent recognizes request_context (field 10)", () => {
   assert.deepEqual(event, { kind: "exec_request_context", execMsgId: 1, execId: "exec-rc" });
 });
 
+test("unknown exec variant is reported even when machine_id metadata precedes it", () => {
+  const esm = Buffer.concat([
+    varintField(1, 24),
+    stringField(57, "host-1"), // ExecServerMessage.machine_id is metadata, not an exec
+    lenPrefixed(58, Buffer.alloc(0)),
+  ]);
+  assert.deepEqual(decodeExecServerEvent(buildAgentServerMessage(esm)), {
+    kind: "exec_unknown",
+    execMsgId: 24,
+    execId: "",
+    variantField: 58,
+  });
+  assert.equal(
+    decodeExecServerEvent(
+      buildAgentServerMessage(Buffer.concat([varintField(1, 24), stringField(57, "host-1")]))
+    ),
+    null,
+    "machine_id alone must not start the unknown-exec watchdog"
+  );
+});
+
 test("decodeExecServerEvent recognizes read_args (field 7) with path", () => {
   const variant = stringField(1, "/etc/passwd");
   const esm = buildExecServerMessage(2, "exec-r", 7, variant);
@@ -96,6 +117,24 @@ test("decodeExecServerEvent recognizes write_args (field 3) with path and file_t
   });
 });
 
+test("WriteArgs file_bytes and encoding_hint are not mistaken for an empty UTF-8 write", () => {
+  const variant = Buffer.concat([
+    stringField(1, "/tmp/existing.bin"),
+    lenPrefixed(5, Buffer.from([0x00, 0xff])),
+    stringField(6, "utf16le"),
+    varintField(4, 1),
+  ]);
+  const event = decodeExecServerEvent(
+    buildAgentServerMessage(buildExecServerMessage(3, "w", 3, variant))
+  );
+  assert.equal(event?.kind, "exec_write");
+  if (event?.kind === "exec_write") {
+    assert.equal(event.hasFileBytes, true);
+    assert.equal(event.encodingHint, "utf16le");
+    assert.equal(event.returnFileContentAfterWrite, true);
+  }
+});
+
 test("decodeExecServerEvent recognizes delete_args (field 4)", () => {
   const variant = stringField(1, "/tmp/y");
   const esm = buildExecServerMessage(4, "exec-d", 4, variant);
@@ -117,6 +156,7 @@ test("decodeExecServerEvent recognizes grep_args (field 5) with pattern, path an
     stringField(1, "pattern"),
     stringField(2, "/tmp/12"),
     stringField(3, "*.cpp"),
+    stringField(4, "files_with_matches"),
   ]);
   const esm = buildExecServerMessage(6, "exec-g", 5, variant);
   const event = decodeExecServerEvent(buildAgentServerMessage(esm));
@@ -127,6 +167,7 @@ test("decodeExecServerEvent recognizes grep_args (field 5) with pattern, path an
     pattern: "pattern",
     path: "/tmp/12",
     glob: "*.cpp",
+    outputMode: "files_with_matches",
   });
 });
 
