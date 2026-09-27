@@ -12,6 +12,7 @@
  *   - and that proxy resolution honours the request proxy context.
  */
 import assert from "node:assert/strict";
+import { EventEmitter } from "node:events";
 import net from "node:net";
 import test from "node:test";
 
@@ -21,6 +22,7 @@ import {
   createProxyTunnelSocket,
   isSocksProxyProtocol,
   resolveCursorH2ProxyUrl,
+  bindTunnelLifecycle,
 } from "../../open-sse/executors/cursor/h2ProxyConnect.ts";
 import { runWithProxyContext } from "../../open-sse/utils/proxyFetch.ts";
 
@@ -173,6 +175,85 @@ test("isSocksProxyProtocol recognises every SOCKS spelling the proxy settings ac
   }
   for (const protocol of ["http:", "https:"]) {
     assert.equal(isSocksProxyProtocol(protocol), false, `${protocol} must take the CONNECT path`);
+  }
+});
+
+test("an in-flight SOCKS handshake stops promptly when the caller aborts", async () => {
+  let accepted!: () => void;
+  const sawHandshake = new Promise<void>((resolve) => {
+    accepted = resolve;
+  });
+  let peer: net.Socket | undefined;
+  const proxy = net.createServer((socket) => {
+    peer = socket;
+    socket.once("data", accepted);
+  });
+  await new Promise<void>((resolve) => proxy.listen(0, "127.0.0.1", resolve));
+  const port = (proxy.address() as net.AddressInfo).port;
+  const controller = new AbortController();
+  try {
+    const result = createProxyTunnelSocket({
+      targetHost: "api2.cursor.sh",
+      targetPort: 443,
+      proxyUrl: `socks5://127.0.0.1:${port}`,
+      signal: controller.signal,
+      timeoutMs: 5_000,
+    }).then(
+      () => "connected",
+      (error: Error) => error.message
+    );
+    await sawHandshake;
+    controller.abort();
+    const outcome = await Promise.race([
+      result,
+      new Promise<string>((resolve) => setTimeout(() => resolve("still pending"), 250)),
+    ]);
+    assert.match(outcome, /abort/i);
+  } finally {
+    peer?.destroy();
+    await new Promise<void>((resolve) => proxy.close(() => resolve()));
+  }
+});
+
+test("a SOCKS5 proxy still establishes the tunnel after wrapping its socket for abort", async () => {
+  const proxy = net.createServer((socket) => {
+    socket.once("data", (hello) => {
+      assert.equal(hello[0], 5);
+      socket.write(Buffer.from([5, 0]));
+      socket.once("data", (request) => {
+        assert.equal(request[0], 5);
+        assert.equal(request[1], 1);
+        socket.write(Buffer.from([5, 0, 0, 1, 127, 0, 0, 1, 1, 187]));
+      });
+    });
+  });
+  await new Promise<void>((resolve) => proxy.listen(0, "127.0.0.1", resolve));
+  const port = (proxy.address() as net.AddressInfo).port;
+  try {
+    const socket = await createProxyTunnelSocket({
+      targetHost: "api2.cursor.sh",
+      targetPort: 443,
+      proxyUrl: `socks5h://127.0.0.1:${port}`,
+      timeoutMs: 2_000,
+    });
+    assert.equal(socket.destroyed, false);
+    socket.destroy();
+  } finally {
+    await new Promise<void>((resolve) => proxy.close(() => resolve()));
+  }
+});
+
+test("a tunneled socket is released on stream close and on abort", () => {
+  for (const event of ["request", "client", "abort"] as const) {
+    const socket = new net.Socket();
+    const client = new EventEmitter();
+    const request = new EventEmitter();
+    const controller = new AbortController();
+    bindTunnelLifecycle(socket, client, request, controller.signal);
+    if (event === "abort") controller.abort();
+    else if (event === "client") client.emit("close");
+    else request.emit("close");
+    assert.equal(socket.destroyed, true, `${event} must release the underlying tunnel`);
   }
 });
 

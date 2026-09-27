@@ -19,6 +19,7 @@
  */
 import net from "node:net";
 import tls from "node:tls";
+import type { EventEmitter } from "node:events";
 
 import { resolveProxyForRequest } from "../../utils/proxyFetch.ts";
 
@@ -126,21 +127,72 @@ export function isSocksProxyProtocol(protocol: string): boolean {
 }
 
 async function createSocksTunnel(options: ProxyTunnelOptions, proxy: URL): Promise<net.Socket> {
+  if (options.signal?.aborted) throw new Error("aborted");
   const { SocksClient } = await import("socks");
+  if (options.signal?.aborted) throw new Error("aborted");
   const type = proxy.protocol === "socks4:" || proxy.protocol === "socks4a:" ? 4 : 5;
-  const { socket } = await SocksClient.createConnection({
-    proxy: {
-      host: proxy.hostname,
-      port: Number(proxy.port) || 1080,
-      type,
-      ...(proxy.username ? { userId: decodeURIComponent(proxy.username) } : {}),
-      ...(proxy.password ? { password: decodeURIComponent(proxy.password) } : {}),
-    },
-    command: "connect",
-    destination: { host: options.targetHost, port: options.targetPort },
-    timeout: options.timeoutMs ?? DEFAULT_TUNNEL_TIMEOUT_MS,
+  const socket = net.connect({ host: proxy.hostname, port: Number(proxy.port) || 1080 });
+  let onAbort: (() => void) | undefined;
+  const aborted = new Promise<never>((_, reject) => {
+    onAbort = () => {
+      socket.destroy();
+      reject(new Error("aborted"));
+    };
+    options.signal?.addEventListener("abort", onAbort, { once: true });
+    if (options.signal?.aborted) onAbort();
   });
-  return socket;
+  let established = false;
+  try {
+    await Promise.race([
+      new Promise<void>((resolve, reject) => {
+        socket.once("connect", () => resolve());
+        socket.once("error", reject);
+      }),
+      aborted,
+    ]);
+    const result = await Promise.race([
+      SocksClient.createConnection({
+        proxy: {
+          host: proxy.hostname,
+          port: Number(proxy.port) || 1080,
+          type,
+          ...(proxy.username ? { userId: decodeURIComponent(proxy.username) } : {}),
+          ...(proxy.password ? { password: decodeURIComponent(proxy.password) } : {}),
+        },
+        command: "connect",
+        destination: { host: options.targetHost, port: options.targetPort },
+        timeout: options.timeoutMs ?? DEFAULT_TUNNEL_TIMEOUT_MS,
+        existing_socket: socket,
+      }),
+      aborted,
+    ]);
+    if (options.signal?.aborted) throw new Error("aborted");
+    established = true;
+    return result.socket;
+  } finally {
+    if (onAbort) options.signal?.removeEventListener("abort", onAbort);
+    if (!established) socket.destroy();
+  }
+}
+
+/** The HTTP/2 session may close without an error; it still owns the tunnel. */
+export function bindTunnelLifecycle(
+  socket: net.Socket,
+  client: EventEmitter,
+  request: EventEmitter,
+  signal?: AbortSignal
+): () => void {
+  const release = () => {
+    client.off("close", release);
+    request.off("close", release);
+    signal?.removeEventListener("abort", release);
+    if (!socket.destroyed) socket.destroy();
+  };
+  client.once("close", release);
+  request.once("close", release);
+  signal?.addEventListener("abort", release, { once: true });
+  if (signal?.aborted) release();
+  return release;
 }
 
 /**
