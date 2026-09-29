@@ -115,6 +115,13 @@ function normalizeResponsesUsage(previous: unknown, raw: unknown): UsageRecord |
     usageNumber(inputDetails.cacheReadTokens) ??
     usageNumber(beforeInputDetails.cached_tokens) ??
     0;
+  const cacheCreationTokens =
+    usageNumber(source.cache_creation_input_tokens) ??
+    usageNumber(source.cache_write_tokens) ??
+    usageNumber(inputDetails.cache_creation_tokens) ??
+    usageNumber(inputDetails.cache_write_tokens) ??
+    usageNumber(beforeInputDetails.cache_creation_tokens) ??
+    usageNumber(beforeInputDetails.cache_write_tokens);
   const outputTokens =
     usageNumber(source.output_tokens) ??
     usageNumber(source.completion_tokens) ??
@@ -137,7 +144,10 @@ function normalizeResponsesUsage(previous: unknown, raw: unknown): UsageRecord |
 
   return {
     input_tokens: inputTokens,
-    input_tokens_details: { cached_tokens: cachedTokens },
+    input_tokens_details: {
+      cached_tokens: cachedTokens,
+      ...(cacheCreationTokens !== undefined ? { cache_creation_tokens: cacheCreationTokens } : {}),
+    },
     output_tokens: outputTokens,
     output_tokens_details: { reasoning_tokens: reasoningTokens },
     total_tokens: totalTokens,
@@ -460,6 +470,8 @@ export function createResponsesApiTransformStream(
     const itemType = customTool ? "custom_tool_call" : "function_call";
     state.funcItemTypes[idx] = itemType;
     state.funcItemAdded[idx] = true;
+    const name = state.funcNames[idx] || "";
+    const identity = resolveRequestToolIdentity(requestToolIdentityMap, name);
 
     emit(controller, "response.output_item.added", {
       type: "response.output_item.added",
@@ -469,7 +481,8 @@ export function createResponsesApiTransformStream(
         type: itemType,
         ...(customTool ? { input: "" } : { arguments: "" }),
         call_id: state.funcCallIds[idx],
-        name: state.funcNames[idx] || "",
+        name: identity?.name ?? name,
+        ...(identity ? { namespace: identity.namespace } : {}),
         status: "in_progress",
       },
     });

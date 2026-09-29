@@ -140,6 +140,7 @@ const ingestShim = require("./_internal/ingest.cjs");
 const forwardShim = require("./_internal/forwardTarget.cjs");
 const aliasConfigShim = require("./_internal/aliasConfig.cjs");
 const standaloneRoutingShim = require("./_internal/standaloneRouting.cjs");
+const writeBackpressureShim = require("./_internal/writeBackpressure.cjs");
 
 // Inspector capture (D4 fallback). The standalone proxy intercepts AgentBridge
 // traffic inline (no MitmHandlerBase / agentBridgeHook), so it posts captured
@@ -255,7 +256,11 @@ function loadLegacySslOptions() {
 // `tproxy/dynamicCert.ts` — see that file's header for why it's duplicated
 // rather than imported). Resolved once during async bootstrap below.
 async function loadRootCaSslOptions() {
-  const { loadOrCreateMitmCa, issueLeafCert, DynamicCertStore } = require("./_internal/rootCaShim.cjs");
+  const {
+    loadOrCreateMitmCa,
+    issueLeafCert,
+    DynamicCertStore,
+  } = require("./_internal/rootCaShim.cjs");
   const ca = await loadOrCreateMitmCa(certDir);
   const certStore = new DynamicCertStore({ key: ca.key, cert: ca.cert });
   const defaultHost = [...TARGET_HOSTS][0];
@@ -597,10 +602,15 @@ async function intercept(req, res, bodyBuffer, override, sourceModel) {
           break;
         }
         const text = decoder.decode(value, { stream: true });
-        if (respBody.length < INGEST_MAX_BODY) respBody += text;
+        if (respBody.length < INGEST_MAX_BODY) {
+          respBody += text.slice(0, INGEST_MAX_BODY - respBody.length);
+        }
         respSize += value ? value.length : 0;
         if (downstreamClosed || res.closed || res.destroyed) break;
-        res.write(text);
+        // #14528: a slow client must drain before the next upstream read,
+        // otherwise the socket write queue grows without bound. A close
+        // during the wait is caught by the downstreamClosed check above.
+        await writeBackpressureShim.writeWithBackpressure(res, text);
       }
     } finally {
       res.off("close", onDownstreamClose);
@@ -738,7 +748,9 @@ async function startMitmServer() {
     vlog(
       1,
       `[MITM] INTERCEPTED ${agentId} ${model} → ${mappedOverride.model || model}` +
-        (mappedOverride.reasoningEffort ? ` (reasoningEffort=${mappedOverride.reasoningEffort})` : "")
+        (mappedOverride.reasoningEffort
+          ? ` (reasoningEffort=${mappedOverride.reasoningEffort})`
+          : "")
     );
     return intercept(req, res, bodyBuffer, mappedOverride, model);
   });

@@ -17,6 +17,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import net from "node:net";
+import { EventEmitter } from "node:events";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { findListeningPids } from "../../bin/cli/utils/pid.mjs";
@@ -126,6 +127,57 @@ test("probePortFree is false while a socket holds the port and true after releas
     await new Promise((r) => server.close(r));
   }
   assert.equal(await probePortFree(port), true, "a released port must bind cleanly");
+});
+
+// macOS, unlike Linux, lets the probe's wildcard bind succeed while a server
+// holds the same port on 0.0.0.0 (the default host), 127.0.0.1 or ::1
+// (localhost), so a wildcard-only probe never saw it. This stub applies those
+// bind semantics, where only the held address itself fails, so the check runs
+// on Linux CI as well.
+function netWithHeldHost(heldHost, code = "EADDRINUSE") {
+  return {
+    createServer() {
+      const server = new EventEmitter();
+      server.listen = (options, onListening) => {
+        const host = typeof options === "object" ? options.host : undefined;
+        queueMicrotask(() => {
+          if (host === heldHost) {
+            server.emit("error", Object.assign(new Error(`listen ${code}`), { code }));
+          } else {
+            onListening();
+          }
+        });
+        return server;
+      };
+      server.close = (done) => {
+        done?.();
+        return server;
+      };
+      return server;
+    },
+  };
+}
+
+test("probePortFree sees a held port when the wildcard bind succeeds (macOS)", async () => {
+  const { probePortFree } = await import("../../bin/cli/utils/pid.mjs");
+  for (const host of ["0.0.0.0", "127.0.0.1", "::1"]) {
+    assert.equal(
+      await probePortFree(20128, { net: netWithHeldHost(host) }),
+      false,
+      `a server bound to ${host} must read as busy`
+    );
+  }
+  assert.equal(await probePortFree(20128, { net: netWithHeldHost(null) }), true);
+});
+
+test("probePortFree treats a missing loopback address as free", async () => {
+  const { probePortFree } = await import("../../bin/cli/utils/pid.mjs");
+  const ipv4Only = netWithHeldHost("::1", "EADDRNOTAVAIL");
+  assert.equal(
+    await probePortFree(20128, { net: ipv4Only }),
+    true,
+    "an IPv4-only host must not block serve"
+  );
 });
 
 test("reportPortInUse degrades gracefully when the owner pid is unknown", async () => {

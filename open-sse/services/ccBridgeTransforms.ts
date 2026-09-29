@@ -22,7 +22,7 @@
 import { createHash } from "node:crypto";
 
 import {
-  CLAUDE_CODE_CLIENT_BUILD_REVISION,
+  getClaudeCodeClientBuildRevision,
   CLAUDE_CODE_CLIENT_VERSION,
   getClaudeCodeClientVersion,
 } from "@/shared/constants/claudeCodeClient";
@@ -126,6 +126,13 @@ export const DEFAULT_CLAUDE_CODE_VERSION = CLAUDE_CODE_CLIENT_VERSION;
 export function getDefaultClaudeCodeVersion(): string {
   return getClaudeCodeClientVersion();
 }
+/**
+ * Default `cc_version=` suffix. Honours the env override, like the version
+ * above: pinning only one of the two advertises a pair no binary emits.
+ */
+export function getDefaultClaudeCodeBuildRevision(): string {
+  return getClaudeCodeClientBuildRevision();
+}
 /** Identity sentinel prepended for Claude Agent SDK callers. */
 export const CLAUDE_AGENT_SDK_IDENTITY =
   "You are a Claude agent, built on Anthropic's Claude Agent SDK.";
@@ -187,7 +194,7 @@ export const DEFAULT_CC_BRIDGE_PIPELINE: TransformOp[] = [
     entrypoint: "sdk-cli",
     versionFormat: "ex-machina",
     cchAlgo: "sha256-first-user",
-    buildRevision: CLAUDE_CODE_CLIENT_BUILD_REVISION,
+    buildRevision: getDefaultClaudeCodeBuildRevision(),
   },
 ];
 
