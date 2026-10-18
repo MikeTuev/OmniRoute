@@ -225,7 +225,7 @@ export async function executeProviderRequest(
     // `systemInstruction`, responses `instructions`. Carrier-less targets
     // (kiro user-fold, antigravity Cloud Code envelope) are covered by the
     // gated PRE-translation pass before translateRequest instead.
-    bodyToSend = injectSystemPromptPostTranslation(bodyToSend, { targetFormat });
+    bodyToSend = injectSystemPromptPostTranslation(bodyToSend, { targetFormat, provider });
 
     updatePendingScope(pendingScope, {
       providerRequest: bodyToSend,

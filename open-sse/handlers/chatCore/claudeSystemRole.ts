@@ -231,11 +231,16 @@ export function hoistLeadingTextSystemMessages(payload: Record<string, unknown>)
 export type SystemRoleRoute = {
   provider?: string | null;
   sourceFormat?: string | null;
+  /** The client's own `anthropic-beta` header (the beta must be negotiated by the client). */
+  clientAnthropicBeta?: string | null;
+  /** Injected ANTHROPIC_COMPATIBLE_MID_CONVERSATION_SYSTEM reader; absent/throwing = off. */
+  isMidConversationSystemEnabled?: (() => boolean) | null;
 };
 
 /**
  * Picks how system/developer turns leave messages[] before a native Claude upstream call.
- * Upstreams that accept mid-conversation system turns only get the leading run hoisted
+ * Upstreams that accept mid-conversation system turns (resolveClaudeMidConversationSystemPolicy:
+ * opt-in flag + client-negotiated beta) only get the leading run hoisted
  * (and directive-only messages moved off messages[0]), so later turns keep their position
  * and the cache prefix stays stable. Accepting `system` turns says nothing about OpenAI
  * `developer` turns, so a body carrying one keeps the full hoist.
@@ -248,6 +253,8 @@ export function liftSystemRoleMessages(
     provider: route?.provider,
     sourceFormat: route?.sourceFormat,
     targetFormat: FORMATS.CLAUDE,
+    clientAnthropicBeta: route?.clientAnthropicBeta,
+    isPassthroughEnabled: route?.isMidConversationSystemEnabled,
   });
   const messages = Array.isArray(payload.messages)
     ? (payload.messages as Array<{ role?: unknown }>)

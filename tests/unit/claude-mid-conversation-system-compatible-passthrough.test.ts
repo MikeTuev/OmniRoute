@@ -1,16 +1,18 @@
 // @ts-nocheck
 /**
- * Mid-conversation system turns on a plain `anthropic-compatible-*` connection.
+ * Mid-conversation system turns on a plain `anthropic-compatible-*` connection (#16236).
  *
- * The claude → claude passthrough for a non-native provider ran
+ * The claude → claude passthrough for a non-native provider runs
  * normalizeClaudeUpstreamMessages(), which hoists EVERY system-role turn into the
  * top-level `system`. A client that appends a system notification each turn (e.g. a
  * `<total_tokens>` budget update) therefore grows `system` — the head of the prompt —
  * on every request, so the cached conversation history after it never matches again
  * (observed: ~27K cache read / ~105K cache write per turn on a 133K prompt).
  *
- * Those turns now always stay in place, whatever beta the client sent. The
- * `mid-conversation-system-2026-04-07` beta is forwarded only when the client sent it.
+ * Keeping those turns in place needs an upstream that accepts `role: "system"` inside
+ * messages[] (the `mid-conversation-system-2026-04-07` beta). Relays without it 400, so the
+ * in-place shape is opt-in: ANTHROPIC_COMPATIBLE_MID_CONVERSATION_SYSTEM (default off) AND the
+ * client's own beta. Flag off, or beta absent, keeps the legacy full hoist byte-for-byte.
  * These tests assert the FINAL body and headers handed to fetch, not the helper in isolation.
  */
 import assert from "node:assert/strict";
@@ -24,13 +26,18 @@ process.env.DATA_DIR = TEST_DATA_DIR;
 
 const core = await import("../../src/lib/db/core.ts");
 const { handleChatCore } = await import("../../open-sse/handlers/chatCore.ts");
-const { resolveClaudeMidConversationSystemPolicy } =
-  await import("../../open-sse/services/claudeMidConversationSystem.ts");
 
 const originalFetch = globalThis.fetch;
 const PROVIDER = "anthropic-compatible-relay-test";
 const MODEL = "claude-opus-5-5";
 const MID_SYSTEM_BETA = "mid-conversation-system-2026-04-07";
+const FLAG = "ANTHROPIC_COMPATIBLE_MID_CONVERSATION_SYSTEM";
+delete process.env[FLAG];
+
+function setFlag(on) {
+  if (on) process.env[FLAG] = "true";
+  else delete process.env[FLAG];
+}
 
 // Captured Claude Code shape: it negotiates the beta itself when it sends such turns.
 const CLAUDE_CODE_HEADERS = {
@@ -58,6 +65,7 @@ async function flushAsyncSideEffects() {
 }
 
 test.afterEach(async () => {
+  delete process.env[FLAG];
   globalThis.fetch = originalFetch;
   await flushAsyncSideEffects();
   core.resetDbInstance();
@@ -66,6 +74,7 @@ test.afterEach(async () => {
 });
 
 test.after(() => {
+  delete process.env[FLAG];
   globalThis.fetch = originalFetch;
   core.resetDbInstance();
   fs.rmSync(TEST_DATA_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
@@ -178,7 +187,51 @@ function assertHoisted(call) {
   assert.ok(!betaTokens(call).includes(MID_SYSTEM_BETA), `beta: ${betaTokens(call)}`);
 }
 
-test("default: mid-conversation system turns stay in place in the final body", async () => {
+// ── Flag off (default): byte-for-byte legacy hoist ───────────────────────────────────────
+
+test("flag off (default): every system turn is hoisted even when the client sent the beta", async () => {
+  setFlag(false);
+  const body = buildBody(3);
+  const call = await send(body);
+  assert.ok(call.url.startsWith("https://relay.example.test/v1/messages"));
+  assertHoisted(call);
+  assert.deepEqual(
+    roles(call.body.messages),
+    roles(body.messages).filter((r) => r !== "system"),
+    "only the system turns leave messages[]"
+  );
+});
+
+test("flag off (default): a beta-less client is hoisted too", async () => {
+  setFlag(false);
+  assertHoisted(await send(buildBody(2), { headers: NO_BETA_HEADERS }));
+});
+
+// ── Flag on, but the client did not negotiate the beta: still the legacy hoist ─────────────
+
+test("flag on, client without the beta: turns are hoisted and the beta is never invented", async () => {
+  setFlag(true);
+  assertHoisted(await send(buildBody(2), { headers: NO_BETA_HEADERS }));
+});
+
+test("flag on, client without any anthropic-beta header: hoisted, no beta header invented", async () => {
+  setFlag(true);
+  assertHoisted(await send(buildBody(2), { headers: { "user-agent": "curl/8.0" } }));
+});
+
+test("flag on, a token that only looks like the beta: hoisted and not forwarded", async () => {
+  setFlag(true);
+  const call = await send(buildBody(2), {
+    headers: { ...SDK_HEADERS, "anthropic-beta": `${MID_SYSTEM_BETA}x` },
+  });
+  assertHoisted(call);
+  assert.ok(!betaTokens(call).some((t) => t.toLowerCase() === MID_SYSTEM_BETA));
+});
+
+// ── Flag on + client-negotiated beta: turns stay in place ──────────────────────────────────
+
+test("flag on + client beta: mid-conversation system turns stay in place in the final body", async () => {
+  setFlag(true);
   const body = buildBody(3);
   const call = await send(body);
 
@@ -205,7 +258,8 @@ test("default: mid-conversation system turns stay in place in the final body", a
   assert.ok(betaTokens(call).includes("per-turn-control-2026-07-01"), `beta: ${betaTokens(call)}`);
 });
 
-test("default: successive turns keep system stable and earlier messages a prefix", async () => {
+test("flag on + client beta: successive turns keep system stable and earlier messages a prefix", async () => {
+  setFlag(true);
   const bodies = [];
   for (const turns of [1, 2, 3, 4]) bodies.push((await send(buildBody(turns))).body);
   for (let i = 1; i < bodies.length; i++) {
@@ -221,14 +275,16 @@ test("default: successive turns keep system stable and earlier messages a prefix
   }
 });
 
-test("a non-Claude Code client gets the same treatment and its beta is forwarded", async () => {
+test("flag on: a non-Claude Code client that sent the beta gets the same treatment", async () => {
+  setFlag(true);
   const body = buildBody(2);
   const call = await send(body, { headers: SDK_HEADERS });
   assertInPlace(call, body);
   assert.ok(betaTokens(call).includes(MID_SYSTEM_BETA));
 });
 
-test("the client's beta token is matched case-insensitively and with spaces", async () => {
+test("flag on: the client's beta token is matched case-insensitively and with spaces", async () => {
+  setFlag(true);
   const body = buildBody(2);
   const call = await send(body, {
     headers: {
@@ -243,42 +299,8 @@ test("the client's beta token is matched case-insensitively and with spaces", as
   );
 });
 
-test("a token that only looks like the beta is not forwarded", async () => {
-  const call = await send(buildBody(2), {
-    headers: { ...SDK_HEADERS, "anthropic-beta": `${MID_SYSTEM_BETA}x` },
-  });
-  assert.ok(!betaTokens(call).some((t) => t.toLowerCase() === MID_SYSTEM_BETA));
-});
-
-test("client without the beta: turns still stay in place, and OmniRoute never invents it", async () => {
-  const body = buildBody(2);
-  const call = await send(body, { headers: NO_BETA_HEADERS });
-  assertInPlace(call, body);
-  assert.ok(!betaTokens(call).includes(MID_SYSTEM_BETA), `beta: ${betaTokens(call)}`);
-});
-
-test("client without any anthropic-beta header: turns stay in place, no beta header invented", async () => {
-  const body = buildBody(2);
-  const call = await send(body, { headers: { "user-agent": "curl/8.0" } });
-  assertInPlace(call, body);
-  assert.ok(!betaTokens(call).includes(MID_SYSTEM_BETA), `beta: ${betaTokens(call)}`);
-});
-
-test("successive turns from a client without the beta also keep earlier messages a prefix", async () => {
-  const bodies = [];
-  for (const turns of [1, 2, 3]) {
-    bodies.push((await send(buildBody(turns), { headers: NO_BETA_HEADERS })).body);
-  }
-  for (let i = 1; i < bodies.length; i++) {
-    assert.deepEqual(bodies[i].system, bodies[i - 1].system);
-    assert.deepEqual(
-      stripCacheControl(bodies[i].messages.slice(0, bodies[i - 1].messages.length)),
-      stripCacheControl(bodies[i - 1].messages)
-    );
-  }
-});
-
-test("a body carrying an OpenAI developer turn keeps the full legacy hoist", async () => {
+test("flag on + beta: a body carrying an OpenAI developer turn keeps the full legacy hoist", async () => {
+  setFlag(true);
   const body = buildBody(2);
   body.messages.splice(2, 0, { role: "developer", content: "developer note" });
   const call = await send(body);
@@ -287,7 +309,8 @@ test("a body carrying an OpenAI developer turn keeps the full legacy hoist", asy
   assert.ok(systemTexts(call.body.system).includes("developer note"));
 });
 
-test("leading text system turn is hoisted, directive-only one relocated", async () => {
+test("flag on + beta: leading text system turn is hoisted, directive-only one relocated", async () => {
+  setFlag(true);
   const body = buildBody(1);
   body.messages.unshift(
     { role: "system", content: [], output_config: { effort: "low" } },
@@ -307,7 +330,8 @@ test("leading text system turn is hoisted, directive-only one relocated", async 
   assert.match(msgs.at(-1).content, /<total_tokens>/);
 });
 
-test("requests without mid-conversation system turns keep their shape and get no extra beta", async () => {
+test("flag on + beta: requests without system turns keep their shape and get no extra beta", async () => {
+  setFlag(true);
   const body = buildBody(1);
   body.messages = body.messages.filter((m) => m.role !== "system");
   const call = await send(body);
@@ -316,7 +340,8 @@ test("requests without mid-conversation system turns keep their shape and get no
   assert.ok(!betaTokens(call).includes(MID_SYSTEM_BETA), "no beta without a surviving turn");
 });
 
-test("the caller's body is not mutated, so retries/combo attempts see the original", async () => {
+test("flag on + beta: the caller's body is not mutated, so retries/combo attempts see the original", async () => {
+  setFlag(true);
   const body = buildBody(2);
   const snapshot = structuredClone(body);
   const credentialsFixture = credentials();
@@ -346,15 +371,32 @@ test("the caller's body is not mutated, so retries/combo attempts see the origin
   assert.deepEqual(body.system, snapshot.system);
 });
 
-test("policy: scope", () => {
+test("policy: scope, client beta and fail-closed flag reader", async () => {
+  const { resolveClaudeMidConversationSystemPolicy } =
+    await import("../../open-sse/services/claudeMidConversationSystem.ts");
   const resolve = (extra = {}) =>
     resolveClaudeMidConversationSystemPolicy({
       provider: PROVIDER,
       sourceFormat: "claude",
       targetFormat: "claude",
+      clientAnthropicBeta: `effort-2025-11-24,${MID_SYSTEM_BETA}`,
+      isPassthroughEnabled: () => true,
       ...extra,
     });
-  assert.equal(resolve(), true, "plain anthropic-compatible claude passthrough");
+  assert.equal(resolve(), true, "plain anthropic-compatible claude passthrough, opted in");
+  assert.equal(resolve({ isPassthroughEnabled: () => false }), false, "flag off");
+  assert.equal(resolve({ isPassthroughEnabled: undefined }), false, "no reader = off");
+  assert.equal(
+    resolve({
+      isPassthroughEnabled: () => {
+        throw new Error("db down");
+      },
+    }),
+    false,
+    "a failing flag read keeps the legacy hoist"
+  );
+  assert.equal(resolve({ clientAnthropicBeta: null }), false, "client did not negotiate");
+  assert.equal(resolve({ clientAnthropicBeta: "effort-2025-11-24" }), false);
   assert.equal(resolve({ targetFormat: "openai" }), false);
   assert.equal(resolve({ provider: "claude" }), false, "native path keeps its own policy");
   assert.equal(
@@ -362,4 +404,13 @@ test("policy: scope", () => {
     false,
     "CC bridge builds its own body"
   );
+  let flagReads = 0;
+  resolve({
+    provider: "openai",
+    isPassthroughEnabled: () => {
+      flagReads++;
+      return true;
+    },
+  });
+  assert.equal(flagReads, 0, "the flag is not read for providers outside the scope");
 });

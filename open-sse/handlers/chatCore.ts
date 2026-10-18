@@ -2047,7 +2047,23 @@ async function handleChatCoreInner({
   const normalizeClaudeUpstreamMessages = (
     payload: Record<string, unknown>,
     options?: { preserveToolResultBlocks?: boolean }
-  ) => normalizeClaudeUpstreamMessagesFor(payload, { ...options, provider, sourceFormat }, log);
+  ) =>
+    normalizeClaudeUpstreamMessagesFor(
+      payload,
+      {
+        ...options,
+        provider,
+        sourceFormat,
+        // #16236: in-place mid-conversation system turns are opt-in AND need the client's beta.
+        clientAnthropicBeta: getHeaderValueCaseInsensitive(
+          clientRawRequest?.headers ?? null,
+          "anthropic-beta"
+        ),
+        isMidConversationSystemEnabled: () =>
+          isFeatureFlagEnabled("ANTHROPIC_COMPATIBLE_MID_CONVERSATION_SYSTEM"),
+      },
+      log
+    );
 
   try {
     if (nativeResponsesPassthrough) {
