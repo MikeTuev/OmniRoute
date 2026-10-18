@@ -436,8 +436,8 @@ server/
 
 ## 4. `open-sse/` — فضای کاری موتور استریم
 
-یک فضای کاری npm مستقل که با نام `@omniroute/open-sse` منتشر میشود. مالک پردازش
-درخواست، اجراکنندهها، مترجمها، سرویسها، تبدیلکننده و سرور MCP است.
+یک فضای کاری npm مستقل که با نام `@omniroute/open-sse` منتشر میشود. مسئول پردازش
+درخواستها، اجراکنندهها، مترجمها، سرویسها، تبدیلکننده و سرور MCP است.
 
 ```
 open-sse/
@@ -446,13 +446,13 @@ open-sse/
 ├── tsconfig.json
 ├── types.d.ts
 ├── config/                 رجیستریهای ارائهدهندگان، پروفایلهای هدر، هویت، …
-├── handlers/               کنترلکنندههای درخواست (چت، تعبیهها، صوت، تصویر، …)
-├── executors/              ۱۰۸ اجراکننده HTTP مختص ارائهدهندگان
+├── handlers/               کنترلکنندههای درخواست (چت، تعبیهسازی، صوت، تصویر، …)
+├── executors/              150 ماژول اجراکننده ارائهدهنده (کلاسهای اجراکننده + ابزارهای کمکی مختص هر ارائهدهنده)
 ├── translator/             تبدیل قالب (OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro)
 ├── transformer/            تبدیلکننده استریم Responses API ↔ Chat Completions
-├── services/               بیش از ۸۰ ماژول سرویس (ترکیبها، جایگزینی، سهمیهها، هویت، …)
-├── utils/                  ابزارهای کمکی استریم، کلاینت TLS، AWS SigV4، واکشی از طریق پروکسی، …
-└── mcp-server/             سرور MCP (۳ روش انتقال، ۳۳ حوزه، ۱۱۰ ابزار)
+├── services/               بیش از 80 ماژول سرویس (ترکیبها، جایگزینی، سهمیهها، هویت، …)
+├── utils/                  ابزارهای کمکی استریم، کلاینت TLS، AWS SigV4، واکشی پراکسی، …
+└── mcp-server/             سرور MCP (3 انتقال، 33 دامنه، 110 ابزار)
 ```
 
 ### 4.1 `open-sse/handlers/`
@@ -461,7 +461,7 @@ open-sse/
 | ----------------------- | ---------------------------------------------------------------------- |
 | `chatCore.ts`           | خط لوله اصلی چت (کش، محدودیت نرخ، مسیریابی ترکیبی، ارسال به اجراکننده) |
 | `responsesHandler.ts`   | نقطه ورود OpenAI Responses API                                         |
-| `embeddings.ts`         | تعبیهها                                                                |
+| `embeddings.ts`         | تعبیهسازیها                                                            |
 | `imageGeneration.ts`    | تولید تصویر                                                            |
 | `audioSpeech.ts`        | تبدیل متن به گفتار                                                     |
 | `audioTranscription.ts` | تبدیل گفتار به متن                                                     |
@@ -477,41 +477,44 @@ open-sse/
 
 ### 4.2 `open-sse/executors/`
 
-۱۰۸ اجراکننده ارائهدهنده که هرکدام `BaseExecutor` (`base.ts`) را گسترش میدهند:
+150 ماژول اجراکننده سطحبالا (`*.ts` بهجز `base.ts`، `index.ts` و آزمونها — این تعداد را
+`npm run check:docs-counts` اندازهگیری میکند). هر کلاس اجراکننده، بهصورت مستقیم یا از طریق
+`DefaultExecutor` یا اجراکنندهای دیگر، از `BaseExecutor` (`base.ts`) ارثبری میکند؛ ماژولهای
+باقیمانده ابزارهای کمکی مختص هر ارائهدهنده هستند (شِمای ابزارها، آداپتورهای واکشی/TTS و کنترلکنندههای رفتارهای خاص). اجراکنندهها شامل موارد زیر هستند:
 
-`antigravity`, `azure-openai`, `blackbox-web`, `cliproxyapi`,
-`chatgpt-web-codex`, `cloudflare-ai`, `codex`, `commandCode`, `cursor`, `default`, `devin-cli`,
-`muse-spark-web`, `nlpcloud`, `opencode`, `perplexity-web`, `petals`,
-`pollinations`, `qoder`, `vertex`, `devin-desktop`، بهعلاوه `claudeIdentity.ts`
-(ابزار کمکی مشترک هویت) و `index.ts` (رجیستری).
+`antigravity`، `azure-openai`، `blackbox-web`، `cliproxyapi`،
+`chatgpt-web-codex`، `cloudflare-ai`، `codex`، `commandCode`، `cursor`، `default`، `devin-cli`،
+`muse-spark-web`، `nlpcloud`، `opencode`، `perplexity-web`، `petals`،
+`pollinations`، `qoder`، `vertex`، `devin-desktop`، بهعلاوه `claudeIdentity.ts`
+(ابزار کمکی هویت مشترک) و `index.ts` (رجیستری).
 
-> توجه: ارائهدهندگانی که در اینجا فهرست نشدهاند، توسط `default.ts` و با استفاده از اجراکننده عمومی
-> سازگار با OpenAI سرویسدهی میشوند. کاتالوگ کامل ارائهدهندگان (۳۵۵ ارائهدهنده) در
+> نکته: ارائهدهندگانی که در اینجا فهرست نشدهاند، با استفاده از اجراکننده عمومی
+> سازگار با OpenAI توسط `default.ts` سرویسدهی میشوند. فهرست کامل ارائهدهندگان (372 ارائهدهنده) در
 > `src/shared/constants/providers.ts` قرار دارد.
 
 ### 4.3 `open-sse/translator/`
 
-ترجمه با معماری هابوپره (OpenAI هاب است).
+ترجمه با معماری هابواسپوک (OpenAI هاب است).
 
-- **۹ مترجم درخواست** (`translator/request/`):
-  `antigravity-to-openai`, `claude-to-gemini`, `claude-to-openai`,
-  `gemini-to-openai`, `openai-responses`, `openai-to-claude`,
-  `openai-to-cursor`, `openai-to-gemini`, `openai-to-kiro`.
-- **۹ مترجم پاسخ** (`translator/response/`):
-  `claude-to-openai`, `cursor-to-openai`, `gemini-to-claude`, `gemini-to-openai`,
-  `kiro-to-openai`, `openai-responses`, `openai-to-antigravity`,
+- **9 مترجم درخواست** (`translator/request/`):
+  `antigravity-to-openai`، `claude-to-gemini`، `claude-to-openai`،
+  `gemini-to-openai`، `openai-responses`، `openai-to-claude`،
+  `openai-to-cursor`، `openai-to-gemini`، `openai-to-kiro`.
+- **9 مترجم پاسخ** (`translator/response/`):
+  `claude-to-openai`، `cursor-to-openai`، `gemini-to-claude`، `gemini-to-openai`،
+  `kiro-to-openai`، `openai-responses`، `openai-to-antigravity`،
   `openai-to-claude`.
-- **۹ ابزار کمکی** (`translator/helpers/`):
-  `claudeHelper`, `geminiHelper`, `geminiToolsSanitizer`, `maxTokensHelper`,
-  `openaiHelper`, `responsesApiHelper`, `schemaCoercion`, `toolCallHelper`، بهعلاوه
+- **9 ابزار کمکی** (`translator/helpers/`):
+  `claudeHelper`، `geminiHelper`، `geminiToolsSanitizer`، `maxTokensHelper`،
+  `openaiHelper`، `responsesApiHelper`، `schemaCoercion`، `toolCallHelper`، بهعلاوه
   آزمونهای ابزارهای کمکی.
 - **ابزارهای کمکی تصویر** (`translator/image/sizeMapper.ts`).
-- سطح بالا: `bootstrap.ts`, `formats.ts`, `registry.ts`, `index.ts`.
+- سطحبالا: `bootstrap.ts`، `formats.ts`، `registry.ts`، `index.ts`.
 
 ### 4.4 `open-sse/transformer/`
 
-- `responsesTransformer.ts` — تبدیلکننده Responses API ↔ Chat
-  Completions مبتنی بر `TransformStream` (مورد استفاده توسط مسیر فراگیر `responses/`).
+- `responsesTransformer.ts` — تبدیلکننده مبتنی بر `TransformStream` برای Responses API ↔ Chat
+  Completions (مورد استفاده توسط مسیر فراگیر `responses/`).
 
 ### 4.5 `open-sse/services/`
 
@@ -535,17 +538,17 @@ open-sse/
 
 ### 4.6 `open-sse/mcp-server/`
 
-- **۱۱۰ ابزار منحصربهفرد** در `server.ts` متصل شدهاند (۴۵ ابزار متعارف در `schemas/tools.ts` +
-  ماژولهای حافظه، مهارتها، GitHub-skills، مخزن، بازیوارسازی، افزونه، Notion، Obsidian،
+- **۱۱۰ ابزار منحصربهفرد** که در `server.ts` سیمکشی شدهاند (۴۵ ابزار استاندارد در `schemas/tools.ts` +
+  ماژولهای حافظه، مهارتها، مهارتهای GitHub، مخزن، بازیوارسازی، افزونه، Notion، Obsidian،
   پیکره محلی و فشردهسازی — اجتماع آنها توسط `countUniqueMcpTools` شمارش شده است).
 - **۳ روش انتقال**: stdio، HTTP Streamable و SSE.
-- **۳۳ محدوده دسترسی** در زمان اجرا اعمال میشوند — فهرست پایه در `src/shared/constants/mcpScopes.ts` قرار دارد و مجموعه کامل، اجتماع محدودههای دسترسی تعریفشده توسط هر ماژول ابزار است.
+- **۳۳ حوزه دسترسی** که در زمان اجرا اعمال میشوند — فهرست پایه در `src/shared/constants/mcpScopes.ts` قرار دارد و مجموعه کامل، اجتماع حوزههای دسترسی اعلامشده توسط هر ماژول ابزار است.
 - جدول ممیزی: `mcp_tool_audit` (توسط `audit.ts` پر میشود).
 - فایلها: `server.ts`، `index.ts`، `httpTransport.ts`، `audit.ts`، `scopeEnforcement.ts`،
   `runtimeHeartbeat.ts`، `descriptionCompressor.ts`، `schemas/{tools, a2a, audit, index}.ts`،
   `tools/{advancedTools, compressionTools, memoryTools, skillTools}.ts`،
-  بهعلاوه آزمونهای موجود در `__tests__/`.
-- برای مشاهده فهرست کامل ابزارها به [MCP-SERVER.md](../frameworks/MCP-SERVER.md) مراجعه کنید.
+  بههمراه آزمونهای موجود در `__tests__/`.
+- برای مشاهده فهرست کامل ابزارها، به [MCP-SERVER.md](../frameworks/MCP-SERVER.md) مراجعه کنید.
 
 ### 4.7 `open-sse/config/`
 
@@ -563,7 +566,7 @@ open-sse/
 
 ### 4.8 `open-sse/utils/`
 
-مؤلفههای پایهٔ استریم و ابزارهای کمکی ارائهدهنده: `stream.ts`، `streamHandler.ts`،
+ساختارهای پایهٔ استریم و ابزارهای کمکی ارائهدهندگان: `stream.ts`، `streamHandler.ts`،
 `streamHelpers.ts`، `streamPayloadCollector.ts`، `streamReadiness.ts`،
 `sseHeartbeat.ts`، `proxyFetch.ts`، `proxyDispatcher.ts`، `tlsClient.ts`،
 `networkProxy.ts`، `awsSigV4.ts`، `cacheControlPolicy.ts`،

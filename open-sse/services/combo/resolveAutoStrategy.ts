@@ -22,6 +22,7 @@ import { supportsToolCalling } from "../modelCapabilities.ts";
 import type { ResilienceSettings } from "../../../src/lib/resilience/settings";
 import { parseAutoConfig } from "./autoConfig.ts";
 import { dedupeTargetsByExecutionKey } from "./comboData.ts";
+import { restoreIncomingOrder } from "./rungOrder.ts";
 import {
   getModelContextLimitForModelString,
   providerSupportsEmulatedToolCalling,
@@ -64,7 +65,11 @@ export interface ResolveAutoStrategyDeps {
   body: Record<string, unknown>;
   combo: ComboLike;
   settings: Record<string, unknown> | null | undefined;
-  config: { complexityAwareRouting?: boolean; compatFilterFailOpen?: boolean };
+  // Index signature keeps this structurally assignable from the caller's much
+  // wider `resolveComboSetupConfig()` return type — without it, TS2559 ("no
+  // properties in common") fires now that `complexityAwareRouting` (the one
+  // property the two types used to share) is gone (#13386).
+  config: { compatFilterFailOpen?: boolean } & Record<string, unknown>;
   relayOptions?: {
     bypassProviderQuotaPolicy?: boolean;
     sessionId?: string | null;
@@ -312,17 +317,18 @@ export async function resolveAutoStrategyOrder(
           },
         }
       : resilienceSettings;
-  // Complexity-aware routing (2026, opt-in): classify the request's
-  // difficulty and feed a tier hint into scoring so tierAffinity /
-  // specificityMatch favor candidates whose tier matches the request.
-  const autoManifestHint: RoutingHint | null =
-    config.complexityAwareRouting === true
-      ? await buildComplexityRoutingHint(
-          eligibleTargets.filter((t) => t.kind === "model"),
-          body,
-          log
-        )
-      : null;
+  // Complexity-aware routing: classify the request's difficulty and feed a
+  // tier hint into scoring so tierAffinity / specificityMatch favor
+  // candidates whose tier matches the request.  Always-on since #13386 — the
+  // former opt-in gate (config.complexityAwareRouting) was orphaned by
+  // migration 103 which stripped it as a legacy key, leaving the feature
+  // permanently disabled.  The classification is lightweight (regex-only, no
+  // LLM call) so always running it has negligible cost.
+  const autoManifestHint: RoutingHint | null = await buildComplexityRoutingHint(
+    eligibleTargets.filter((t) => t.kind === "model"),
+    body,
+    log
+  );
 
   const { sourceCandidates, candidates, routableCandidates, scoredTargets } =
     await evaluateAutoCandidates({
@@ -459,8 +465,14 @@ export async function resolveAutoStrategyOrder(
     // routable ranked ones (and, when the cutoff is OFF, makes this identical to
     // the pre-cutoff behavior), but a quota-blocked target still survives as a
     // final fallback instead of vanishing — the hard cutoff only de-prioritizes.
+    const preserveRungOrder =
+      (combo as { autoConfig?: { preserveRungOrder?: unknown } })?.autoConfig?.preserveRungOrder ===
+      true;
+    const headTargets = preserveRungOrder
+      ? restoreIncomingOrder(rankedTargets, eligibleTargets)
+      : [selectedTarget, ...rankedTargets];
     orderedTargets = dedupeTargetsByExecutionKey(
-      [selectedTarget, ...rankedTargets, ...eligibleTargets].filter(
+      [...headTargets, ...eligibleTargets].filter(
         (entry): entry is ResolvedComboTarget => entry !== undefined && entry !== null
       )
     );

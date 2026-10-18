@@ -144,7 +144,7 @@ jobs:
     name: Preflight — amd64 runner availability
     needs: prepare
     if: >-
-      github.event_name != 'schedule' && needs.prepare.outputs.skip != 'true' && vars.USE_VPS_RUNNER == 'true' &&
+      github.event_name != 'schedule' && needs.prepare.outputs.skip != 'true' && vars.USE_VPS_RUNNER == 'true' && vars.USE_VPS_BUILD_RUNNER == 'true' &&
       (github.event_name != 'schedule' || github.repository == 'diegosouzapw/OmniRoute')
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -193,7 +193,7 @@ jobs:
     # (run 33253576569). The same tree's arm64 webpack build on hosted ARM
     # succeeded (run 33264823398). Dockerfile already documents webpack as the
     # Docker escape hatch (OMNIROUTE_USE_TURBOPACK=0).
-    runs-on: ${{ matrix.arch == 'amd64' && (vars.USE_VPS_RUNNER == 'true' && fromJSON('["self-hosted","omni-build"]') || 'ubuntu-24.04') || 'ubuntu-24.04-arm' }}
+    runs-on: ${{ matrix.arch == 'amd64' && (vars.USE_VPS_RUNNER == 'true' && vars.USE_VPS_BUILD_RUNNER == 'true' && fromJSON('["self-hosted","omni-build"]') || 'ubuntu-24.04') || 'ubuntu-24.04-arm' }}
     # Share the 1-slot omni-build ceiling (#12048) with ci.yml `Build` /
     # npm-publish. Same group as main's Build so a :next publish waits beside
     # the artefact instead of sitting next to it. arm64 is hosted — its own
@@ -352,6 +352,9 @@ jobs:
           DIGEST_BUN_WEB: ${{ steps.build-bun-web.outputs.digest }}
         run: |
           set -euo pipefail
+          # Self-hosted runners keep /tmp across runs: start empty so digests of
+          # earlier runs are never uploaded (#15184).
+          rm -rf /tmp/digests
           mkdir -p /tmp/digests/base /tmp/digests/web /tmp/digests/bun-base /tmp/digests/bun-web
           touch "/tmp/digests/base/${DIGEST_BASE#sha256:}"
           touch "/tmp/digests/web/${DIGEST_WEB#sha256:}"
@@ -480,6 +483,18 @@ jobs:
           pattern: digests-bun-web-*
           path: /tmp/digests/bun-web
           merge-multiple: true
+
+      - name: Guard against stale digests
+        run: |
+          set -euo pipefail
+          # One digest per arch (amd64 + arm64) at most; more means stale digests leaked in (#15184).
+          for dir in base web bun-base bun-web; do
+            count=$(find "/tmp/digests/$dir" -type f 2>/dev/null | wc -l)
+            if [ "$count" -gt 2 ]; then
+              echo "digests in $dir: found $count, expected at most 2 (stale digests leaked in)" >&2
+              exit 1
+            fi
+          done
 
       - name: Create Docker Hub version manifests
         run: |
@@ -650,7 +665,7 @@ jobs:
       - name: Upload Trivy SARIF to Security tab
         if: needs.prepare.outputs.version != 'main'
         continue-on-error: true
-        uses: github/codeql-action/upload-sarif@v4.38.2
+        uses: github/codeql-action/upload-sarif@v4.38.3
         with:
           sarif_file: trivy-results.sarif
           category: trivy-image
@@ -676,6 +691,7 @@ jobs:
     name: omni-build runner offline alert
     if: >-
       (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') &&
+      vars.USE_VPS_RUNNER == 'true' && vars.USE_VPS_BUILD_RUNNER == 'true' &&
       (github.event_name != 'schedule' || github.repository == 'diegosouzapw/OmniRoute')
     runs-on: ubuntu-latest
     timeout-minutes: 5

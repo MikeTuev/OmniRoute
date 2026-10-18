@@ -16,6 +16,12 @@ import {
 } from "@/shared/utils/fetchTimeout";
 import { sanitizeErrorMessage } from "../../utils/error.ts";
 import { sleep } from "../../utils/sleep.ts";
+import {
+  MAX_CONSECUTIVE_POLL_RETRIES,
+  computePollRetryDelayMs,
+  isRetryablePollStatus,
+  parseRetryAfterMs,
+} from "./pollRetry.ts";
 
 interface LogLike {
   info?: (tag: string, msg: string, meta?: unknown) => void;
@@ -232,11 +238,90 @@ export function getVideoJobPreset(presetName: unknown): VideoJobPreset | null {
   return preset ?? null;
 }
 
+type JobLog = {
+  info?: (tag: string, msg: string, meta?: unknown) => void;
+  error?: (tag: string, msg: string) => void;
+};
+
+export type VideoJobResult =
+  { success: true; data: unknown } | { success: false; status: number; error: string };
+
+/** One finished job, as handed to the injected call recorder. */
+export interface VideoJobCallRecord {
+  provider: string;
+  model: string;
+  /**
+   * Structural, not the VideoJobResult union: this workspace compiles with
+   * `strict: false` (open-sse/tsconfig.json), where a `true`/`false` property is
+   * widened to `boolean` and therefore cannot act as a discriminant. Declaring the
+   * optional members directly avoids relying on narrowing that does not happen here.
+   */
+  result: { success: boolean; status?: number; error?: string };
+  durationMs: number;
+}
+
+/**
+ * Persists a finished job (call log + usage row). Injected by the dispatcher in
+ * `../videoGeneration.ts`, which owns the usage-DB writers, so this module keeps no
+ * dependency on the app's `@/lib` layer.
+ */
+export type RecordVideoJobCall = (record: VideoJobCallRecord) => Promise<void> | void;
+
 /**
  * Handle a video-generation job via the submit→poll preset pipeline.
  * Returns the same shape as the sync handlers: { success, data?: …, status?, error? }.
  */
 export async function handleVideoJobGeneration({
+  model,
+  presetName,
+  body,
+  credentials,
+  log,
+  maxPolls,
+  pollIntervalMs,
+  provider,
+  recordCall,
+}: {
+  model: string;
+  presetName: string;
+  body: Record<string, unknown>;
+  credentials?: unknown;
+  log?: JobLog;
+  maxPolls?: number;
+  pollIntervalMs?: number;
+  /** Provider id, for the usage/call-log rows. Unknown falls back to the preset. */
+  provider?: string;
+  /** Usage/call-log recorder; when absent the job is not recorded. */
+  recordCall?: RecordVideoJobCall;
+}): Promise<VideoJobResult> {
+  const startTime = Date.now();
+  const result = await runVideoJobGeneration({
+    model,
+    presetName,
+    body,
+    credentials,
+    log,
+    maxPolls,
+    pollIntervalMs,
+  });
+  // Recorded here rather than on each return, so a new exit path cannot skip it.
+  // A recording failure must never turn a finished generation into an error.
+  if (recordCall) {
+    try {
+      await recordCall({
+        provider: provider || presetName,
+        model,
+        result,
+        durationMs: Date.now() - startTime,
+      });
+    } catch (error) {
+      log?.error?.("VIDEO", `Failed to record video job call: ${sanitizeErrorMessage(error)}`);
+    }
+  }
+  return result;
+}
+
+async function runVideoJobGeneration({
   model,
   presetName,
   body,
@@ -249,13 +334,10 @@ export async function handleVideoJobGeneration({
   presetName: string;
   body: Record<string, unknown>;
   credentials?: unknown;
-  log?: {
-    info?: (tag: string, msg: string, meta?: unknown) => void;
-    error?: (tag: string, msg: string) => void;
-  };
+  log?: JobLog;
   maxPolls?: number;
   pollIntervalMs?: number;
-}) {
+}): Promise<VideoJobResult> {
   const preset = getVideoJobPreset(presetName);
   if (!preset) {
     return {
@@ -319,8 +401,11 @@ export async function handleVideoJobGeneration({
   const maxPolls = maxPollsOverride ?? preset.maxPolls;
   const pollInterval = pollIntervalOverride ?? preset.pollIntervalMs;
 
+  let consecutiveRetries = 0;
+  let nextDelay = pollInterval;
   for (let attempt = 1; attempt <= maxPolls; attempt += 1) {
-    await sleep(pollInterval);
+    await sleep(nextDelay);
+    nextDelay = pollInterval;
     const pollUrl = `${baseUrl}${preset.poll.pathTemplate
       .replace("{taskId}", encodeURIComponent(taskId))
       .replace("{model}", encodeURIComponent(model))}`;
@@ -330,8 +415,23 @@ export async function handleVideoJobGeneration({
       log,
     });
     if (pollResult.ok === false) {
+      // #15536: 429/503 on a status query is transient - back off and keep polling.
+      if (
+        isRetryablePollStatus(pollResult.status) &&
+        consecutiveRetries < MAX_CONSECUTIVE_POLL_RETRIES
+      ) {
+        consecutiveRetries += 1;
+        nextDelay = computePollRetryDelayMs(
+          pollInterval,
+          consecutiveRetries,
+          pollResult.retryAfterMs
+        );
+        attempt -= 1; // transient waits do not consume the poll budget
+        continue;
+      }
       return { success: false, status: pollResult.status, error: pollResult.error };
     }
+    consecutiveRetries = 0;
 
     const status =
       readPath(pollResult.data, preset.statusPath) ??
@@ -423,7 +523,9 @@ async function fetchJson(
     body?: string;
     log?: LogLike;
   }
-): Promise<{ ok: true; data: unknown } | { ok: false; status: number; error: string }> {
+): Promise<
+  { ok: true; data: unknown } | { ok: false; status: number; error: string; retryAfterMs?: number }
+> {
   try {
     const response = await fetchWithTimeout(url, {
       method,
@@ -434,7 +536,12 @@ async function fetchJson(
     if (!response.ok) {
       const errorText = await response.text();
       log?.error?.("VIDEO", `Upstream ${response.status} for ${url}: ${errorText.slice(0, 200)}`);
-      return { ok: false, status: response.status, error: errorText };
+      return {
+        ok: false,
+        status: response.status,
+        error: errorText,
+        retryAfterMs: parseRetryAfterMs(response.headers.get("retry-after")),
+      };
     }
     const data = await response.json();
     return { ok: true, data };

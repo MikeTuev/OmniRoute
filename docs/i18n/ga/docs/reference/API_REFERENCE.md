@@ -4,9 +4,12 @@
 
 ---
 
-🌐 **Teangacha:** 🇺🇸 [English](./API_REFERENCE.md) | 🇪🇹 [አማርኛ](../i18n/am/docs/reference/API_REFERENCE.md) | 🇸🇦 [العربية](../i18n/ar/docs/reference/API_REFERENCE.md) | 🇦🇿 [Azərbaycan dili](../i18n/az/docs/reference/API_REFERENCE.md) | 🇧🇬 [Български](../i18n/bg/docs/reference/API_REFERENCE.md) | 🇧🇩 [বাংলা](../i18n/bn/docs/reference/API_REFERENCE.md) | 🇧🇦 [Bosanski](../i18n/bs/docs/reference/API_REFERENCE.md) | 🇨🇿 [Čeština](../i18n/cs/docs/reference/API_REFERENCE.md) | 🇩🇰 [Dansk](../i18n/da/docs/reference/API_REFERENCE.md) | 🇩🇪 [Deutsch](../i18n/de/docs/reference/API_REFERENCE.md) | 🇬🇷 [Ελληνικά](../i18n/el/docs/reference/API_REFERENCE.md) | 🇪🇸 [Español](../i18n/es/docs/reference/API_REFERENCE.md) | 🇪🇪 [Eesti](../i18n/et/docs/reference/API_REFERENCE.md) | 🇮🇷 [فارسی](../i18n/fa/docs/reference/API_REFERENCE.md) | 🇫🇮 [Suomi](../i18n/fi/docs/reference/API_REFERENCE.md) | 🇫🇷 [Français](../i18n/fr/docs/reference/API_REFERENCE.md) | 🇮🇪 [Gaeilge](../i18n/ga/docs/reference/API_REFERENCE.md) | 🇮🇳 [ગુજરાતી](../i18n/gu/docs/reference/API_REFERENCE.md) | 🇳🇬 [Hausa](../i18n/ha/docs/reference/API_REFERENCE.md) | 🇮🇱 [עברית](../i18n/he/docs/reference/API_REFERENCE.md) | 🇮🇳 [हिन्दी](../i18n/hi/docs/reference/API_REFERENCE.md) | 🇭🇷 [Hrvatski](../i18n/hr/docs/reference/API_REFERENCE.md) | 🇭🇺 [Magyar](../i18n/hu/docs/reference/API_REFERENCE.md) | 🇦🇲 [Հայերեն](../i18n/hy/docs/reference/API_REFERENCE.md) | 🇮🇩 [Bahasa Indonesia](../i18n/id/docs/reference/API_REFERENCE.md) | 🇳🇬 [Igbo](../i18n/ig/docs/reference/API_REFERENCE.md) | 🇮🇹 [Italiano](../i18n/it/docs/reference/API_REFERENCE.md) | 🇯🇵 [日本語](../i18n/ja/docs/reference/API_REFERENCE.md) | 🇬🇪 [ქართული](../i18n/ka/docs/reference/API_REFERENCE.md) | 🇰🇭 [ខ្មែរ](../i18n/km/docs/reference/API_REFERENCE.md) | 🇮🇳 [ಕನ್ನಡ](../i18n/kn/docs/reference/API_REFERENCE.md) | 🇰🇷 [한국어](../i18n/ko/docs/reference/API_REFERENCE.md) | 🇱🇹 [Lietuvių](../i18n/lt/docs/reference/API_REFERENCE.md) | 🇱🇻 [Latviešu](../i18n/lv/docs/reference/API_REFERENCE.md) | 🇮🇳 [മലയാളം](../i18n/ml/docs/reference/API_REFERENCE.md) | 🇮🇳 [मराठी](../i18n/mr/docs/reference/API_REFERENCE.md) | 🇲🇾 [Bahasa Melayu](../i18n/ms/docs/reference/API_REFERENCE.md) | 🇲🇹 [Malti](../i18n/mt/docs/reference/API_REFERENCE.md) | 🇲🇲 [မြန်မာ](../i18n/my/docs/reference/API_REFERENCE.md) | 🇳🇵 [नेपाली](../i18n/ne/docs/reference/API_REFERENCE.md) | 🇳🇱 [Nederlands](../i18n/nl/docs/reference/API_REFERENCE.md) | 🇳🇴 [Norsk](../i18n/no/docs/reference/API_REFERENCE.md) | 🇮🇳 [ଓଡ଼ିଆ](../i18n/or/docs/reference/API_REFERENCE.md) | 🇮🇳 [ਪੰਜਾਬੀ](../i18n/pa/docs/reference/API_REFERENCE.md) | 🇵🇭 [Filipino](../i18n/phi/docs/reference/API_REFERENCE.md) | 🇵🇱 [Polski](../i18n/pl/docs/reference/API_REFERENCE.md) | 🇵🇹 [Português (Portugal)](../i18n/pt/docs/reference/API_REFERENCE.md) | 🇧🇷 [Português (Brasil)](../i18n/pt-BR/docs/reference/API_REFERENCE.md) | 🇷🇴 [Română](../i18n/ro/docs/reference/API_REFERENCE.md) | 🇷🇺 [Русский](../i18n/ru/docs/reference/API_REFERENCE.md) | 🇱🇰 [සිංහල](../i18n/si/docs/reference/API_REFERENCE.md) | 🇸🇰 [Slovenčina](../i18n/sk/docs/reference/API_REFERENCE.md) | 🇸🇮 [Slovenščina](../i18n/sl/docs/reference/API_REFERENCE.md) | 🇷🇸 [Српски](../i18n/sr/docs/reference/API_REFERENCE.md) | 🇸🇪 [Svenska](../i18n/sv/docs/reference/API_REFERENCE.md) | 🇰🇪 [Kiswahili](../i18n/sw/docs/reference/API_REFERENCE.md) | 🇮🇳 [தமிழ்](../i18n/ta/docs/reference/API_REFERENCE.md) | 🇮🇳 [తెలుగు](../i18n/te/docs/reference/API_REFERENCE.md) | 🇹🇭 [ไทย](../i18n/th/docs/reference/API_REFERENCE.md) | 🇹🇷 [Türkçe](../i18n/tr/docs/reference/API_REFERENCE.md) | 🇺🇦 [Українська](../i18n/uk-UA/docs/reference/API_REFERENCE.md) | 🇵🇰 [اردو](../i18n/ur/docs/reference/API_REFERENCE.md) | 🇺🇿 [Oʻzbekcha](../i18n/uz/docs/reference/API_REFERENCE.md) | 🇻🇳 [Tiếng Việt](../i18n/vi/docs/reference/API_REFERENCE.md) | 🇳🇬 [Yorùbá](../i18n/yo/docs/reference/API_REFERENCE.md) | 🇨🇳 [中文 (简体)](../i18n/zh-CN/docs/reference/API_REFERENCE.md) | 🇹🇼 [中文 (繁體)](../i18n/zh-TW/docs/reference/API_REFERENCE.md)
+🌐 **Teangacha:** 🇺🇸 [Béarla](./API_REFERENCE.md) | 🇪🇹 [አማርኛ](../i18n/am/docs/reference/API_REFERENCE.md) | 🇸🇦 [العربية](../i18n/ar/docs/reference/API_REFERENCE.md) | 🇦🇿 [Azərbaycan dili](../i18n/az/docs/reference/API_REFERENCE.md) | 🇧🇬 [Български](../i18n/bg/docs/reference/API_REFERENCE.md) | 🇧🇩 [বাংলা](../i18n/bn/docs/reference/API_REFERENCE.md) | 🇧🇦 [Bosanski](../i18n/bs/docs/reference/API_REFERENCE.md) | 🇨🇿 [Čeština](../i18n/cs/docs/reference/API_REFERENCE.md) | 🇩🇰 [Dansk](../i18n/da/docs/reference/API_REFERENCE.md) | 🇩🇪 [Deutsch](../i18n/de/docs/reference/API_REFERENCE.md) | 🇬🇷 [Ελληνικά](../i18n/el/docs/reference/API_REFERENCE.md) | 🇪🇸 [Español](../i18n/es/docs/reference/API_REFERENCE.md) | 🇪🇪 [Eesti](../i18n/et/docs/reference/API_REFERENCE.md) | 🇮🇷 [فارسی](../i18n/fa/docs/reference/API_REFERENCE.md) | 🇫🇮 [Suomi](../i18n/fi/docs/reference/API_REFERENCE.md) | 🇫🇷 [Français](../i18n/fr/docs/reference/API_REFERENCE.md) | 🇮🇪 [Gaeilge](../i18n/ga/docs/reference/API_REFERENCE.md) | 🇮🇳 [ગુજરાતી](../i18n/gu/docs/reference/API_REFERENCE.md) | 🇳🇬 [Hausa](../i18n/ha/docs/reference/API_REFERENCE.md) | 🇮🇱 [עברית](../i18n/he/docs/reference/API_REFERENCE.md) | 🇮🇳 [हिन्दी](../i18n/hi/docs/reference/API_REFERENCE.md) | 🇭🇷 [Hrvatski](../i18n/hr/docs/reference/API_REFERENCE.md) | 🇭🇺 [Magyar](../i18n/hu/docs/reference/API_REFERENCE.md) | 🇦🇲 [Հայերեն](../i18n/hy/docs/reference/API_REFERENCE.md) | 🇮🇩 [Bahasa Indonesia](../i18n/id/docs/reference/API_REFERENCE.md) | 🇳🇬 [Igbo](../i18n/ig/docs/reference/API_REFERENCE.md) | 🇮🇹 [Italiano](../i18n/it/docs/reference/API_REFERENCE.md) | 🇯🇵 [日本語](../i18n/ja/docs/reference/API_REFERENCE.md) | 🇬🇪 [ქართული](../i18n/ka/docs/reference/API_REFERENCE.md) | 🇰🇭 [ខ្មែរ](../i18n/km/docs/reference/API_REFERENCE.md) | 🇮🇳 [ಕನ್ನಡ](../i18n/kn/docs/reference/API_REFERENCE.md) | 🇰🇷 [한국어](../i18n/ko/docs/reference/API_REFERENCE.md) | 🇱🇹 [Lietuvių](../i18n/lt/docs/reference/API_REFERENCE.md) | 🇱🇻 [Latviešu](../i18n/lv/docs/reference/API_REFERENCE.md) | 🇮🇳 [മലയാളം](../i18n/ml/docs/reference/API_REFERENCE.md) | 🇮🇳 [मराठी](../i18n/mr/docs/reference/API_REFERENCE.md) | 🇲🇾 [Bahasa Melayu](../i18n/ms/docs/reference/API_REFERENCE.md) | 🇲🇹 [Malti](../i18n/mt/docs/reference/API_REFERENCE.md) | 🇲🇲 [မြန်မာ](../i18n/my/docs/reference/API_REFERENCE.md) | 🇳🇵 [नेपाली](../i18n/ne/docs/reference/API_REFERENCE.md) | 🇳🇱 [Nederlands](../i18n/nl/docs/reference/API_REFERENCE.md) | 🇳🇴 [Norsk](../i18n/no/docs/reference/API_REFERENCE.md) | 🇮🇳 [ଓଡ଼ିଆ](../i18n/or/docs/reference/API_REFERENCE.md) | 🇮🇳 [ਪੰਜਾਬੀ](../i18n/pa/docs/reference/API_REFERENCE.md) | 🇵🇭 [Filipino](../i18n/phi/docs/reference/API_REFERENCE.md) | 🇵🇱 [Polski](../i18n/pl/docs/reference/API_REFERENCE.md) | 🇵🇹 [Português (Portugal)](../i18n/pt/docs/reference/API_REFERENCE.md) | 🇧🇷 [Português (Brasil)](../i18n/pt-BR/docs/reference/API_REFERENCE.md) | 🇷🇴 [Română](../i18n/ro/docs/reference/API_REFERENCE.md) | 🇷🇺 [Русский](../i18n/ru/docs/reference/API_REFERENCE.md) | 🇱🇰 [සිංහල](../i18n/si/docs/reference/API_REFERENCE.md) | 🇸🇰 [Slovenčina](../i18n/sk/docs/reference/API_REFERENCE.md) | 🇸🇮 [Slovenščina](../i18n/sl/docs/reference/API_REFERENCE.md) | 🇷🇸 [Српски](../i18n/sr/docs/reference/API_REFERENCE.md) | 🇸🇪 [Svenska](../i18n/sv/docs/reference/API_REFERENCE.md) | 🇰🇪 [Kiswahili](../i18n/sw/docs/reference/API_REFERENCE.md) | 🇮🇳 [தமிழ்](../i18n/ta/docs/reference/API_REFERENCE.md) | 🇮🇳 [తెలుగు](../i18n/te/docs/reference/API_REFERENCE.md) | 🇹🇭 [ไทย](../i18n/th/docs/reference/API_REFERENCE.md) | 🇹🇷 [Türkçe](../i18n/tr/docs/reference/API_REFERENCE.md) | 🇺🇦 [Українська](../i18n/uk-UA/docs/reference/API_REFERENCE.md) | 🇵🇰 [اردو](../i18n/ur/docs/reference/API_REFERENCE.md) | 🇺🇿 [Oʻzbekcha](../i18n/uz/docs/reference/API_REFERENCE.md) | 🇻🇳 [Tiếng Việt](../i18n/vi/docs/reference/API_REFERENCE.md) | 🇳🇬 [Yorùbá](../i18n/yo/docs/reference/API_REFERENCE.md) | 🇨🇳 [中文 (简体)](../i18n/zh-CN/docs/reference/API_REFERENCE.md) | 🇹🇼 [中文 (繁體)](../i18n/zh-TW/docs/reference/API_REFERENCE.md)
 
-Croíthagairt d'API OmniRoute. Clúdaíonn sí an comhéadan poiblí `/v1` agus na críochphointí bainistíochta is mó a úsáidtear; is iad [`docs/openapi.yaml`](../openapi.yaml), atá inléite ag meaisín, agus an crann bealaí faoi `src/app/api/` na foinsí uileghabhálacha.
+Croíthagairt don API OmniRoute. Clúdaíonn sí an comhéadan poiblí `/v1` agus na críochphointí bainistíochta is mó a úsáidtear; is iad [`docs/openapi.yaml`](../openapi.yaml), atá inléite ag meaisín, agus an crann bealaí faoi `src/app/api/` na foinsí uileghabhálacha.
+
+Le haghaidh an phrótacail dhírithe atá comhoiriúnach le OpenAI agus mhaitrís inniúlachtaí na soláthraithe, féach
+[`OPENAI_COMPATIBILITY.md`](./OPENAI_COMPATIBILITY.md).
 
 ---
 
@@ -189,7 +192,7 @@ X-OmniRoute-Compression: <mode>; source=<source>
 
 ---
 
-## Leabúcháin
+## Leabuithe
 
 ```bash
 POST /v1/embeddings
@@ -204,16 +207,16 @@ Content-Type: application/json
 
 Soláthraithe atá ar fáil: Nebius, OpenAI, Mistral, Together AI, Fireworks, NVIDIA, **OpenRouter**, Jina AI.
 
-Is é formáid aitheantóirí na catalóige ná `provider/model` (mar shampla: `jina-ai/jina-embeddings-v5-omni-small`). Réitítear freisin aitheantóirí loma samhlacha Jina atá sa chlárlann (mar shampla `jina-embeddings-v5-text-small`, `jina-reranker-v3.5`). Úsáideann oibríochtaí leabaithe/athrangaithe/aicmithe/deighilte Jina dintiúir `jina-ai` ón deais ar dtús; ní úsáidtear `JINA_AI_API_KEY` mar rogha thánaisteach ach amháin nuair nach bhfuil eochair deaise ann. Is le haghaidh Reader / `r.jina.ai` amháin atá an cárta `jina-reader` (`POST /v1/web/fetch`) agus ní sholáthraíonn sé leabúcháin ná athrangú choíche.
+Is é `provider/model` formáid aitheantais na catalóige (sampla: `jina-ai/jina-embeddings-v5-omni-small`). Réitítear freisin aitheantais lom samhlacha Jina atá sa chlárlann (mar shampla `jina-embeddings-v5-text-small`, `jina-reranker-v3.5`). Úsáideann oibríochtaí leabaithe/athrangaithe/aicmithe/deighilte Jina dintiúir `jina-ai` an deais ar dtús; ní úsáidtear `JINA_AI_API_KEY` mar chúltaca ach amháin nuair nach bhfuil eochair deaise ann. Is le haghaidh Reader / `r.jina.ai` amháin atá an cárta `jina-reader` (`POST /v1/web/fetch`) agus ní sholáthraíonn sé leabuithe ná athrangú riamh.
 
-Glacann samhlacha clárlainne a fhógraíonn tacaíocht ilmhódach le suas le 32 mír struchtúrtha
-atá neodrach ó thaobh soláthraí de freisin. Is iad cineálacha míre meán ná `text`, `image`, `audio`, `video`, agus `document`. Is é a `source`
-meán ná `{"type":"url","url":"https://..."}` nó
+Glacann samhlacha sa chlárlann a fhógraíonn tacaíocht ilmhódach le suas le 32 mír struchtúrtha atá neodrach ó thaobh soláthraí de freisin.
+Is iad `text`, `image`, `audio`, `video`, agus `document` na cineálacha míre meán. Is é `source` na meán
+ná `{"type":"url","url":"https://..."}` nó
 `{"type":"base64","data":"...","media_type":"..."}`.
 
 Glacann Jina v5 Omni (`jina-ai/jina-embeddings-v5-omni-small`, `jina-ai/jina-embeddings-v5-omni-nano`,
 agus ailias an teaghlaigh `jina-ai/jina-embeddings-v5-omni` → omni-small) le cáipéisí dúchasacha
-EmbeddingsV5Request Jina freisin agus **cuireann sé ar aghaidh slán iad** chuig `https://api.jina.ai/v1/embeddings`:
+EmbeddingsV5Request Jina freisin agus **cuireann sé ar aghaidh gan athrú iad** chuig `https://api.jina.ai/v1/embeddings`:
 
 ```json
 {
@@ -230,26 +233,32 @@ EmbeddingsV5Request Jina freisin agus **cuireann sé ar aghaidh slán iad** chui
 }
 ```
 
-Féadfaidh luachanna dúchasacha `{ image | audio | video | pdf }` a bheith ina URL poiblí HTTPS, ina URI `data:`, nó ina mbunachar
-base64. Ní dhéanann OmniRoute na hoibiachtaí sin a shraithiú ná URLanna dúchasacha íomhánna a fháil — aisghabhann Jina
+Is féidir le luachanna dúchasacha `{ image | audio | video | pdf }` a bheith ina URL poiblí HTTPS, ina URI `data:`, nó ina
+mbonn64 amh. Ní thiontaíonn OmniRoute na hoibiachtaí sin ina dteaghráin agus ní aisghabhann sé URLanna dúchasacha íomhánna — aisghabhann Jina
 na meáin phoiblí féin. Cuirtear réimsí breise Jina (`task`, `normalized`, `truncate`, `embedding_type`) ar aghaidh.
-Diúltaíonn SKUanna Jina atá téacs-amháin fós do cháipéisí nach téacs iad.
+Diúltaíonn SKUanna Jina atá téacsamháin do cháipéisí nach téacs iad fós.
 
 Teorainneacha slándála agus iompair:
 
-- Ní mór do URLanna meán cianda a bheith ina HTTPS poiblí. Faightear míreanna canónacha `{type,source:url}`
+- Ní mór do URLanna cianmheán a bheith poiblí agus HTTPS a úsáid. Aisghabhtar míreanna canónacha `{type,source:url}`
   ar thaobh an fhreastalaí (athbhailíochtú atreoruithe, teorainn ama, teorainneacha méide, DNS poiblí, pionnáil naisc) agus
-  cuirtear isteach inlíne iad roimh ghlao an tsoláthraí. Cuirtear míreanna dúchasacha Jina `{image:"https://..."}` ar aghaidh mar atá
-  tar éis an tseiceála chéanna ar HTTPS poiblí; faigheann Jina an URL.
-- Tá meáin base64 inlíne teoranta do 8 MiB díchódaithe in aghaidh na míre agus 16 MiB díchódaithe ar fud na hiarrata.
+  inlínítear iad roimh ghlao an tsoláthraí. Cuirtear míreanna dúchasacha Jina `{image:"https://..."}` ar aghaidh mar atá siad
+  tar éis an tseiceála chéanna ar HTTPS poiblí; aisghabhann Jina an URL.
+- Tá meáin inlíne base64 teoranta do 8 MiB díchódaithe in aghaidh na míre agus 16 MiB díchódaithe ar fud na hiarrata.
 
-Aistriúchán soláthraí (ní chuirtear míreanna canónacha ar aghaidh gan athrú choíche):
+Aistriúchán soláthraí (ní chuirtear míreanna canónacha ar aghaidh gan athrú riamh):
 
 - Samhlacha ilmhódacha Jina: déantar oibiacht amháin eochraithe de réir módúlachta de gach mír ardleibhéil
-  (`text` / `image` / `audio` / `video` / `pdf`), agus URIanna sonraí á n-úsáid do mheáin inlíne; veicteoir amháin in aghaidh
-  gach míre ardleibhéil.
+  (`text` / `image` / `audio` / `video` / `pdf`), agus URIanna sonraí á n-úsáid le haghaidh meáin inlíne; veicteoir amháin in aghaidh
+  na míre ardleibhéil.
 - Teaghlach Gemini Embedding 2: déantar iarratas dúchasach aonair
-  `models/{model}:embedContent` d'eagar ardleibhéil amháin le `content.parts` (`text` nó `inline_data`).
+  `models/{model}:embedContent` d'eagar ardleibhéil amháin, le `content.parts` (`text` nó `inline_data`).
+- llama.cpp (`llama-cpp/<model>`, aon samhail atá luchtaithe ag an bhfreastalaí áitiúil): déantar gnáth-theaghráin de mhíreanna canónacha `text`,
+  agus déantar oibiacht amháin `{"content": [part]}` de gach mír `image` / `audio` / `video`,
+  ag úsáid codanna inneachair comhrá llama-server (`image_url`,
+  `input_audio` leis an bhformáid `wav` / `mp3` / `flac`, `input_video`) le sonraí inlíne; veicteoir amháin
+  in aghaidh na míre ardleibhéil. Ní mór don fhreastalaí a bheith ag rith le `--embedding --mmproj …`; gan teilgeoir,
+  diúltaíonn sé do na meáin féin. Ní thacaítear le `document`.
 - Diúltaíonn samhlacha anaithnide/dinimiciúla nach bhfuil meiteashonraí sainráite módúlachta acu d'ionchur struchtúrtha le HTTP 400.
 
 ```json
@@ -267,11 +276,11 @@ Aistriúchán soláthraí (ní chuirtear míreanna canónacha ar aghaidh gan ath
 }
 ```
 
-Tugann teaglamaí samhla/módúlachta nach dtacaítear leo HTTP 400 ar ais seachas an mhír a chomhéigniú. Leanann réimsí
-sínte nach réimsí ionchuir iad ar iarratais oidhreachta teaghráin/comharthaí de bheith curtha ar aghaidh gan athrú.
+Tugann teaglamaí samhla/módúlachta nach dtacaítear leo HTTP 400 ar ais seachas an mhír a chomhéigniú. Leanann réimsí sínte nach réimsí ionchuir iad
+ar iarrataí oidhreachta teaghráin/comharthaí de bheith curtha ar aghaidh gan athrú.
 
 ```bash
-# Liostaigh gach samhail leabúcháin
+# Liostaigh na samhlacha leabaithe go léir
 GET /v1/embeddings
 ```
 
@@ -291,10 +300,37 @@ Content-Type: application/json
 }
 ```
 
-Soláthraithe atá ar fáil: OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, SD WebUI (áitiúil), ComfyUI (áitiúil).
+I measc na soláthraithe atá ar fáil tá OpenAI (GPT Image 2), xAI (Grok Image), Together AI (FLUX), Fireworks AI, Nebius (FLUX), Hyperbolic, NanoBanana, **OpenRouter**, **ZenMux**, SD WebUI (áitiúil), ComfyUI (áitiúil).
+
+Filleann `n` líon `n` íomhánna in `data[]`. I gcás soláthraithe a bhfilleann a n-API réamhtheachtach íomhá amháin in aghaidh an ghlao
+(Black Forest Labs, Stability AI, Leonardo, Ideogram, Haiper, Hyperbolic, Magnific/Freepik,
+NVIDIA NIM, Cloudflare Workers AI), déantar `n` glao réamhtheachtacha ar leith, agus 4 cinn ar a mhéad ar siúl ag an am céanna. Déantar
+`seed` seasta a fhritháireamh de réir innéacs an ghlao (`seed`, `seed + 1`, …), ionas go mbíonn na híomhánna éagsúil ach gur féidir
+iad a atáirgeadh. Tá uasteorainn 10 ar `n`. Teipeann ar an iarratas ina iomláine má theipeann ar aon ghlao. Tá liosta
+na bhformáidí fan-amach in `SINGLE_IMAGE_FANOUT_FORMATS` in
+`open-sse/handlers/imageGeneration/fanOut.ts`.
+
+Athúsáideann ZenMux an nasc eochair-API atá ann cheana agus glacann sé le réimíreanna `zenmux/` nó `zm/`:
+
+- Úsáideann `zenmux/openai/gpt-image-2` API Íomhánna OpenAI ZenMux. I measc na roghanna tá `size`,
+  `quality`, `n`, `output_format`, `output_compression`, `background`, agus `response_format`.
+- Úsáideann foilsitheoirí eile, amhail `zm/meta/muse-image-1.0`, críochphointe `:predict`
+  Vertex AI ZenMux. Mapálann `n` go `sampleCount`, `aspect_ratio` go `aspectRatio`, agus `image_size`
+  (`1K`, `2K`, `4K`) go `sampleImageSize`. Ní sholáthraíonn `size` i bpicteilíní ach cóimheas treoíochta,
+  ní toisí picteilín ráthaithe. Athraíonn na cóimheasa, na taifigh agus na comhairimh a dtacaítear leo de réir na samhla.
+- Roghnaíonn `zm/inclusionai/ming-image-0.1-design` a thoisí féin. Fág `size`,
+  `aspect_ratio`, agus `image_size` ar lár; filleann luachanna sainráite HTTP 400. Is féidir PNG, JPEG, agus WebP
+  a iarraidh le `output_format`.
+
+Tacaíonn an comhtháthú seo le giniúint téacs-go-híomhá, ní le heagarthóireacht íomhánna tagartha. Déantar aschur Vertex
+a normalú go `data[].b64_json`; filleann `response_format: "url"` URL HTTPS réamhtheachtach
+nó URL sonraí base64 nuair nach mbíonn ach bearta íomhá ar fáil. Filleann aschuir fholmha/scagtha
+earráid seachas freagra rathúil folamh. Braitheann rochtain ar shamhlacha ar an gcuntas ZenMux.
+Féach [API Vertex ZenMux](https://docs.zenmux.ai/api/vertexai/generate-images) agus
+[API Íomhánna OpenAI](https://docs.zenmux.ai/api/openai/generate-an-image).
 
 ```bash
-# Liostaigh gach samhail íomhá
+# Liostaigh na samhlacha íomhá go léir
 GET /v1/images/generations
 ```
 
@@ -370,40 +406,54 @@ Authorization: Bearer your-api-key
 → Seoltar ar ais gach samhail comhrá, leabaithe agus íomhá + teaglamaí i bhformáid OpenAI
 ```
 
-### Réimí aitheantais samhla (`?prefix=`)
+### Réimíreanna aitheantais samhla (`?prefix=`)
 
-Fógraítear formhór na samhlacha faoi **réim soláthraí**. Is í an bhratach gné
-`MODELS_CATALOG_PREFIX_MODE` a rialaíonn cén réim a gheobhaidh tú, agus is féidir í a shárú **do gach iarratas ar leith** le
-paraiméadar iarratais — rud atá úsáideach do chliant atá ag iarraidh liosta glan gan an socrú ar fud an fhreastalaí
-a athrú do gach duine eile:
+Fógraítear formhór na samhlacha faoi **réimír soláthraí**. Is í an bhratach ghné
+`MODELS_CATALOG_PREFIX_MODE` a rialaíonn cén réimír a fhaigheann tú, agus is féidir í a shárú **do gach iarratas ar leith** le
+paraiméadar iarratais — rud atá úsáideach do chliant ar mian leis liosta glan a fháil gan an socrú
+ar fud an fhreastalaí a athrú do gach duine eile:
 
 ```bash
-GET /v1/models?prefix=alias        # aitheantas amháin in aghaidh na samhla — an réim ghearr ailias
+GET /v1/models?prefix=alias        # aitheantas amháin in aghaidh na samhla — an réimír ghearr ailias
 GET /v1/models?prefix=dual         # an dá fhoirm (réamhshocrú an fhreastalaí)
-GET /v1/models?prefix=canonical    # réim iomlán aitheantas an tsoláthraí amháin
+GET /v1/models?prefix=canonical    # an réimír iomlán aitheantais soláthraí amháin
 ```
 
-| Mód         | Astaíonn                                                   | Nótaí                                                                                                                                                                                                                                   |
-| ----------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `dual`      | `cc/claude-sonnet-4-6` **agus** `claude/claude-sonnet-4-6` | **Réamhshocrú.** Treoraítear an dá aitheantas chuig an tsamhail chéanna; coinnítear iad ionas go leanfaidh cumraíochtaí cliant ina bhfuil ceachtar foirm crua-chódaithe ag obair. Déantar an chatalóg a dhúbailt, a bheag nó a mhór.    |
-| `alias`     | `cc/claude-sonnet-4-6`                                     | Iontráil amháin in aghaidh na samhla. Astaíonn soláthraithe nach bhfuil ailias ar leith acu a n-iontráil fós, mar sin ní chailltear aon rud.                                                                                            |
-| `canonical` | `claude/claude-sonnet-4-6`                                 | Iontráil amháin in aghaidh na samhla faoi réim iomlán aitheantas an tsoláthraí. Astaíonn soláthraithe nach bhfuil ailias ar leith acu (m.sh. `antigravity/…`, `agy/…`) a n-aon aitheantas anseo freisin, mar sin ní chailltear aon rud. |
+| Mód         | Aschuir                                                    | Nótaí                                                                                                                                                                                                                                        |
+| ----------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dual`      | `cc/claude-sonnet-4-6` **agus** `claude/claude-sonnet-4-6` | **Réamhshocrú.** Seoltar an dá aitheantas chuig an tsamhail chéanna; coinnítear iad ionas go leanfaidh cumraíochtaí cliant ina bhfuil ceachtar foirm códaithe go docht ag obair. Méadaíonn sé méid na catalóige faoi dhó, a bheag nó a mhór. |
+| `alias`     | `cc/claude-sonnet-4-6`                                     | Iontráil amháin in aghaidh na samhla. Eisíonn soláthraithe nach bhfuil ailias ar leith acu a n-iontráil fós, mar sin ní chailltear aon rud.                                                                                                  |
+| `canonical` | `claude/claude-sonnet-4-6`                                 | Iontráil amháin in aghaidh na samhla faoin réimír iomlán aitheantais soláthraí. Eisíonn soláthraithe nach bhfuil ailias ar leith acu (m.sh. `antigravity/…`, `agy/…`) a n-aon aitheantas anseo freisin, mar sin ní chailltear aon rud.       |
 
-Is féidir scáthán i mód `dual` a aithint gan an paraiméadar iarratais freisin: bíonn réimse `parent`
-ann a dhíríonn ar an bpríomhaitheantas.
+Is féidir scáthán sa mhód `dual` a aithint gan an paraiméadar iarratais freisin: bíonn réimse `parent`
+aige a dhíríonn ar an bpríomhaitheantas.
 
 Ba cheart do chliaint a thaispeánann roghnóir samhla `?prefix=alias` a iarraidh — is é seo a dhéanann an
 [síneadh OmniCopilot do VS Code](../guides/VSCODE-COPILOT.md).
 
+### Samhlacha comhrá atá folaithe ina n-aonar
+
+Déantar samhail atá marcáilte **Folaithe** ar leathanach a soláthraí a eisiamh ón gcatalóg agus diúltaítear di
+le HTTP `404` / `model_not_found` nuair a iarrtar go sainráite í. Úsáideann an tseiceáil an
+soláthraí agus an tsamhail réitithe, lena n-áirítear ailiasanna soláthraithe, réimíreanna nód soláthraithe chomhoiriúnacha, agus
+réamhshocruithe ceangail. Fágann teaglama spriocanna folaithe ar lár agus is féidir leis samhail ghaolmhar infheicthe a úsáid; nuair nach mbíonn aon
+sprioc inrite fágtha, seolann sé an cód earráide céanna ar ais. Tagann deireadh leis an bhfolach i bhfeidhm ar an gcéad
+iarratas eile. Ní fholaíonn sáruithe infheictheachta d’íomhánna amháin an tsamhail chomhrá leis an aitheantas céanna.
+
+Tá an socrú seo do shamhail aonair ar leithligh ó na
+[liostaí ceadaithe/diúltaithe maidir le nochtadh samhlacha](../routing/MODEL_EXPOSURE_LIST.md), a dhéanann fógraíocht sa chatalóg
+agus iarrthóirí uathródaithe a scagadh, agus seoladh sainráite á choinneáil acu. Leanann ceadanna samhlacha
+na n-eochracha API de bheith i bhfeidhm go neamhspleách. Is é `dual` fós mód réamhshocraithe réimír na catalóige.
+
 ### Leaganacha samhla gan smaointeoireacht
 
-I gcás samhlacha Claude atá in ann smaointeoireacht a dhéanamh, fógraíonn `/v1/models` leagan **gan smaointeoireacht** freisin a bhfuil `claude-3-omniroute-no-thinking/` mar réim ar a aitheantas:
+I gcás samhlacha Claude atá in ann smaointeoireacht a dhéanamh, fógraíonn `/v1/models` leagan **gan smaointeoireacht** freisin, a bhfuil `claude-3-omniroute-no-thinking/` mar réimír ar a aitheantas:
 
 ```
 claude-3-omniroute-no-thinking/<provider>/<model>
 ```
 
-Má roghnaítear an t-aitheantas seo (m.sh. i gcumraíocht Claude Code a cheanglaíonn bloc `thinking` i gcónaí), réitítear ar ais é chuig an bhfíor-`<provider>/<model>` agus an réasúnaíocht faoi chois — `thinking:{type:"disabled"}` ar chonair `/v1/messages`, nó baintear na réimsí `reasoning`/`reasoning_effort` ar chonair `/v1/chat/completions`. Ní liostaítear an leagan ach amháin do shamhlacha de theaghlach Claude a thacaíonn le smaointeoireacht **agus** a urramaíonn `disabled` (mar sin, mar shampla, fágtar samhlacha oiriúnaitheacha amháin a dhiúltaíonn do `disabled` as an áireamh). Is féidir le hoibreoirí an leagan a chur i bhfeidhm nó a dhíchumasú do gach samhail ar leith trí `ModelSpec.noThinkingAlias`.
+Má roghnaítear an t-aitheantas seo (m.sh. i gcumraíocht Claude Code a cheanglaíonn bloc `thinking` i gcónaí), réitítear é ar ais chuig an bhfíor-`<provider>/<model>` agus réasúnú faoi chois — `thinking:{type:"disabled"}` ar chonair `/v1/messages`, nó baintear na réimsí `reasoning`/`reasoning_effort` ar chonair `/v1/chat/completions`. Ní liostaítear an leagan ach amháin i gcás samhlacha de theaghlach Claude a thacaíonn le smaointeoireacht **agus** a urramaíonn `disabled` (mar sin, mar shampla, eisítear samhlacha oiriúnaitheacha amháin a dhiúltaíonn do `disabled`). Is féidir le hoibreoirí an leagan a chur ar siúl nó as go héigeantach do gach samhail ar leith trí `ModelSpec.noThinkingAlias`.
 
 ---
 
@@ -436,7 +486,7 @@ feidhmeanna rite, ceanntásca iarratais, agus sonraí cuntais ar lár d'aon ghn�
 | POST | `/v1/videos/generations`                  | Giniúint físe ar nós OpenAI                  |
 | POST | `/v1/music/generations`                   | Giniúint ceoil ar nós OpenAI                 |
 | POST | `/v1/audio/transcriptions`                | OpenAI Audio (STT)                           |
-| POST | `/v1/audio/speech`                        | OpenAI TTS (seolann sé corp fuaime)          |
+| POST | `/v1/audio/speech`                        | OpenAI TTS (seolann sé corp fuaime ar ais)   |
 | POST | `/v1/rerank`                              | Athrangú ar nós Cohere/Voyage                |
 | POST | `/v1/classify`                            | Aicmiú Jina (`api.jina.ai`)                  |
 | POST | `/v1/segment`                             | Deighilteoir Jina (`segment.jina.ai`)        |
@@ -448,14 +498,14 @@ feidhmeanna rite, ceanntásca iarratais, agus sonraí cuntais ar lár d'aon ghn�
 | POST | `/v1/api/chat`                            | Ollama                                       |
 | GET  | `/api/v1/vscode/{token}/`                 | Ailias catalóige OpenAI                      |
 | GET  | `/api/v1/vscode/{token}/models`           | Ailias samhlacha OpenAI                      |
-| POST | `/api/v1/vscode/{token}/chat/completions` | Ailias OpenAI le comhartha                   |
-| POST | `/api/v1/vscode/{token}/responses`        | Ailias OpenAI Responses le comhartha         |
-| POST | `/api/v1/vscode/{token}/api/chat`         | Ailias Ollama le comhartha                   |
-| GET  | `/api/v1/vscode/{token}/api/tags`         | Ailias clibeanna Ollama le comhartha         |
+| POST | `/api/v1/vscode/{token}/chat/completions` | Ailias comharthaíochta OpenAI                |
+| POST | `/api/v1/vscode/{token}/responses`        | Ailias comharthaíochta OpenAI Responses      |
+| POST | `/api/v1/vscode/{token}/api/chat`         | Ailias comharthaíochta Ollama                |
+| GET  | `/api/v1/vscode/{token}/api/tags`         | Ailias comharthaíochta clibeanna Ollama      |
 
-Leanann gach bealach POST an struchtúr céanna: `Bearer your-api-key` + corp JSON arna bhailíochtú ag Zod (`v1RerankSchema`, `v1ModerationSchema`, `v1AudioSpeechSchema`, srl., féach `src/shared/validation/schemas.ts`). Seoltar 4xx ar ais má theipeann ar bhailíochtú na scéime.
+Leanann gach bealach POST an cruth céanna: `Bearer your-api-key` + corp JSON bailíochtaithe ag Zod (`v1RerankSchema`, `v1ModerationSchema`, `v1AudioSpeechSchema`, srl., féach `src/shared/validation/schemas.ts`). Seoltar 4xx ar ais má theipeann ar an scéimre.
 
-I gcás cliant nach féidir leo `Authorization: Bearer ...` a cheangal, glacann OmniRoute le heochracha API san URL freisin, trí chomhoiriúnacht teaghráin iarratais (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) nó trí na críochphointí tiomnaithe `/api/v1/vscode/{token}/...` a bhfuil cur síos orthu thíos.
+I gcás cliant nach féidir leo `Authorization: Bearer ...` a cheangal, glacann OmniRoute le heochracha API san URL freisin, trí chomhoiriúnacht teaghráin iarratais (`?token=...`, `?apiKey=...`, `?api_key=...`, `?key=...`) nó trí na críochphointí tiomnaithe `/api/v1/vscode/{token}/...` atá doiciméadaithe thíos.
 
 ```bash
 # Athrangú (soláthraí clárlainne néil, nó nód soláthraí atá comhoiriúnach le OpenAI mar "<prefix>/<model>")
@@ -470,17 +520,17 @@ POST /v1/segment     { "content": "...", "return_chunks": true }
 # Cuardach Jina (s.jina.ai; ailiasanna soláthraí: jina-search, jina-ai, jina)
 POST /v1/search      { "query": "...", "provider": "jina-search" }
 
-# Modhnóireachtaí
+# Modhnóireacht
 POST /v1/moderations { "model": "omni-moderation-latest", "input": "..." }
 
-# TTS — seolann sé corp audio/mpeg (nó corp san fhormáid iarrtha)
+# TTS — seolann sé corp audio/mpeg (nó an fhormáid iarrtha) ar ais
 POST /v1/audio/speech { "model": "openai/tts-1", "input": "Hello", "voice": "alloy" }
 
-# Teastaíonn teanga agus guth ó Soniox TTS: is é "en" réamhshocrú `language`; má tá
-# guth ar iarraidh nó más ainm caighdeánach gutha OpenAI é (alloy, nova, …), úsáidtear "Adrian"
+# Teastaíonn teanga agus guth ó Soniox TTS: is é "en" réamhshocrú `language`; athraítear guth
+# atá ar iarraidh nó ainm caighdeánach gutha OpenAI (alloy, nova, …) go "Adrian"
 POST /v1/audio/speech { "model": "soniox/tts-rt-v1", "input": "Xin chào", "voice": "Adrian", "language": "vi" }
 
-# Eagarthóireacht íomhá (multipart)
+# Eagarthóireacht íomhá (ilpháirteach)
 POST /v1/images/edits  -F image=@input.png -F prompt="..." -F mask=@mask.png
 
 # Giniúint físe / ceoil (aitheantas samhla le réimír soláthraí)
@@ -488,27 +538,30 @@ POST /v1/videos/generations { "model": "runway/gen-3", "prompt": "..." }
 POST /v1/music/generations  { "model": "kie/suno-v4.0",   "prompt": "..." }
 ```
 
-> **Nóid soláthraí athrangaithe:** Déanann `POST /v1/rerank` ródú freisin chuig nóid soláthraí atá comhoiriúnach le OpenAI
-> (oMLX, vLLM, Infinity, TEI taobh thiar de gheata, …) agus a seoltar orthu mar `<node-prefix>/<model>`. Bíonn nóid
-> lúb-ais (`localhost`, `127.0.0.1`, `172.16.0.0/12`) incháilithe i gcónaí. Ní bhíonn nóid ar aon
+> **Nóid soláthraí athrangaithe:** Treoraíonn `POST /v1/rerank` iarratais freisin chuig nóid soláthraí atá comhoiriúnach le OpenAI
+> (oMLX, vLLM, Infinity, TEI taobh thiar de thairseach, …) agus a seoltar chucu mar `<node-prefix>/<model>`. Bíonn nóid
+> ais-lúbtha (`localhost`, `127.0.0.1`, `172.16.0.0/12`) incháilithe i gcónaí, mar a bhíonn óstainmneacha a
+> liostaíonn an t-oibreoir in `OMNIROUTE_LOCAL_PROVIDER_NODE_HOSTS` (m.sh. ainm seirbhíse Docker/Compose amhail
+> `http://reranker:8080/v1`; glaoitear orthu seo go díreach, agus ní trí `HTTP(S)_PROXY` ná trí
+> sheachfhreastalaí greamaithe naisc riamh). Ní bhíonn nóid ar aon
 > óstach eile — bosca LAN nó piara Tailscale — incháilithe ach amháin nuair a chumasaíonn an t-oibreoir
-> an bhratach ghné `RERANK_REMOTE_PROVIDER_NODES` **agus** nuair a chomhlíonann bun-URL an nóid polasaí
-> URL amach an tsoláthraí (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`);
-> ní dhéantar ródú riamh chuig óstaigh mheiteashonraí néil. Glaonn céim athrangaithe an innill chuimhne an bealach seo thar
-> lúb-ais, mar sin rialaíonn an riail chéanna `rerankProviderModel` sna socruithe Cuimhne.
+> an bhratach ghné `RERANK_REMOTE_PROVIDER_NODES` **agus** nuair a chomhlíonann bun-URL an nóid polasaí URL
+> amach an tsoláthraí (`OMNIROUTE_ALLOW_LOCAL_PROVIDER_URLS` / `OMNIROUTE_ALLOW_PRIVATE_PROVIDER_URLS`).
+> Glaonn céim athrangaithe an innill chuimhne ar an mbealach seo thar
+> ais-lúbadh, mar sin rialaíonn an riail chéanna `rerankProviderModel` sna socruithe Cuimhne.
 >
-> **Cruthanna freastalaí áitiúil:** Glaoitear an nód ag `<base>/v1/rerank` agus, i gcás 404, ag `<base>/rerank`
-> (Infinity, TEI). Iompraíonn an corp réamhtheachtach litriú Cohere/OpenAI (`documents`,
-> `return_documents`) agus litriú TEI (`texts`, `return_text`) araon, agus normalaítear an freagra réamhtheachtach
-> chuig imchlúdach Cohere: tagann `[{index, score, text}]` lom TEI, `{results: [{index, score}]}`
-> ó gheataí tanaí, agus `{data: [...]}` ar stíl Voyage ar ais chuig an gcliant mar
-> `{results: [{index, relevance_score, document?}]}`, sórtáilte de réir scóir agus teoranta do `top_n`.
+> **Cruthanna freastalaí áitiúil:** glaoitear ar an nód ag `<base>/v1/rerank` agus, i gcás 404, ag `<base>/rerank`
+> (Infinity, TEI). Bíonn idir litriú Cohere/OpenAI (`documents`,
+> `return_documents`) agus litriú TEI (`texts`, `return_text`) sa chorp réamhtheachtach, agus
+> normalófar an freagra réamhtheachtach go clúdach Cohere: tagann liosta lom TEI `[{index, score, text}]`,
+> `{results: [{index, score}]}` ó thairseacha tanaí, agus `{data: [...]}` ar nós Voyage ar ais chuig an gcliant mar
+> `{results: [{index, relevance_score, document?}]}`, sórtáilte de réir scóir agus teoranta ag `top_n`.
 
-> **Fionnachtain nóid soláthraí:** Feictear samhlacha ar nód soláthraí atá comhoiriúnach le OpenAI in `GET /v1/models`
-> faoi réimír an nóid. Faigheann rónna nach bhfuil meiteashonraí críochphointe acu (mar is gnách i liostaí áitiúla `/v1/models`)
-> `apiType` an nóid le hoidhreacht, ionas gur `type: "embedding"` iad samhlacha nóid `embeddings` agus gur
-> `type: "rerank"` iad samhlacha nóid `rerank` in ionad comhrá a úsáid mar réamhshocrú; bíonn tosaíocht fós ag
-> `supportedEndpoints` sainráite ar ró sioncronaithe nó curtha leis de láimh.
+> **Aimsiú nóid soláthraí:** feictear samhlacha ar nód soláthraí atá comhoiriúnach le OpenAI in `GET /v1/models`
+> faoi réimír an nóid. Faigheann sraitheanna nach bhfuil meiteashonraí críochphointe ar bith acu (mar is gnách i liostuithe áitiúla `/v1/models`)
+> `apiType` an nóid le hoidhreacht, mar sin bíonn `type: "embedding"` ag samhlacha nóid `embeddings` agus
+> `type: "rerank"` ag samhlacha nóid `rerank` seachas comhrá a úsáid mar réamhshocrú; bíonn tosaíocht fós ag
+> `supportedEndpoints` sainráite ar shraith shioncronaithe nó ar shraith a cuireadh leis de láimh.
 
 ### Bealaí Tiomnaithe Soláthraí
 
@@ -518,7 +571,7 @@ POST /v1/providers/{provider}/embeddings
 POST /v1/providers/{provider}/images/generations
 ```
 
-Cuirtear réimír an tsoláthraí leis go huathoibríoch má tá sé in easnamh. Tugann samhlacha neamh-chomhoiriúnacha `400` ar ais.
+Cuirtear réimír an tsoláthraí leis go huathoibríoch má bhíonn sé ar iarraidh. Tugann samhlacha nach meaitseálann `400` ar ais.
 
 ---
 
@@ -685,31 +738,31 @@ críochnú.
 
 ---
 
-## Úsáid féinseirbhíse (`/api/usage/om-usage`)
+## Úsáid féinfhreastail (`/api/usage/om-usage`)
 
-Is féidir le haon eochair API **a húsáid féin** agus a cuótaí féin a léamh — níl fíordheimhniú bainistíochta ag teastáil. Seo é an críochphointe a
+Is féidir le haon eochair API a húsáid agus a cuótaí **féin** a léamh — níl fíordheimhniú bainistíochta ag teastáil. Seo é an críochphointe a
 úsáideann cliant (CLI, painéal OmniCopilot) chun caiteachas sealbhóra eochrach a thaispeáint dó.
 
 ```bash
-# Foirm téacs (an conradh stairiúil — gnáth-théacs do theirminéal)
+# Foirm téacs (an conradh stairiúil — gnáth-théacs le haghaidh teirminéil)
 curl -H "Authorization: Bearer <your-api-key>" \
   http://localhost:20128/api/usage/om-usage
 
-# Foirm struchtúrtha — an méid a úsáideann UI
+# Foirm struchtúrtha — an méid a úsáideann comhéadan úsáideora
 curl -H "Authorization: Bearer <your-api-key>" \
   "http://localhost:20128/api/usage/om-usage?format=json"
 ```
 
-Ní mór **`allowUsageCommand`** a bheith cumasaithe don eochair (díchumasaithe de réir réamhshocraithe — déanann bainisteoir
-eochracha API an deais é a scoránú do gach eochair). Gan é, freagraíonn an críochphointe le `403`.
+Ní mór **`allowUsageCommand`** a bheith cumasaithe don eochair (díchumasaithe de réir réamhshocraithe — scoránaíonn
+bainisteoir eochracha API an deais é do gach eochair). Gan é, freagraíonn an críochphointe le `403`.
 
-Filleann `?format=json` cruth idirdhealaithe ionas nach léann glaoiteoir réimse sonraí ó
-dhiúltú riamh. Ar rath:
+Tugann `?format=json` cruth idirdhealaithe ar ais ionas nach léann glaoiteoir réimse sonraí ó
+dhiúltú choíche. Ar rath:
 
 ```jsonc
 {
   "allowed": true,
-  // i láthair nuair a roghnaigh an eochair teorainneacha úsáide in aghaidh na heochrach amháin (USD laethúil/seachtainiúil):
+  // i láthair ach amháin nuair a roghnaigh an eochair teorainneacha úsáide in aghaidh na heochrach (USD laethúil/seachtainiúil):
   "personal": {
     "dailySpentUsd": 1.25,
     "dailyLimitUsd": 5,
@@ -718,14 +771,14 @@ dhiúltú riamh. Ar rath:
     "weeklyLimitUsd": 20,
     "weeklyResetAtIso": "…" /* … */,
   },
-  // léargas ar chuóta an tsoláthraí roghnaithe, nó null nuair nach bhfuil aon rud i dtaisce fós:
+  // léargas cuóta an tsoláthraí roghnaithe, nó null nuair nach bhfuil aon rud sa taisce fós:
   "provider": {
     "connectionId": "…",
     "provider": "claude",
     "plan": "…",
     "quotas": {/* … */},
   },
-  // léargas gach ceangail, ionas gur féidir le UI roinnt soláthraithe a rindreáil taobh le taobh:
+  // léargas gach naisc, ionas gur féidir le comhéadan úsáideora roinnt soláthraithe a léiriú taobh le taobh:
   "providers": [
     { "connectionId": "…", "provider": "claude" /* … */ },
     { "provider": "codex" /* … */ },
@@ -733,13 +786,64 @@ dhiúltú riamh. Ar rath:
 }
 ```
 
-Ar dhiúltú (`401` droch-eochair / `403` gan chead), filleann an bealach céanna
-`{ "allowed": false, "error": { "message": "…" } }` — is staid éagsúil ó dhiúltú é `personal`/`provider`
-atá i láthair ach folamh (eochair ceadaithe, gan aon rud foghlamtha fós), agus is í an fhoirm JSON amháin
-a dhéanann idirdhealú eatarthu.
+Ar dhiúltú (`401` drocheochair / `403` gan chead), tugann an bealach céanna
+`{ "allowed": false, "error": { "message": "…" } }` ar ais — is staid éagsúil é `personal`/`provider`
+atá i láthair ach folamh (eochair ceadaithe, gan aon rud foghlamtha fós) ó dhiúltú, agus ní dhéanann ach an fhoirm JSON
+idirdhealú eatarthu.
 
-**Fíordheimhniú:** eochair API Bearer an ghlaoiteora féin, bailíochtaithe le `isValidApiKey` — ní hé seo
-an dromchla bainistíochta (`/api/keys/…`), a fhanann faoi chosaint `requireManagementAuth`.
+**Fíordheimhniú:** eochair API Bearer an ghlaoiteora féin, bailíochtaithe le `isValidApiKey` — ní hé seo an
+comhéadan bainistíochta (`/api/keys/…`), a fhanann faoi chosaint `requireManagementAuth`.
+
+### Céatadáin Chuóta Amha vs. Céatadáin Chuóta Coigeartaithe de réir Scoithphointe
+
+Agus `/api/usage/om-usage` á úsáid, ba cheart do ghlaoiteoirí an t-idirdhealú idir na
+céatadáin a chuirtear i láthair san **aschur gnáth-théacs** agus san **aschur struchtúrtha JSON** a thabhairt faoi deara:
+
+| Gné                     | Formáid gnáth-théacs (`/api/usage/om-usage` / `@@om-usage`)                                                         | Formáid JSON (`?format=json`)                                                          |
+| :---------------------- | :------------------------------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------- |
+| **Réimse aschuir**      | `NN% left` (m.sh., `20% left`)                                                                                      | `provider.quotas` / `providers[].quotas`                                               |
+| **Tomhas**              | **Liúntas inúsáidte coigeartaithe de réir scoithphointe**: acmhainn atá fágtha os cionn thairseach an scoithphointe | **Cuóta amh réamhtheachtach**: tomhas soláthraí neamhchoigeartaithe                    |
+| **Scálú scoithphointe** | Scálaithe trí `effectiveRemainingPercent()` ionas go léitear an cúlchiste cosanta mar `0% left`                     | Dada (luachanna léargais amha mar a thuairiscíonn an soláthraí iad)                    |
+| **Sonraí tairsí**       | Ionchorpraithe sa chéatadán a thaispeántar                                                                          | Stóráilte in `quotaWindowThresholds` de réir naisc (nó réamhshocruithe an fhreastalaí) |
+| **Príomhúsáideoir**     | CLIanna idirghníomhacha, leideanna teirminéil, oibreoirí daonna                                                     | Comhtháthuithe ríomhchláraithe, deaiseanna, anailísíocht, rianairí billeála            |
+
+#### Foirmle an Choigeartaithe Scoithphointe
+
+Tacaíonn OmniRoute le scoithphointí réamhghníomhacha cuóta chun ídiú réamhtheachtach a chosc (cumraithe trí
+`quotaWindowThresholds` an naisc, réamhshocruithe an tsoláthraí, nó socruithe domhanda athléimneachta). Nuair atá tairseach scoithphointe
+(m.sh., `cutoff = 25%`) gníomhach ar fhuinneog chuóta, ríomhann an rindreálaí téacs an liúntas atá fágtha mar seo:
+
+- Má tá `remaining <= cutoff`: tugtar `0%` ar ais.
+- Má tá `remaining > cutoff`: tugtar `((remaining - cutoff) / (100 - cutoff)) * 100` ar ais.
+
+Slánaíonn an t-aschur téacs formáidithe é seo go dtí an tslánuimhir is gaire (`Math.round(...)`).
+
+#### Sampla Léiritheach
+
+Samhlaigh fuinneog soláthraí ina bhfuil **60% d'úsáid amh** (agus dá bhrí sin **40% de chuóta amh fágtha**) agus
+tairseach chumraithe **25% mar scoithphointe don chuóta atá fágtha**:
+
+| Léiriú                         | Ríomh                                              | Fágtha  |             Úsáid Intuigthe             |
+| :----------------------------- | :------------------------------------------------- | :-----: | :-------------------------------------: |
+| **JSON amh (`?format=json`)**  | Léargas réamhtheachtach (`quotas[window]`)         | **40%** |                 **60%**                 |
+| **Formáid téacs (`NN% left`)** | `((40 - 25) / (100 - 25)) * 100 = (15 / 75) * 100` | **20%** | **80%** (má ríomhtar `100 - remaining`) |
+
+- **Cén fáth a léiríonn an téacs 20% fágtha:** As an 40% den chuóta fisiciúil atá fágtha sa chuntas, tá 25% curtha in áirithe ag an
+  bpolasaí scoithphointe. Níl fágtha ag an nglaoiteoir ach 15% as 75% den spás inúsáidte sula stopann an ródaire
+  den trácht a ródú chuig an nasc seo. Cinntíonn an scálú go gcomharthaíonn an nasc ídiú (`0% left`) go díreach nuair a
+  scoirfear den ródú.
+- **Cén fáth a gcaomhnaíonn JSON luachanna amha:** Tugann an pálasta JSON léargas beacht an tsoláthraí (`UsageSnapshot`) ar ais
+  ionas go mbeidh rochtain ag uirlisí seachtracha ar fhíorúsáid réamhtheachtach agus ar
+  `quotaWindowThresholds` ar leibhéal an naisc gan scálú caillteach ar thaobh an fhreastalaí.
+
+#### Treoir d'Aistriú Tomhaltóirí
+
+Má scríob comhtháthú seachtrach (amhail breiseán eagarthóra nó eisínteacht gníomhaire) an críochphointe téacs
+(`NN% left`) roimhe seo agus má ríomh sé an céatadán úsáidte mar `100 - NN`, ciallaíonn aistriú go `?format=json`:
+
+- Léireoidh léamh luachanna amha JSON an **tomhaltas réamhtheachtach iarbhír** (60% úsáidte sa sampla thuas).
+- Más mian leis an gcomhtháthú séimeantaic liúntais inúsáidte an chríochphointe téacs a chaomhnú, is féidir leis
+  foirmle éifeachtach an mhéid atá fágtha a mheas ar thaobh an chliaint trí `quotaWindowThresholds` a úsáid le haghaidh sáruithe ar leibhéal an naisc.
 
 ---
 
@@ -810,42 +914,78 @@ X-OmniRoute-No-Cache: true
 
 ## Deais & Bainistíocht
 
-Níl bealaí bainistíochta (`/api/*` seachas fíordheimhniú/logáil isteach phoiblí) údaraithe le
+Ní údaraítear bealaí bainistíochta (`/api/*` seachas fíordheimhniú/logáil isteach phoiblí) le
 gnáth-eochracha API tátail. Teaghlaigh dintiúr, scóip, agus samplaí curl:
 [Fíordheimhniú Bainistíochta](../guides/MANAGEMENT-AUTH.md).
 
 ### Fíordheimhniú
 
-| Críochphointe                 | Modh    | Cur Síos                             |
-| ----------------------------- | ------- | ------------------------------------ |
-| `/api/auth/login`             | POST    | Logáil isteach                       |
-| `/api/auth/logout`            | POST    | Logáil amach                         |
-| `/api/settings/require-login` | GET/PUT | Scoránaigh riachtanas logála isteach |
+| Críochphointe                 | Modh    | Cur Síos                                |
+| ----------------------------- | ------- | --------------------------------------- |
+| `/api/auth/login`             | POST    | Logáil isteach                          |
+| `/api/auth/logout`            | POST    | Logáil amach                            |
+| `/api/settings/require-login` | GET/PUT | Scoránaigh an riachtanas logála isteach |
 
 ### Bainistíocht Soláthraithe
 
-| Críochphointe                           | Modh                  | Cur Síos                                                                                                                                                                          |
-| --------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/providers`                        | GET/POST              | Liostaigh / cruthaigh soláthraithe                                                                                                                                                |
-| `/api/providers/[id]`                   | GET/PUT/DELETE        | Bainistigh soláthraí                                                                                                                                                              |
-| `/api/providers/[id]/test`              | POST                  | Tástáil nasc an tsoláthraí                                                                                                                                                        |
-| `/api/providers/[id]/models`            | GET                   | Liostaigh samhlacha an tsoláthraí                                                                                                                                                 |
-| `/api/providers/validate`               | POST                  | Bailíochtaigh cumraíocht an tsoláthraí                                                                                                                                            |
-| `/api/providers/bulk`                   | POST                  | Cuir eochracha API leis ar an mórchóir do sholáthraí AMHÁIN                                                                                                                       |
-| `/api/providers/import`                 | POST                  | Iompórtáil LIOSTA ilchineálach soláthraithe ó chomhad CSV/JSON parsáilte (#6836); torthaí maidir le teip pháirteach de réir ró                                                    |
-| `/api/provider-nodes*`                  | Éagsúil               | Bainistíocht nóid soláthraithe                                                                                                                                                    |
-| `/api/provider-models`                  | GET/POST/PATCH/DELETE | Samhlacha saincheaptha (cuir leis, nuashonraigh, folaigh/taispeáin, scrios)                                                                                                       |
-| `/api/provider-models/validate-and-add` | POST                  | Bailíochtú dian naisc, fíordheimhnithe ag an mbainistíocht agus roghnach, mar aon le clárú adamhach samhla saincheaptha; féach [Bailíochtú samhla](../guides/MODEL-VALIDATION.md) |
+| Críochphointe                           | Modh                      | Cur Síos                                                                                                                                                               |
+| --------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/providers`                        | GET/POST                  | Liostaigh / cruthaigh soláthraithe                                                                                                                                     |
+| `/api/providers/[id]`                   | GET/PUT/DELETE            | Bainistigh soláthraí                                                                                                                                                   |
+| `/api/providers/[id]/test`              | POST                      | Tástáil nasc an tsoláthraí                                                                                                                                             |
+| `/api/providers/[id]/models`            | GET                       | Liostaigh samhlacha an tsoláthraí                                                                                                                                      |
+| `/api/providers/validate`               | POST                      | Bailíochtaigh cumraíocht an tsoláthraí                                                                                                                                 |
+| `/api/providers/bulk`                   | POST                      | Cuir eochracha API leis ar an mórchóir le haghaidh soláthraí AMHÁIN                                                                                                    |
+| `/api/providers/import`                 | POST                      | Iompórtáil LIOSTA ilchineálach soláthraithe ó chomhad CSV/JSON parsáilte (#6836); torthaí teipe páirtí de réir ró                                                      |
+| `/api/provider-nodes*`                  | Éagsúil                   | Bainistíocht nóid soláthraí                                                                                                                                            |
+| `/api/provider-models`                  | GET/POST/PUT/PATCH/DELETE | Samhlacha saincheaptha agus sáruithe de réir samhla (cuir leis, nuashonraigh, folaigh/taispeáin, scrios)                                                               |
+| `/api/provider-models/validate-and-add` | POST                      | Bailíochtú dian naisc roghnach atá fíordheimhnithe don bhainistíocht agus clárú adamhach samhla saincheaptha; féach [Bailíochtú samhla](../guides/MODEL-VALIDATION.md) |
+
+I gcás samhlacha sioncronaithe/iompórtáilte, glacann `PUT /api/provider-models` le `provider`, `modelId`, agus
+`maxOutputTokenOverride`: socraíonn slánuimhir dheimhneach an uasteorainn láimhe ar chomharthaí aschuir, agus glanann `null`
+í chun an réamhshocrú a athbhunú. Tugann `GET /api/provider-models?provider=<provider>` na luachanna seo ar ais
+in `modelOutputOverrides`, lena n-áirítear samhlacha gan ró samhla saincheaptha. Úsáideann an sárú
+an cumas `max_output_tokens` ag am rite agus maireann sé tar éis athshioncronú samhla. Cuireann leathanach an
+tsoláthraí atá comhoiriúnach le OpenAI na rialtáin chéanna eagarthóireachta/glanta ar fáil agus marcálann sé samhlacha a bhfuil tacaíocht shainráite amhairc acu.
+
+Cuireann nóid shaincheaptha Chat Completions roghanna sainráite diúltaithe réasúnaithe in oiriúint don inneall réamhtheachtach. Roghnaíonn
+tástáil rathúil naisc rialtáin teimpléid comhrá go huathoibríoch do gach ID cruinn samhla
+a gcruthaíonn a iontráil `/models` luach aitheanta `owned_by`: `vllm`, `sglang`, nó `llamacpp`.
+Féadfaidh fillteáin thrédhearcacha atá comhoiriúnach le OpenAI iontráil bhunaidh na samhla a chaomhnú laistigh d’oibiacht neadaithe
+`openai`; leanann an bhrath suas le trí imchlúdach den sórt sin. Coinníonn samhlacha a bhfuil úinéireacht in easnamh, anaithnid, nó
+contrártha acu gnáthiompar OpenAI. Athúsáideann an bhrath an t-iarratas catalóige atá ann cheana,
+ní ghineann sé aon chomharthaí comhlánaithe, agus cuirtear ó bhail é nuair a athraíonn críochphointe an naisc.
+
+Chun an t-iompar a shocrú d’inneall nach nochtann na meiteashonraí sin, úsáid an API atá ann cheana
+le haghaidh nuashonrú páirteach soláthraí:
+
+```json
+{
+  "providerSpecificData": {
+    "reasoningControl": "chat-template"
+  }
+}
+```
+
+Seol an corp sin le `PUT /api/providers/<connection-id>`. Ar an nasc sin, seoltar iarracht shainráite
+réasúnaithe de `none` mar `chat_template_kwargs.thinking=false` agus
+`chat_template_kwargs.enable_thinking=false`. Fanann luachanna sainráite dúchasacha teimpléid údarásach
+mura gcuireann riail réasúnaithe ar thaobh an fhreastalaí iarracht i bhfeidhm. Ní bhíonn feidhm ag an socrú ach amháin nuair a
+sheolann nasc saincheaptha atá comhoiriúnach le OpenAI corp Chat Completions; coinníonn iarratais Responses agus gnáthsholáthraithe
+a gcruth dúchasach iarratais. Socraigh `reasoningControl` mar `openai` chun gnáth-thraschur OpenAI
+`reasoning_effort` a chur i bhfeidhm, nó fág ar lár é/socraigh mar `null` é chun brath uathoibríoch a úsáid.
+
+Díchumasaíonn iarratais aicmitheora uathmhóid Claude Code smaointeoireacht dhúchasach de réir réamhshocraithe nuair nach mbíonn aon rialuithe réasúnaíochta sainráite iontu. Úsáideann an bhrath marcóir córais an aicmitheora in iarratais i bhformáid Claude, seachas ainmneacha samhlacha ná teorainneacha comhlánaithe. Coinníonn rialuithe sainráite i gcorp an iarratais, ceanntásca iarrachta/smaointeoireachta a dtacaítear leo, rialacha ródaithe, agus iarracht réitithe na samhla an tosaíocht atá acu cheana féin. Coinníonn an dá chéim den aicmitheoir a gcuid leid, teorainneacha comhlánaithe, seichimh stad, agus fíorbhreitheanna ceada réamhtheachtacha; is féidir leis an dara céim fós an réasúnaíocht infheicthe iarrtha a tháirgeadh mar ghnáth-théacs.
 
 ### Sreafaí OAuth
 
-| Críochphointe                    | Modh    | Cur Síos                                       |
+| Críochphointe                    | Modh    | Cur síos                                       |
 | -------------------------------- | ------- | ---------------------------------------------- |
 | `/api/oauth/[provider]/[action]` | Éagsúil | OAuth a bhaineann go sonrach leis an soláthraí |
 
 ### Ródú & Cumraíocht
 
-| Críochphointe         | Modh     | Cur Síos                                 |
+| Críochphointe         | Modh     | Cur síos                                 |
 | --------------------- | -------- | ---------------------------------------- |
 | `/api/models/alias`   | GET/POST | Ailiasanna samhlacha                     |
 | `/api/models/catalog` | GET      | Gach samhail de réir soláthraí + cineáil |
@@ -855,32 +995,73 @@ gnáth-eochracha API tátail. Teaghlaigh dintiúr, scóip, agus samplaí curl:
 
 ### Úsáid & Anailísíocht
 
-| Críochphointe                    | Modh            | Cur síos                                                                                                                                                                                                                                                                                                                                                                     |
-| -------------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/usage/history`             | GET             | Stair úsáide                                                                                                                                                                                                                                                                                                                                                                 |
-| `/api/usage/logs`                | GET             | Logaí úsáide                                                                                                                                                                                                                                                                                                                                                                 |
-| `/api/usage/request-logs`        | GET             | Logaí ar leibhéal na hiarrata                                                                                                                                                                                                                                                                                                                                                |
-| `/api/usage/[connectionId]`      | GET             | Úsáid de réir naisc                                                                                                                                                                                                                                                                                                                                                          |
-| `/api/usage/token-limits`        | GET/POST/DELETE | Buiséid teorann comharthaí de réir eochair API                                                                                                                                                                                                                                                                                                                               |
-| `/api/usage/model-latency-stats` | GET             | Comhiomlán rollach folaigh de réir soláthraí/samhla (meán/p50/p95/p99, ráta ratha); scagairí: `windowHours`/`minSamples`/`maxRows`/`provider`/`model` (#6873)                                                                                                                                                                                                                |
-| `/api/usage/cache-health`        | GET             | Achoimre ar shláinte thaisce na leideanna thar `call_logs` — cóimheas scríofa/léite, dáileadh p50/p90/p99 de mhéid na scríbhneoireachta, comhchruinniú tromscríbhneoireachta, miondealú de réir samhla, agus breithiúnas `healthy`/`degraded`/`thrash`/`no-data`; paraiméadair iarratais `range` (`1h`\|`24h`\|`7d`\|`30d`, réamhshocrú `24h`) agus `model` roghnach (#8827) |
+| Críochphointe                    | Modh            | Cur síos                                                                                                                                                                                                                                                                                                                                                              |
+| -------------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/usage/history`             | GET             | Stair úsáide                                                                                                                                                                                                                                                                                                                                                          |
+| `/api/usage/logs`                | GET             | Logaí úsáide                                                                                                                                                                                                                                                                                                                                                          |
+| `/api/usage/request-logs`        | GET             | Logaí ar leibhéal an iarratais                                                                                                                                                                                                                                                                                                                                        |
+| `/api/usage/[connectionId]`      | GET             | Úsáid de réir ceangail                                                                                                                                                                                                                                                                                                                                                |
+| `/api/usage/token-limits`        | GET/POST/DELETE | Buiséid teorann comharthaí de réir eochair API                                                                                                                                                                                                                                                                                                                        |
+| `/api/usage/model-latency-stats` | GET             | Comhiomlán rollach moille de réir soláthraí/samhla (meán/p50/p95/p99, ráta ratha); scagairí: `windowHours`/`minSamples`/`maxRows`/`provider`/`model` (#6873)                                                                                                                                                                                                          |
+| `/api/usage/cache-health`        | GET             | Achoimre ar shláinte taisce na leid thar `call_logs` — cóimheas scríofa/léite, dáileadh mhéid na scríbhneoireachta p50/p90/p99, comhchruinniú scríbhneoireachta troma, miondealú de réir samhla, agus breithiúnas `healthy`/`degraded`/`thrash`/`no-data`; paraiméadair iarratais `range` (`1h`\|`24h`\|`7d`\|`30d`, réamhshocrú `24h`) agus `model` roghnach (#8827) |
+
+### Ceadanna eochrach API
+
+Nuashonraíonn `PATCH /api/keys/{id}` ceadanna eochrach atá ann cheana. Cosúil le gach bealach `/api/keys*`, teastaíonn údarú bainistíochta uaidh (féach [Fíordheimhniú Bainistíochta](../guides/MANAGEMENT-AUTH.md)), seachas eochair tátail. Ná seol ach na réimsí is mian leat a athrú; diúltaítear d'iarratas nach bhfuil aon cheann acu ann le `No valid fields to update`. Sainítear na réimsí a nglactar leo le `updateKeyPermissionsSchema` in `src/shared/validation/schemas/keys.ts`.
+
+| Réimse                                      | Cineál                                                                          | Nótaí                                                                                                                                                                    |
+| ------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`                                      | teaghrán, 1-200 carachtar                                                       |                                                                                                                                                                          |
+| `isActive`                                  | Booleach                                                                        |                                                                                                                                                                          |
+| `isBanned`                                  | Booleach                                                                        |                                                                                                                                                                          |
+| `expiresAt`                                 | dáta-am ISO 8601 nó `null`                                                      | Glanann `null` an dáta éaga                                                                                                                                              |
+| `modelAccessMode`                           | `all` \| `restricted`                                                           | Ní mór do `allowedModels` a bheith folamh nuair is é `all` an mód                                                                                                        |
+| `allowedModels`, `blockedModels`            | eagar teaghrán, suas le 1000                                                    |                                                                                                                                                                          |
+| `allowedCombos`                             | eagar teaghrán, suas le 500                                                     | Rialaíonn sé na teaglamaí is féidir leis an eochair a ghlaoch; rialaítear samhlacha díreacha le `modelAccessMode` / `allowedModels`                                      |
+| `connectionAccessMode`                      | `all` \| `restricted`                                                           | Ní mór do `allowedConnections` a bheith neamhfholamh nuair is `restricted` atá ann agus folamh nuair is `all` atá ann                                                    |
+| `allowedConnections`                        | eagar UUIDanna, suas le 100                                                     |                                                                                                                                                                          |
+| `allowAutoCombos`                           | Booleach                                                                        | Diúltaíonn `false` d'iarratais ar shamhlacha `auto/*` leis an eochair seo; ceadaítear eochracha nár shocraigh é riamh                                                    |
+| `catalogScope`                              | `all` \| `combos` \| `models`                                                   | An méid a liostaíonn `GET /v1/models` don eochair seo (teaglamaí amháin, samhlacha amháin, nó an dá cheann); ní athraíonn sé an méid is féidir leis an eochair a ghlaoch |
+| `noLog`, `autoResolve`                      | Booleach                                                                        |                                                                                                                                                                          |
+| `throttleDelayMs`                           | slánuimhir, 0-300000                                                            |                                                                                                                                                                          |
+| `maxSessions`                               | slánuimhir, 0-10000                                                             |                                                                                                                                                                          |
+| `rateLimits`                                | eagar de `{ limit, window }` (slánuimhreacha deimhneacha, suas le 50) nó `null` | Glanann `null` na teorainneacha                                                                                                                                          |
+| `accessSchedule`                            | réad sceidil nó `null`                                                          | Glanann `null` an sceideal                                                                                                                                               |
+| `scopes`                                    | eagar teaghrán, suas le 32                                                      |                                                                                                                                                                          |
+| `allowedEndpoints`                          | eagar teaghrán, suas le 20                                                      |                                                                                                                                                                          |
+| `streamDefaultMode`                         | `legacy` \| `json`                                                              |                                                                                                                                                                          |
+| `cacheDefaultMode`                          | `legacy` \| `bypass`                                                            | Féach [Seachaint taisce de réir eochrach](#per-key-cache-bypass)                                                                                                         |
+| `compressionEnabled`                        | Booleach                                                                        |                                                                                                                                                                          |
+| `codexServiceMode`                          | ceann de mhóid seirbhíse Codex                                                  |                                                                                                                                                                          |
+| `disableNonPublicModels`                    | Booleach                                                                        |                                                                                                                                                                          |
+| `allowUsageCommand`                         | boolean                                                                         |                                                                                                                                                                          |
+| `usageLimitEnabled`                         | boolean                                                                         |                                                                                                                                                                          |
+| `dailyUsageLimitUsd`, `weeklyUsageLimitUsd` | number >= 0 nó `null`                                                           |                                                                                                                                                                          |
+| `chaosModeEnabled`                          | boolean                                                                         |                                                                                                                                                                          |
+
+```bash
+curl -X PATCH "$OMNIROUTE_URL/api/keys/$KEY_ID" \
+  -H "Authorization: Bearer <management-credential>" \
+  -H "Content-Type: application/json" \
+  -d '{ "allowAutoCombos": false, "catalogScope": "combos" }'
+```
 
 ### Socruithe
 
-| Críochphointe                         | Modh          | Cur síos                                                                                                                                                                                                                          |
-| ------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/settings`                       | GET/PUT/PATCH | Socruithe ginearálta                                                                                                                                                                                                              |
-| `/api/settings/proxy`                 | GET/PUT       | Cumraíocht sheachfhreastalaí an líonra                                                                                                                                                                                            |
-| `/api/settings/proxy/test`            | POST          | Tástáil nasc an tseachfhreastalaí                                                                                                                                                                                                 |
-| `/api/settings/ip-filter`             | GET/PUT       | Liosta ceadaithe/liosta coiscthe IP                                                                                                                                                                                               |
-| `/api/settings/thinking-budget`       | GET/PUT       | Mód athscríofa **iarrata** don bhuiséad smaointeoireachta/réasúnaíochta (seoladh tríd / baint uathoibríoch / saincheaptha / oiriúnaitheach). Neamhspleách ar chomhbhrú. Féach [THINKING_BUDGET.md](../guides/THINKING_BUDGET.md). |
-| `/api/settings/system-prompt`         | GET/PUT       | Leid chórais dhomhanda                                                                                                                                                                                                            |
-| `/api/settings/compression`           | GET/PUT       | Cumraíocht chomhbhrúite dhomhanda                                                                                                                                                                                                 |
-| `/api/settings/purge-request-history` | POST          | Glan rónna loga na n-iarratas agus déantáin áitiúla loga glaonna                                                                                                                                                                  |
+| Críochphointe                         | Modh          | Cur síos                                                                                                                                                                                                         |
+| ------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/api/settings`                       | GET/PUT/PATCH | Socruithe ginearálta                                                                                                                                                                                             |
+| `/api/settings/proxy`                 | GET/PUT       | Cumraíocht seachfhreastalaí líonra                                                                                                                                                                               |
+| `/api/settings/proxy/test`            | POST          | Tástáil an nasc seachfhreastalaí                                                                                                                                                                                 |
+| `/api/settings/ip-filter`             | GET/PUT       | Liosta ceadaithe/liosta coiscthe IP                                                                                                                                                                              |
+| `/api/settings/thinking-budget`       | GET/PUT       | Mód athscríofa **iarratais** smaointeoireachta/réasúnaithe (pas tríd / baint uathoibríoch / saincheaptha / oiriúnaitheach). Neamhspleách ar chomhbhrú. Féach [THINKING_BUDGET.md](../guides/THINKING_BUDGET.md). |
+| `/api/settings/system-prompt`         | GET/PUT       | Leid chórais dhomhanda                                                                                                                                                                                           |
+| `/api/settings/compression`           | GET/PUT       | Cumraíocht chomhbhrúite dhomhanda                                                                                                                                                                                |
+| `/api/settings/purge-request-history` | POST          | Glan rónna loga iarratas agus déantáin loga glaonna áitiúla                                                                                                                                                      |
 
 ### Comhthéacs & Comhbhrú
 
-| Críochphointe                          | Modh           | Cur Síos                                                                                                  |
+| Críochphointe                          | Modh           | Cur síos                                                                                                  |
 | -------------------------------------- | -------------- | --------------------------------------------------------------------------------------------------------- |
 | `/api/compression/preview`             | POST           | Réamhamharc ar chomhbhrú off/lite/standard/aggressive/ultra/RTK/stacked                                   |
 | `/api/compression/language-packs`      | GET            | Liostaigh na pacáistí teanga Caveman atá ar fáil                                                          |
@@ -889,42 +1070,53 @@ gnáth-eochracha API tátail. Teaghlaigh dintiúr, scóip, agus samplaí curl:
 | `/api/context/rtk/config`              | GET/PUT        | Socruithe a bhaineann go sonrach le RTK, lena n-áirítear scagairí saincheaptha agus coinneáil aschuir amh |
 | `/api/context/rtk/filters`             | GET            | Catalóg scagairí RTK agus diagnóisic scagairí saincheaptha                                                |
 | `/api/context/rtk/test`                | POST           | Rith réamhamharc/tástáil RTK ar phálasta téacs                                                            |
-| `/api/context/rtk/raw-output/[id]`     | GET            | Léigh aschur amh folaithe coinnithe de réir aitheantas an phointeora                                      |
-| `/api/context/combos`                  | GET/POST       | Liosta/cruthú teaglamaí comhbhrú                                                                          |
-| `/api/context/combos/[id]`             | GET/PUT/DELETE | Sonraí/nuashonrú/scriosadh teaglama comhbhrú                                                              |
-| `/api/context/combos/[id]/assignments` | GET/PUT        | Sann teaglamaí comhbhrú do theaglamaí ródúcháin                                                           |
-| `/api/context/analytics`               | GET            | Ailias anailísíochta comhbhrú                                                                             |
+| `/api/context/rtk/raw-output/[id]`     | GET            | Léigh aschur amh coinnithe, folaithe de réir aitheantas an phointeora                                     |
+| `/api/context/combos`                  | GET/POST       | Liosta/cruthú teaglamaí comhbhrúite                                                                       |
+| `/api/context/combos/[id]`             | GET/PUT/DELETE | Sonraí/nuashonrú/scriosadh teaglama comhbhrúite                                                           |
+| `/api/context/combos/[id]/assignments` | GET/PUT        | Sann teaglamaí comhbhrúite do theaglamaí ródaithe                                                         |
+| `/api/context/analytics`               | GET            | Ailias anailísíochta comhbhrúite                                                                          |
 
 ### Monatóireacht
 
-| Críochphointe                        | Modh       | Cur Síos                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ------------------------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/api/sessions`                      | GET        | Rianú seisiún gníomhach                                                                                                                                                                                                                                                                                                                                                                                                                |
-| `/api/rate-limits`                   | GET        | Teorainneacha ráta de réir cuntais                                                                                                                                                                                                                                                                                                                                                                                                     |
-| `/api/monitoring/health`             | GET        | Seiceáil sláinte + achoimre soláthraithe (`catalogCount`, `configuredCount`, `activeCount`, `monitoredCount`). Áirítear `credentialHealth` san amharc bainistíochta: scálaigh taisce tóireadóra, `failedConnections` nuair atá `failed>0`, agus `staleDbNonOkCount` (`test_status` greamaitheach SQLite, ní an tomhsaire). Féach [MONITORING_GUIDE.md](../ops/MONITORING_GUIDE.md#credentialhealth-probe-cache-vs-sqlite-test_status). |
-| `/api/cache/stats`                   | GET/DELETE | Staitisticí taisce / glanadh                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `/api/modality-bridge/stats`         | GET        | `attempts` sa chuimhne, éachtaí/`bridged`, teipeanna, amais taisce, `totalLatencyMs`, `latencySamples`, `averageLatencyMs` atá bunaithe ar líon na samplaí, agus am na húsáide deireanaí (athshocraítear ar atosú; fíordheimhniú bainistíochta)                                                                                                                                                                                        |
-| `/api/modality-bridge/video/runtime` | GET        | Seiceáil dhian ar aisfhillteán iontaofa roimh fhíordheimhniú/tóraíocht bhainistíochta; infhaighteacht agus leaganacha sláintithe FFmpeg/ffprobe (no-store)                                                                                                                                                                                                                                                                             |
-| `/api/modality-bridge/video/extract` | POST       | Bróicéir inmheánach beart ar aisfhillteán iontaofa agus fíordheimhnithe; ionchur 50 MiB, scuaine theoranta/aschur 32 MiB, acmhainn `503`, dícheangal `499`, sprioc-am `504`; ní API poiblí uaslódála é                                                                                                                                                                                                                                 |
+| Críochphointe                        | Modh       | Cur síos                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `/api/sessions`                      | GET        | Rianú seisiún gníomhach                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `/api/rate-limits`                   | GET        | Teorainneacha ráta in aghaidh an chuntais                                                                                                                                                                                                                                                                                                                                                                                                        |
+| `/api/monitoring/health`             | GET        | Seiceáil sláinte + achoimre soláthraithe (`catalogCount`, `configuredCount`, `activeCount`, `monitoredCount`). Áirítear `credentialHealth` san amharc bainistíochta: luachanna scálacha taisce tóireadóra, `failedConnections` nuair atá `failed>0`, agus `staleDbNonOkCount` (`test_status` greamaitheach SQLite, ní an tomhsaire). Féach [MONITORING_GUIDE.md](../ops/MONITORING_GUIDE.md#credentialhealth-probe-cache-vs-sqlite-test_status). |
+| `/api/cache/stats`                   | GET/DELETE | Staitisticí taisce / glanadh                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `/api/modality-bridge/stats`         | GET        | `attempts` sa chuimhne, éachtaí/`bridged`, teipeanna, amas taisce, `totalLatencyMs`, `latencySamples`, `averageLatencyMs` bunaithe ar líon na samplaí, agus am na húsáide is déanaí (athshocraítear ar atosú; fíordheimhniú bainistíochta)                                                                                                                                                                                                       |
+| `/api/modality-bridge/video/runtime` | GET        | Seiceáil dhocht ar aisfhillteán iontaofa roimh fhíordheimhniú/tóraíocht bhainistíochta; infhaighteacht agus leaganacha sláintithe FFmpeg/ffprobe (gan stóráil)                                                                                                                                                                                                                                                                                   |
+| `/api/modality-bridge/video/extract` | POST       | Bróicéir beart inmheánach fíordheimhnithe ar aisfhillteán iontaofa; ionchur 50 MiB, scuaine theoranta/aschur 32 MiB, acmhainn `503`, dícheangal `499`, sprioc-am `504`; ní API poiblí uaslódála é                                                                                                                                                                                                                                                |
 
 ### Cúltaca & Easpórtáil/Iompórtáil
 
-| Críochphointe               | Modh | Cur Síos                                                  |
-| --------------------------- | ---- | --------------------------------------------------------- |
-| `/api/db-backups`           | GET  | Liostaigh na cúltacaí atá ar fáil                         |
-| `/api/db-backups`           | PUT  | Cruthaigh cúltaca de láimh                                |
-| `/api/db-backups`           | POST | Athchóirigh ó chúltaca sonrach                            |
-| `/api/db-backups/export`    | GET  | Íoslódáil an bunachar sonraí mar chomhad .sqlite          |
-| `/api/db-backups/import`    | POST | Uaslódáil comhad .sqlite chun an bunachar sonraí a ionadú |
-| `/api/db-backups/exportAll` | GET  | Íoslódáil cúltaca iomlán mar chartlann .tar.gz            |
+| Críochphointe               | Modh | Cur síos                                                                                              |
+| --------------------------- | ---- | ----------------------------------------------------------------------------------------------------- |
+| `/api/db-backups`           | GET  | Liostaigh na cúltacaí atá ar fáil                                                                     |
+| `/api/db-backups`           | PUT  | Cruthaigh cúltaca de láimh                                                                            |
+| `/api/db-backups`           | POST | Athchóirigh ó chúltaca ar leith                                                                       |
+| `/api/db-backups/export`    | GET  | Íoslódáil an bunachar sonraí mar chomhad .sqlite                                                      |
+| `/api/db-backups/import`    | POST | Uaslódáil comhad .sqlite chun an bunachar sonraí a ionadú (ní dhéanann `?dryRun=true` ach bailíochtú) |
+| `/api/db-backups/exportAll` | GET  | Íoslódáil an cúltaca iomlán mar chartlann .tar.gz                                                     |
+
+Dáileann `/api/db-backups/export`, `/api/db-backups/exportAll` agus `/api/settings/export-json`
+gach dintiúr stóráilte, mar sin teastaíonn seisiún an deais nó an CLI áitiúil uathu (nó logáil
+isteach díchumasaithe). Faigheann eochracha API d'aon raon agus comharthaí rochtana `oma_` `403`.
+
+`/api/db-backups/export`, `/api/db-backups/exportAll` and `/api/settings/export-json` hand out
+every stored credential, so they require the dashboard session or the local CLI (or login
+disabled). API keys of any scope and `oma_` access tokens get `403`. The restores hold the same
+boundary: `POST /api/db-backups/import` (`dryRun=true` included), `POST /api/db-backups` (restore
+by id) and `POST /api/settings/import-json` replace the live database or settings, so a machine
+credential gets `403` there too; `omniroute sync import` sends the local CLI credential.
 
 ### Sioncronú Néalríomhaireachta
 
-| Críochphointe          | Modh    | Cur Síos                                     |
-| ---------------------- | ------- | -------------------------------------------- |
-| `/api/sync/cloud`      | Éagsúil | Oibríochtaí sioncronaithe néalríomhaireachta |
-| `/api/sync/initialize` | POST    | Tosaigh an sioncronú                         |
-| `/api/cloud/*`         | Éagsúil | Bainistíocht néalríomhaireachta              |
+| Críochphointe          | Modhanna | Cur síos                       |
+| ---------------------- | -------- | ------------------------------ |
+| `/api/sync/cloud`      | Éagsúla  | Oibríochtaí sioncronaithe néil |
+| `/api/sync/initialize` | POST     | Tosaigh an sioncronú           |
+| `/api/cloud/*`         | Éagsúla  | Bainistíocht néil              |
 
 ### Tolláin
 
@@ -943,9 +1135,9 @@ gnáth-eochracha API tátail. Teaghlaigh dintiúr, scóip, agus samplaí curl:
 | `/api/cli-tools/codex-settings`    | GET  | Stádas Codex CLI                    |
 | `/api/cli-tools/droid-settings`    | GET  | Stádas Droid CLI                    |
 | `/api/cli-tools/openclaw-settings` | GET  | Stádas OpenClaw CLI                 |
-| `/api/cli-tools/runtime/[toolId]`  | GET  | Timpeallacht reatha ghinearálta CLI |
+| `/api/cli-tools/runtime/[toolId]`  | GET  | Timpeallacht reatha CLI ghinearálta |
 
-Áirítear iad seo i bhfreagraí CLI: `installed`, `runnable`, `command`, `commandPath`, `runtimeMode`, `reason`.
+Áirítear sna freagraí CLI: `installed`, `runnable`, `command`, `commandPath`, `runtimeMode`, `reason`.
 
 ### Gníomhairí ACP
 
@@ -953,40 +1145,40 @@ gnáth-eochracha API tátail. Teaghlaigh dintiúr, scóip, agus samplaí curl:
 | ----------------- | ------ | ---------------------------------------------------------------------- |
 | `/api/acp/agents` | GET    | Liostaigh gach gníomhaire braite (ionsuite + saincheaptha) lena stádas |
 | `/api/acp/agents` | POST   | Cuir gníomhaire saincheaptha leis nó athnuaigh an taisce braite        |
-| `/api/acp/agents` | DELETE | Bain gníomhaire saincheaptha de réir paraiméadar iarratais `id`        |
+| `/api/acp/agents` | DELETE | Bain gníomhaire saincheaptha de réir pharaiméadar fiosrúcháin `id`     |
 
-Áirítear i bhfreagra GET `agents[]` (id, name, binary, version, installed, protocol, isCustom) agus `summary` (total, installed, notFound, builtIn, custom).
+Áirítear sa fhreagra GET `agents[]` (id, name, binary, version, installed, protocol, isCustom) agus `summary` (total, installed, notFound, builtIn, custom).
 
 ### Athléimneacht & Teorainneacha Ráta
 
-| Críochphointe                     | Modh      | Cur Síos                                                                                                                |
-| --------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `/api/resilience`                 | GET/PATCH | Faigh/nuashonraigh scuaine na n-iarratas, tréimhse shuaimhnis an naisc, scoradán an tsoláthraí, agus socruithe feithimh |
-| `/api/resilience/reset`           | POST      | Athshocraigh scoradáin chiorcaid na soláthraithe                                                                        |
-| `/api/resilience/model-cooldowns` | GET       | Liostaigh frithdhúnadh gníomhach de réir (soláthraí, nasc, samhail), sórtáilte de réir an ama atá fágtha                |
-| `/api/resilience/model-cooldowns` | DELETE    | Glan frithdhúnadh samhla — corp `{provider, model}` nó `{all: true}` chun gach rud a ghlanadh                           |
-| `/api/rate-limits`                | GET       | Stádas teorann ráta de réir cuntais                                                                                     |
-| `/api/rate-limit`                 | GET       | Cumraíocht dhomhanda teorann ráta                                                                                       |
+| Críochphointe                     | Modh      | Cur Síos                                                                                                     |
+| --------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------ |
+| `/api/resilience`                 | GET/PATCH | Faigh/nuashonraigh ciú na n-iarratas, tréimhse mhoillithe naisc, scoradán soláthraí, agus socruithe feithimh |
+| `/api/resilience/reset`           | POST      | Athshocraigh scoradáin chiorcaid soláthraithe                                                                |
+| `/api/resilience/model-cooldowns` | GET       | Liostaigh frithdhúnta gníomhacha de réir (soláthraí, nasc, samhail), sórtáilte de réir an ama atá fágtha     |
+| `/api/resilience/model-cooldowns` | DELETE    | Glan frithdhúnadh samhla — corp `{provider, model}` nó `{all: true}` chun gach rud a scriosadh               |
+| `/api/rate-limits`                | GET       | Stádas teorann ráta de réir cuntais                                                                          |
+| `/api/rate-limit`                 | GET       | Cumraíocht dhomhanda teorann ráta                                                                            |
 
-> Éilíonn na ceithre bhealach `/api/resilience/*` go léir **fíordheimhniú bainistíochta** (`requireManagementAuth`). Féach [Athléimneacht (leathnaithe)](#resilience-extended) chun miondealú iomlán a fháil ar scoradán soláthraí i gcomparáid le tréimhse shuaimhnis naisc agus frithdhúnadh samhla.
+> Éilíonn na ceithre bhealach `/api/resilience/*` go léir **fíordheimhniú bainistíochta** (`requireManagementAuth`). Féach [Athléimneacht (leathnaithe)](#resilience-extended) le haghaidh miondealú iomlán ar scoradán soláthraí i gcomparáid le tréimhse mhoillithe naisc agus frithdhúnadh samhla.
 
 ### Meastóireachtaí
 
-| Críochphointe | Modh     | Cur Síos                                              |
-| ------------- | -------- | ----------------------------------------------------- |
-| `/api/evals`  | GET/POST | Liostaigh tacair mheastóireachta / rith meastóireacht |
+| Críochphointe | Modh     | Cur Síos                                                  |
+| ------------- | -------- | --------------------------------------------------------- |
+| `/api/evals`  | GET/POST | Liostaigh sraitheanna meastóireachta / rith meastóireacht |
 
-### Polasaithe
+### Beartais
 
-| Críochphointe   | Modh            | Cur Síos                       |
-| --------------- | --------------- | ------------------------------ |
-| `/api/policies` | GET/POST/DELETE | Bainistigh polasaithe ródaithe |
+| Críochphointe   | Modh            | Cur Síos                     |
+| --------------- | --------------- | ---------------------------- |
+| `/api/policies` | GET/POST/DELETE | Bainistigh beartais ródaithe |
 
 ### Comhlíonadh
 
-| Críochphointe               | Modh | Cur Síos                                   |
-| --------------------------- | ---- | ------------------------------------------ |
-| `/api/compliance/audit-log` | GET  | Loga iniúchta comhlíonta (an N deireanach) |
+| Críochphointe               | Modh | Cur Síos                             |
+| --------------------------- | ---- | ------------------------------------ |
+| `/api/compliance/audit-log` | GET  | Loga iniúchta comhlíonta (N deiridh) |
 
 ### v1beta (Comhoiriúnach le Gemini)
 
@@ -995,21 +1187,23 @@ gnáth-eochracha API tátail. Teaghlaigh dintiúr, scóip, agus samplaí curl:
 | `/v1beta/models`           | GET  | Liostaigh samhlacha i bhformáid Gemini |
 | `/v1beta/models/{...path}` | POST | Críochphointe Gemini `generateContent` |
 
-Léiríonn na críochphointí seo formáid API Gemini do chliaint a éilíonn comhoiriúnacht dhúchasach le SDK Gemini.
+Léiríonn na críochphointí seo formáid API Gemini do chliaint a mbíonn comhoiriúnacht dhúchasach le Gemini SDK de dhíth orthu.
 
 ### APIanna Inmheánacha / Córais
 
 | Críochphointe            | Modh | Cur Síos                                                             |
 | ------------------------ | ---- | -------------------------------------------------------------------- |
-| `/api/init`              | GET  | Seiceáil thúsaithe an fheidhmchláir (úsáidtear ar an gcéad rith)     |
-| `/api/tags`              | GET  | Clibeanna samhlacha atá comhoiriúnach le Ollama (do chliaint Ollama) |
-| `/api/restart`           | POST | Atosú rianúil an fhreastalaí a thionscnamh                           |
-| `/api/shutdown`          | POST | Múchadh rianúil an fhreastalaí a thionscnamh                         |
-| `/api/system/env/repair` | POST | Athróga timpeallachta soláthraí OAuth a dheisiú                      |
+| `/api/init`              | GET  | Seiceáil thúsaithe an fheidhmchláir (úsáidte ar an gcéad rith)       |
+| `/api/tags`              | GET  | Clibeanna samhla atá comhoiriúnach le Ollama (do chliaint Ollama)    |
+| `/api/restart`           | POST | Spreag atosú séimh an fhreastalaí                                    |
+| `/api/shutdown`          | POST | Spreag múchadh séimh an fhreastalaí                                  |
+| `/api/system/env/repair` | POST | Deisigh athróga timpeallachta soláthraí OAuth                        |
+| `/api/system/version`    | GET  | Leagan reatha/is déanaí, stádas nuashonraithe, cainéal eisiúna       |
+| `/api/system/version`    | POST | Tosaigh nuashonrú atá feasach ar imscaradh chuig an leagan is déanaí |
 
-> **Nóta:** Úsáideann an córas na críochphointí seo go hinmheánach nó úsáidtear iad ar mhaithe le comhoiriúnacht le cliaint Ollama. De ghnáth, ní ghlaonn úsáideoirí deiridh orthu.
+> **Nóta:** Úsáideann an córas na críochphointí seo go hinmheánach nó úsáidtear iad le haghaidh comhoiriúnacht le cliaint Ollama. De ghnáth ní ghlaonn úsáideoirí deiridh orthu.
 
-### Deisiú Thimpeallacht OAuth _(v3.6.1+)_
+### Deisiú Timpeallachta OAuth _(v3.6.1+)_
 
 ```bash
 POST /api/system/env/repair
@@ -1020,7 +1214,7 @@ Content-Type: application/json
 }
 ```
 
-Deisíonn sé athróga timpeallachta OAuth atá in easnamh nó truaillithe do sholáthraí ar leith. Tugann sé an méid seo a leanas ar ais:
+Deisíonn sé athróga timpeallachta OAuth atá ar iarraidh nó truaillithe do sholáthraí sonrach. Filleann sé:
 
 ```json
 {
@@ -1029,6 +1223,43 @@ Deisíonn sé athróga timpeallachta OAuth atá in easnamh nó truaillithe do sh
   "backupPath": "/home/user/.omniroute/backups/env-repair-2026-04-11.bak"
 }
 ```
+
+### Leagan agus Cainéal Eisiúna
+
+```bash
+GET /api/system/version
+```
+
+Bealach bainistíochta lúb-ais amháin (fíordheimhniú riarthóra). Tugann sé an leagan atá ag rith, an leagan
+foilsithe is déanaí agus stádas an nuashonraithe uathoibríoch ar ais. Is réimsí breiseacha iad `releaseChannel` agus `channels`
+(ó 3.8.54); coinníonn `channel` a bhrí — an mód imlonnaithe a úsáideann nuashonraitheoir an deais
+(`npm`, `source` nó `docker-compose`).
+
+```json
+{
+  "current": "3.8.52",
+  "latest": "3.8.52",
+  "updateAvailable": false,
+  "channel": "npm",
+  "autoUpdateSupported": true,
+  "autoUpdateError": null,
+  "news": null,
+  "releaseChannel": "latest",
+  "channels": { "latest": "3.8.52", "next": "3.8.53-rc.1" }
+}
+```
+
+- `releaseChannel` — cainéal npm na tógála atá ag rith: `nightly` i gcás leaganacha `-nightly.*`,
+  `next` i gcás réamhleaganacha eile (`-rc.*`, `-beta.*`, `-alpha.*`), `lts` i gcás leagan cobhsaí de
+  mhórleagan níos sine ná `channels.latest`, agus `latest` murach sin. Na rialacha céanna le
+  `scripts/release/dist-tag.mjs`, a roghnaíonn an dist-tag npm tráth foilsithe.
+- `channels` — ceann foilsithe gach dist-tag, ó `npm view omniroute dist-tags` (cúltaca HTTP na clárlainne),
+  curtha i dtaisce leis an TTL 10 nóiméad céanna le `latest`. Bíonn `latest` i láthair i gcónaí
+  (téann sé siar go dtí an réimse `latest`, agus ansin `"unavailable"`); ní bhíonn `next`, `nightly` ná `lts` le feiceáil
+  ach amháin nuair atá an dist-tag sin ann. Déanann iarratas `Cache-Control: no-cache` an dá chuardach a athnuachan.
+
+Tá cur síos ar mhúnla na gcainéal (`latest` = v3 go dtí GA 4.0, `next` = rc, `nightly` = tógálacha `develop`,
+`lts` = paistí v3 tar éis GA 4.0) in `docs/ops/RELEASE_STRATEGY.md`.
 
 ---
 
@@ -1240,19 +1471,19 @@ Síntiúis crúca gréasáin amach do theagmhais OmniRoute (cur i gcrích iarrat
 
 ---
 
-## Eochracha Cláraithe (Uathbhainistíocht)
+## Eochracha Cláraithe (Uathbhainistiú)
 
-Úsáideann an fochóras uathbhainistíochta eochracha iad chun eochracha API a eisiúint agus a rothlú i leith soláthraí/cuntais tacaíochta, le cuótaí laethúla/uairiúla.
+Úsáideann an fochóras uathbhainistithe eochracha iad chun eochracha API a eisiúint agus a rothlú i gcoinne soláthraí/cuntais taca, le cuótaí laethúla/uairiúla.
 
-| Modh   | Conair                                | Cur síos                                                                                                                                                                                                                           |
-| ------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| GET    | `/api/v1/registered-keys`             | Liostaigh eochracha cláraithe (réimír mascaithe amháin)                                                                                                                                                                            |
-| POST   | `/api/v1/registered-keys`             | Eisigh eochair chláraithe nua — corp: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Tugtar an eochair amh ar ais **uair amháin**. Tugtar `429` ar ais má dhiúltaítear de bharr cuóta. |
-| GET    | `/api/v1/registered-keys/[id]`        | Aisghabh meiteashonraí eochrach cláraithe (gan ábhar amh)                                                                                                                                                                          |
-| DELETE | `/api/v1/registered-keys/[id]`        | Cúlghair eochair chláraithe                                                                                                                                                                                                        |
-| POST   | `/api/v1/registered-keys/[id]/revoke` | Críochphointe sainráite cúlghairme (an éifeacht chéanna le DELETE)                                                                                                                                                                 |
+| Modh   | Conair                                | Cur Síos                                                                                                                                                                                                                                   |
+| ------ | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| GET    | `/api/v1/registered-keys`             | Liostaigh eochracha cláraithe (réimír folaithe amháin)                                                                                                                                                                                     |
+| POST   | `/api/v1/registered-keys`             | Eisigh eochair chláraithe nua — corp: `{name, provider?, accountId?, idempotencyKey?, expiresAt?, dailyBudget?, hourlyBudget?}`. Seoltar an eochair amh ar ais **uair amháin**. Seoltar `429` ar ais má dhiúltaítear mar gheall ar chuóta. |
+| GET    | `/api/v1/registered-keys/[id]`        | Aisghabh meiteashonraí eochrach cláraithe (gan aon ábhar amh)                                                                                                                                                                              |
+| DELETE | `/api/v1/registered-keys/[id]`        | Cúlghair eochair chláraithe                                                                                                                                                                                                                |
+| POST   | `/api/v1/registered-keys/[id]/revoke` | Críochphointe sainráite cúlghairme (an éifeacht chéanna le DELETE)                                                                                                                                                                         |
 
-**Fíordheimhniú:** Eochair API Bearer (`isAuthenticated`). Féach freisin `/v1/quotas/check` agus `/v1/issues/report`.
+**Fíordheimhniú:** seisiún bainistíochta/eochair API (`requireManagementAuth`) — an chosaint chéanna agus atá ag `/api/keys`: seisiún deais, an comhartha CLI áitiúil, nó eochair API a bhfuil scóip `manage`/`admin` aici; faigheann eochracha API atá le haghaidh tátail amháin `403`. Féach freisin `/v1/quotas/check` agus `/v1/issues/report`.
 
 ---
 

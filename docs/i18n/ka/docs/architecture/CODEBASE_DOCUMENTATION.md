@@ -434,10 +434,10 @@ server/
 
 ---
 
-## 4. `open-sse/` — სტრიმინგის ძრავის სამუშაო სივრცე
+## 4. `open-sse/` — ნაკადური დამუშავების ძრავის სამუშაო სივრცე
 
-ცალკე npm სამუშაო სივრცე, რომელიც გამოქვეყნებულია, როგორც `@omniroute/open-sse`. პასუხისმგებელია მოთხოვნების
-დამუშავებაზე, შემსრულებლებზე, მთარგმნელებზე, სერვისებზე, ტრანსფორმერსა და MCP სერვერზე.
+ცალკე npm სამუშაო სივრცე, რომელიც ქვეყნდება როგორც `@omniroute/open-sse`. პასუხისმგებელია მოთხოვნების
+დამუშავებაზე, შემსრულებლებზე, მთარგმნელებზე, სერვისებზე, ტრანსფორმატორსა და MCP სერვერზე.
 
 ```
 open-sse/
@@ -446,58 +446,61 @@ open-sse/
 ├── tsconfig.json
 ├── types.d.ts
 ├── config/                 პროვაიდერების რეესტრები, სათაურების პროფილები, იდენტობა, …
-├── handlers/               მოთხოვნების დამმუშავებლები (ჩატი, ემბედინგები, აუდიო, სურათი, …)
-├── executors/              პროვაიდერებისთვის სპეციფიკური 108 HTTP შემსრულებელი
-├── translator/             ფორმატების კონვერტაცია (OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro)
-├── transformer/            Responses API ↔ Chat Completions ნაკადის ტრანსფორმერი
+├── handlers/               მოთხოვნების დამმუშავებლები (ჩატი, ემბედინგები, აუდიო, გამოსახულება, …)
+├── executors/              პროვაიდერების 150 შემსრულებელი მოდული (შემსრულებლის კლასები + თითოეული პროვაიდერის დამხმარეები)
+├── translator/             ფორმატების გარდაქმნა (OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro)
+├── transformer/            Responses API ↔ Chat Completions ნაკადის ტრანსფორმატორი
 ├── services/               80-ზე მეტი სერვისის მოდული (კომბინაციები, სარეზერვო გადართვა, კვოტები, იდენტობა, …)
-├── utils/                  სტრიმინგის დამხმარეები, TLS კლიენტი, AWS SigV4, პროქსირებული fetch, …
-└── mcp-server/             MCP სერვერი (3 ტრანსპორტი, 33 მოქმედების არე, 110 ხელსაწყო)
+├── utils/                  ნაკადური დამუშავების დამხმარეები, TLS კლიენტი, AWS SigV4, პროქსირებული fetch, …
+└── mcp-server/             MCP სერვერი (3 ტრანსპორტი, 33 წვდომის სფერო, 110 ინსტრუმენტი)
 ```
 
 ### 4.1 `open-sse/handlers/`
 
-| დამმუშავებელი           | დანიშნულება                                                                                              |
-| ----------------------- | -------------------------------------------------------------------------------------------------------- |
-| `chatCore.ts`           | ჩატის ძირითადი კონვეიერი (კეში, სიხშირის შეზღუდვა, კომბინირებული მარშრუტიზაცია, შემსრულებლის გამოძახება) |
-| `responsesHandler.ts`   | OpenAI Responses API-ის შესვლის წერტილი                                                                  |
-| `embeddings.ts`         | ემბედინგები                                                                                              |
-| `imageGeneration.ts`    | სურათების გენერაცია                                                                                      |
-| `audioSpeech.ts`        | ტექსტის მეტყველებად გარდაქმნა                                                                            |
-| `audioTranscription.ts` | მეტყველების ტექსტად გარდაქმნა                                                                            |
-| `videoGeneration.ts`    | ვიდეოების გენერაცია                                                                                      |
-| `musicGeneration.ts`    | მუსიკის გენერაცია                                                                                        |
-| `rerank.ts`             | ხელახალი რანჟირება                                                                                       |
-| `moderations.ts`        | მოდერაცია                                                                                                |
-| `search.ts`             | ვებში ძიება                                                                                              |
-| `sseParser.ts`          | SSE მოვლენების პარსერი                                                                                   |
-| `usageExtractor.ts`     | ზედა დონის ნაკადებიდან ტოკენების რაოდენობის ამოღება                                                      |
-| `responseSanitizer.ts`  | პროვაიდერისთვის სპეციფიკური ხმაურის მოცილება                                                             |
-| `responseTranslator.ts` | პროვაიდერის პასუხსა და მთარგმნელის ფენას შორის დამაკავშირებელი შრე                                       |
+| დამმუშავებელი           | დანიშნულება                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------------- |
+| `chatCore.ts`           | ჩატის მთავარი კონვეიერი (კეში, სიხშირის შეზღუდვა, კომბინირებული მარშრუტიზაცია, შემსრულებლის გამოძახება) |
+| `responsesHandler.ts`   | OpenAI Responses API-ის შესვლის წერტილი                                                                 |
+| `embeddings.ts`         | ემბედინგები                                                                                             |
+| `imageGeneration.ts`    | გამოსახულების გენერაცია                                                                                 |
+| `audioSpeech.ts`        | ტექსტიდან მეტყველების გენერაცია                                                                         |
+| `audioTranscription.ts` | მეტყველებიდან ტექსტის გენერაცია                                                                         |
+| `videoGeneration.ts`    | ვიდეოს გენერაცია                                                                                        |
+| `musicGeneration.ts`    | მუსიკის გენერაცია                                                                                       |
+| `rerank.ts`             | ხელახალი რანჟირება                                                                                      |
+| `moderations.ts`        | მოდერაცია                                                                                               |
+| `search.ts`             | ვებძიება                                                                                                |
+| `sseParser.ts`          | SSE მოვლენების პარსერი                                                                                  |
+| `usageExtractor.ts`     | ზემდგომი ნაკადებიდან ტოკენების რაოდენობების ამოღება                                                     |
+| `responseSanitizer.ts`  | პროვაიდერისთვის სპეციფიკური ხმაურის მოცილება                                                            |
+| `responseTranslator.ts` | პროვაიდერის პასუხსა და მთარგმნელ ფენას შორის დამაკავშირებელი შრე                                        |
 
 ### 4.2 `open-sse/executors/`
 
-პროვაიდერის 108 შემსრულებელი, რომელთაგან თითოეული აფართოებს `BaseExecutor`-ს (`base.ts`):
+ზედა დონის 150 შემსრულებელი მოდული (`*.ts`, გარდა `base.ts`-ისა, `index.ts`-ისა და ტესტებისა — რაოდენობას
+`npm run check:docs-counts` ზომავს). შემსრულებლის თითოეული კლასი აფართოებს `BaseExecutor`-ს (`base.ts`),
+პირდაპირ ან `DefaultExecutor`-ის ან სხვა შემსრულებლის მეშვეობით; დარჩენილი მოდულები თითოეული პროვაიდერისთვის
+განკუთვნილი დამხმარეებია (ინსტრუმენტების სქემები, fetch/TTS ადაპტერები, თავისებურებების დამმუშავებლები). შემსრულებლებს შორისაა:
 
 `antigravity`, `azure-openai`, `blackbox-web`, `cliproxyapi`,
 `chatgpt-web-codex`, `cloudflare-ai`, `codex`, `commandCode`, `cursor`, `default`, `devin-cli`,
 `muse-spark-web`, `nlpcloud`, `opencode`, `perplexity-web`, `petals`,
 `pollinations`, `qoder`, `vertex`, `devin-desktop`, აგრეთვე `claudeIdentity.ts`
-(იდენტობის საზიარო დამხმარე) და `index.ts` (რეესტრი).
+(იდენტობის საერთო დამხმარე) და `index.ts` (რეესტრი).
 
 > შენიშვნა: აქ ჩამოუთვლელ პროვაიდერებს ემსახურება `default.ts` ზოგადი
-> OpenAI-თან თავსებადი შემსრულებლის გამოყენებით. პროვაიდერების სრული კატალოგი (355 პროვაიდერი) განთავსებულია
+> OpenAI-თან თავსებადი შემსრულებლის გამოყენებით. პროვაიდერების სრული კატალოგი (372 პროვაიდერი) მდებარეობს
 > `src/shared/constants/providers.ts`-ში.
 
 ### 4.3 `open-sse/translator/`
 
-ცენტრალური კვანძისა და განშტოებების პრინციპზე დაფუძნებული თარგმნა (OpenAI ცენტრალური კვანძია).
+ცენტრ-და-სხივის ტიპის თარგმნა (OpenAI არის ცენტრი).
 
-- **მოთხოვნების 9 მთარგმნელი** (`translator/request/`):
+- **მოთხოვნის 9 მთარგმნელი** (`translator/request/`):
   `antigravity-to-openai`, `claude-to-gemini`, `claude-to-openai`,
   `gemini-to-openai`, `openai-responses`, `openai-to-claude`,
   `openai-to-cursor`, `openai-to-gemini`, `openai-to-kiro`.
-- **პასუხების 9 მთარგმნელი** (`translator/response/`):
+- **პასუხის 9 მთარგმნელი** (`translator/response/`):
   `claude-to-openai`, `cursor-to-openai`, `gemini-to-claude`, `gemini-to-openai`,
   `kiro-to-openai`, `openai-responses`, `openai-to-antigravity`,
   `openai-to-claude`.
@@ -505,7 +508,7 @@ open-sse/
   `claudeHelper`, `geminiHelper`, `geminiToolsSanitizer`, `maxTokensHelper`,
   `openaiHelper`, `responsesApiHelper`, `schemaCoercion`, `toolCallHelper`, აგრეთვე
   დამხმარეების ტესტები.
-- **სურათების დამხმარეები** (`translator/image/sizeMapper.ts`).
+- **გამოსახულების დამხმარეები** (`translator/image/sizeMapper.ts`).
 - ზედა დონე: `bootstrap.ts`, `formats.ts`, `registry.ts`, `index.ts`.
 
 ### 4.4 `open-sse/transformer/`
@@ -517,35 +520,35 @@ open-sse/
 
 მთავარი კომპონენტები (სრული სია იხილეთ `open-sse/services/`-ში):
 
-| საკითხი                     | ფაილები                                                                                                                                                                                                                                                  |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| კომბინირებული მარშრუტიზაცია | `combo.ts` (19 სტრატეგია), `comboConfig.ts`, `comboMetrics.ts`, `comboManifestMetrics.ts`, `comboAgentMiddleware.ts`                                                                                                                                     |
-| ავტომატური Combo ძრავა      | `autoCombo/` — `engine.ts`, `scoring.ts`, `taskFitness.ts`, `virtualFactory.ts`, `modePacks.ts`, `autoPrefix.ts`, `persistence.ts`, `providerDiversity.ts`, `providerRegistryAccessor.ts`, `routerStrategy.ts`, `selfHealing.ts`, `index.ts`             |
-| მდგრადობა                   | `accountFallback.ts` (დაყოვნების პერიოდი + ბლოკირება), `errorClassifier.ts`, `requestRejectedStreak.ts`, `emergencyFallback.ts`, `rateLimitManager.ts`, `rateLimitSemaphore.ts`, `accountSemaphore.ts`, `accountSelector.ts`                             |
-| კვოტები                     | `quotaMonitor.ts`, `quotaPreflight.ts`, `bailianQuotaFetcher.ts`, `codexQuotaFetcher.ts`, `deepseekQuotaFetcher.ts`, `openrouterQuotaFetcher.ts`, `openrouterFreeWindow.ts`, `llmgatewayQuotaFetcher.ts`, `crofUsageFetcher.ts`, `antigravityCredits.ts` |
-| ქეშირება                    | `reasoningCache.ts`, `searchCache.ts`, `signatureCache.ts`, `requestDedup.ts`                                                                                                                                                                            |
-| მარშრუტიზაციის ინტელექტი    | `intentClassifier.ts`, `taskAwareRouter.ts`, `backgroundTaskDetector.ts`, `volumeDetector.ts`, `wildcardRouter.ts`, `workflowFSM.ts`, `specificityDetector.ts`, `specificityRules.ts`, `specificityTypes.ts`                                             |
-| მოდელების დამუშავება        | `modelCapabilities.ts`, `modelDeprecation.ts`, `modelFamilyFallback.ts`, `modelStrip.ts`, `model.ts`, `provider.ts`, `providerRequestDefaults.ts`, `providerCostData.ts`, `payloadRules.ts`                                                              |
-| შეკუმშვა                    | `compression/` — შეკუმშვის ძრავის სრული დაკავშირება                                                                                                                                                                                                      |
-| ტოკენი + სესია              | `tokenRefresh.ts`, `sessionManager.ts`, `apiKeyRotator.ts`, `contextManager.ts`, `contextHandoff.ts`, `systemPrompt.ts`, `roleNormalizer.ts`, `responsesInputSanitizer.ts`, `toolSchemaSanitizer.ts`, `toolLimitDetector.ts`, `thinkingBudget.ts`        |
-| დონე / მანიფესტი            | `tierResolver.ts`, `tierConfig.ts`, `tierDefaults.json`, `tierTypes.ts`, `manifestAdapter.ts`                                                                                                                                                            |
-| IP / ქსელი                  | `ipFilter.ts`, `webSearchFallback.ts`                                                                                                                                                                                                                    |
-| პაკეტები                    | `batchProcessor.ts`                                                                                                                                                                                                                                      |
-| გამოყენება                  | `usage.ts`                                                                                                                                                                                                                                               |
+| საკითხი                  | ფაილები                                                                                                                                                                                                                                                  |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Combo მარშრუტიზაცია      | `combo.ts` (19 სტრატეგია), `comboConfig.ts`, `comboMetrics.ts`, `comboManifestMetrics.ts`, `comboAgentMiddleware.ts`                                                                                                                                     |
+| Auto Combo ძრავა         | `autoCombo/` — `engine.ts`, `scoring.ts`, `taskFitness.ts`, `virtualFactory.ts`, `modePacks.ts`, `autoPrefix.ts`, `persistence.ts`, `providerDiversity.ts`, `providerRegistryAccessor.ts`, `routerStrategy.ts`, `selfHealing.ts`, `index.ts`             |
+| მდგრადობა                | `accountFallback.ts` (მოცდის პერიოდი + ბლოკირება), `errorClassifier.ts`, `requestRejectedStreak.ts`, `emergencyFallback.ts`, `rateLimitManager.ts`, `rateLimitSemaphore.ts`, `accountSemaphore.ts`, `accountSelector.ts`                                 |
+| კვოტები                  | `quotaMonitor.ts`, `quotaPreflight.ts`, `bailianQuotaFetcher.ts`, `codexQuotaFetcher.ts`, `deepseekQuotaFetcher.ts`, `openrouterQuotaFetcher.ts`, `openrouterFreeWindow.ts`, `llmgatewayQuotaFetcher.ts`, `crofUsageFetcher.ts`, `antigravityCredits.ts` |
+| ქეშირება                 | `reasoningCache.ts`, `searchCache.ts`, `signatureCache.ts`, `requestDedup.ts`                                                                                                                                                                            |
+| მარშრუტიზაციის ინტელექტი | `intentClassifier.ts`, `taskAwareRouter.ts`, `backgroundTaskDetector.ts`, `volumeDetector.ts`, `wildcardRouter.ts`, `workflowFSM.ts`, `specificityDetector.ts`, `specificityRules.ts`, `specificityTypes.ts`                                             |
+| მოდელების დამუშავება     | `modelCapabilities.ts`, `modelDeprecation.ts`, `modelFamilyFallback.ts`, `modelStrip.ts`, `model.ts`, `provider.ts`, `providerRequestDefaults.ts`, `providerCostData.ts`, `payloadRules.ts`                                                              |
+| შეკუმშვა                 | `compression/` — შეკუმშვის ძრავის სრული დაკავშირება                                                                                                                                                                                                      |
+| ტოკენი + სესია           | `tokenRefresh.ts`, `sessionManager.ts`, `apiKeyRotator.ts`, `contextManager.ts`, `contextHandoff.ts`, `systemPrompt.ts`, `roleNormalizer.ts`, `responsesInputSanitizer.ts`, `toolSchemaSanitizer.ts`, `toolLimitDetector.ts`, `thinkingBudget.ts`        |
+| დონე / მანიფესტი         | `tierResolver.ts`, `tierConfig.ts`, `tierDefaults.json`, `tierTypes.ts`, `manifestAdapter.ts`                                                                                                                                                            |
+| IP / ქსელი               | `ipFilter.ts`, `webSearchFallback.ts`                                                                                                                                                                                                                    |
+| პაკეტები                 | `batchProcessor.ts`                                                                                                                                                                                                                                      |
+| გამოყენება               | `usage.ts`                                                                                                                                                                                                                                               |
 
 ### 4.6 `open-sse/mcp-server/`
 
-- **110 უნიკალური ინსტრუმენტი**, დაკავშირებული `server.ts`-ში (45 კანონიკური ინსტრუმენტი `schemas/tools.ts`-ში +
-  მეხსიერების, უნარების, GitHub-ის უნარების, პულის, გეიმიფიკაციის, დანამატის, Notion-ის, Obsidian-ის,
-  ლოკალური კორპუსისა და შეკუმშვის მოდულები — გაერთიანებული რაოდენობა დათვლილია `countUniqueMcpTools`-ის მიერ).
+- **110 უნიკალური ხელსაწყო**, დაკავშირებული `server.ts`-ში (45 კანონიკური ხელსაწყო `schemas/tools.ts`-ში +
+  მეხსიერების, უნარების, GitHub-უნარების, პულის, გეიმიფიკაციის, პლაგინის, Notion-ის, Obsidian-ის,
+  ლოკალური კორპუსისა და შეკუმშვის მოდულები — გაერთიანება დათვლილია `countUniqueMcpTools`-ით).
 - **3 ტრანსპორტი**: stdio, HTTP Streamable, SSE.
-- შესრულების დროს მოქმედებს **33 არე** — საბაზო სია მოცემულია `src/shared/constants/mcpScopes.ts`-ში, სრული ნაკრები კი თითოეული ინსტრუმენტის მოდულის მიერ გამოცხადებული არეების გაერთიანებაა.
-- აუდიტის ცხრილი: `mcp_tool_audit` (ივსება `audit.ts`-ის მიერ).
+- **33 მოქმედების სფერო**, რომლებიც შესრულების დროს კონტროლდება — საბაზისო სია მოცემულია `src/shared/constants/mcpScopes.ts`-ში, სრული ნაკრები კი თითოეული ხელსაწყოს მოდულის მიერ გამოცხადებული მოქმედების სფეროების გაერთიანებაა.
+- აუდიტის ცხრილი: `mcp_tool_audit` (ივსება `audit.ts`-ით).
 - ფაილები: `server.ts`, `index.ts`, `httpTransport.ts`, `audit.ts`, `scopeEnforcement.ts`,
   `runtimeHeartbeat.ts`, `descriptionCompressor.ts`, `schemas/{tools, a2a, audit, index}.ts`,
   `tools/{advancedTools, compressionTools, memoryTools, skillTools}.ts`,
   ასევე ტესტები `__tests__/`-ში.
-- ინსტრუმენტების სრული კატალოგისთვის იხილეთ [MCP-SERVER.md](../frameworks/MCP-SERVER.md).
+- ხელსაწყოების სრული კატალოგისთვის იხილეთ [MCP-SERVER.md](../frameworks/MCP-SERVER.md).
 
 ### 4.7 `open-sse/config/`
 
@@ -553,10 +556,10 @@ open-sse/
 `providerHeaderProfiles.ts`), მოდელების რეესტრები თითოეული ფორმატისთვის (`audioRegistry.ts`,
 `embeddingRegistry.ts`, `imageRegistry.ts`, `moderationRegistry.ts`,
 `musicRegistry.ts`, `rerankRegistry.ts`, `searchRegistry.ts`, `videoRegistry.ts`),
-იდენტობის დამხმარე საშუალებები (`codexIdentity.ts`, `codexInstructions.ts`,
+იდენტობის დამხმარე კომპონენტები (`codexIdentity.ts`, `codexInstructions.ts`,
 `anthropicHeaders.ts`, `antigravityUpstream.ts`, `antigravityModelAliases.ts`,
 `cliFingerprints.ts`, `toolCloaking.ts`, `defaultThinkingSignature.ts`),
-ავტორიზაციის მონაცემების დამხმარე საშუალებები (`credentialLoader.ts`, `codexClient.ts`) და ღრუბლოვანი
+ავტორიზაციის მონაცემების დამხმარე კომპონენტები (`credentialLoader.ts`, `codexClient.ts`) და ღრუბლოვანი
 ადაპტერები (`azureAi.ts`, `bedrock.ts`, `datarobot.ts`, `glmProvider.ts`,
 `maritalk.ts`, `oci.ts`, `petals.ts`, `runway.ts`, `sap.ts`, `watsonx.ts`,
 `ollamaModels.ts`, `errorConfig.ts`, `constants.ts`, `registryUtils.ts`).
@@ -656,7 +659,7 @@ bin/
 
 ## 8. `scripts/`
 
-დანიშნულების მიხედვით ორგანიზებულია 6 ქვეცნობარად.
+დანიშნულების მიხედვით ორგანიზებულია 6 ქვე-საქაღალდედ.
 
 - **`scripts/build/`** — `build-next-isolated.mjs`, `prepublish.ts`,
   `prepare-electron-standalone.mjs`, `pack-artifact-policy.ts`,

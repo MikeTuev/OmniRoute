@@ -13,23 +13,25 @@
 
 # 🚀 OmniRoute — 무료 AI 게이트웨이
 
-<img src="./docs/diagrams/readme-hero.svg" width="100%" alt="OmniRoute — 코딩을 멈추지 마세요. 모든 AI 도구 → 358개 공급자 — 150개 이상 무료 — 단일 엔드포인트를 통해. Claude Code, Codex, Cursor, Cline, Copilot 및 Antigravity를 자동 대체 기능으로 무료 Claude / GPT / Gemini로. RTK + Caveman 스택 압축으로 15–95% 토큰 절약 (평균 ~89%) — 한도에 도달할 일이 없습니다. 358개 AI 공급자 · 150개 이상 무료 티어 · 월 ~16.2억 무료 토큰 · 19가지 라우팅 전략 · 시작 비용 $0."/>
+<img src="./docs/diagrams/readme-hero.svg" width="100%" alt="OmniRoute — 코딩을 멈추지 마세요. 모든 AI 도구 → 372개 제공업체 — 150개 이상 무료 — 하나의 엔드포인트로 연결. Claude Code, Codex, Cursor, Cline, Copilot 및 Antigravity를 자동 폴백과 함께 무료 Claude / GPT / Gemini로 연결합니다. RTK + Caveman 다중 압축으로 토큰을 15~95%(평균 약 89%) 절약하여 한도에 도달하지 않습니다. 372개 AI 제공업체 · 150개 이상의 무료 티어 · 월 약 16억 2천만 개 무료 토큰 · 19가지 라우팅 전략 · $0로 시작."/>
 
 </div>
 
 <div align="center">
 
-## 💰 월 ~1.62B 무료 토큰
+## 💰 타사 무료 티어에서 월 ~1.62B 토큰
 
 </div>
 
-> 무료 티어를 직접 조합하는 일은 고통스럽습니다. 수십 개의 SDK, 수십 개의 사용량 제한이 있는 데다 실제로 얼마나 사용할 수 있는지조차 알기 어렵습니다. OmniRoute는 **35개의 반복 풀 키에 걸친 489개의 무료 티어 항목**을 분류하고, **공개된 월간 예산이 0보다 큰 17개 풀과 모델별 Groq 한도 5개**를 바탕으로 토큰 수치를 계산하며, 공유 풀은 중복 계산하지 않습니다. 지역 신원 확인을 거쳐야만 사용할 수 있는 할당량(현재: ModelScope)은 별도로 표시되며, 지역 신원 확인 후 제공되는 +~6M은 주요 수치에 절대 합산하지 않습니다. 결과는 대시보드(`/dashboard/free-tiers`)에서 계속 확인할 수 있습니다.
+> **자체 제공업체 계정을 사용하세요.** 이는 개별적으로 이용 자격을 갖춘 타사 무료 티어를 합산한 추정치이며, OmniRoute가 제공하는 토큰이 아닙니다. 가입하고, 필요한 경우 자격 증명을 발급받은 다음, 사용할 수 있는 제공업체를 연결하세요. 한도, 가용성 및 이용 약관은 각 제공업체가 관리합니다.
+>
+> 무료 티어를 수동으로 조합하는 일은 번거롭습니다. 수십 개의 SDK, 수십 개의 사용량 제한, 그리고 실제로 얼마나 사용할 수 있는지조차 알기 어렵습니다. OmniRoute는 **35개의 반복 제공 풀 키에 걸친 485개의 무료 티어 항목**을 카탈로그화하며, **공개된 월간 예산이 양수인 17개 풀과 모델별 Groq 한도 5개**를 기준으로 토큰 수치를 계산하고 공유 풀을 기준으로 중복을 제거합니다. 지역 신원 확인을 거쳐야만 열리는 할당량(현재: ModelScope)은 별도로 표시되며, 지역 신원 확인 뒤 이용 가능한 +~6M은 주요 수치에 절대 합산되지 않습니다. 결과는 대시보드(`/dashboard/free-tiers`)에서 계속 확인할 수 있습니다.
 
-<img src="./docs/diagrams/free-tier-budget.svg" width="100%" alt="OmniRoute 무료 티어 예산 카드: 매월 안정적으로 ~1.62B개의 무료 토큰, 가입 크레딧을 포함하면 첫 달에는 최대 ~2.22B개를 하나의 엔드포인트에서 이용할 수 있으며, 문서화된 35개의 반복 풀 키가 분류된 489개의 무료 티어 항목을 포괄합니다. 공유 풀마다 한 번만 계산하는 정직한 풀 중복 제거 방식 — 공개된 월간 토큰 예산이 0보다 큰 17개의 반복 풀과 모델별 Groq 한도 5개를 포함합니다. 약관 위험 카탈로그에서 13개 제공업체는 회피 대상으로 표시되므로 사용 여부는 직접 결정할 수 있습니다. 예산 막대에는 Mistral 1B, Nara 210M, LLM7 150M, xKiro 150M, Groq 30M(모델별 한도 5개) 및 더 작은 풀들이 포함됩니다. 또한 첫 달 가입 크레딧과 토큰 한도가 없는 영구 무료 제공업체는 주요 수치를 부풀리지 않도록 별도로 표시됩니다. /dashboard/free-tiers에서 실시간 사용량/잔여량을 확인할 수 있습니다."/>
+<img src="./docs/diagrams/free-tier-budget.svg" width="100%" alt="OmniRoute 무료 티어 예산 카드: 매월 안정적으로 ~1.62B개의 무료 토큰, 가입 크레딧을 포함하면 첫 달에는 최대 ~2.22B개. 하나의 엔드포인트 뒤에서 카탈로그화된 무료 티어 항목 485개를 포괄하는 문서화된 반복 제공 풀 키 35개 기반. 정직한 풀 중복 제거 계산 — 공유 풀은 각각 한 번만 계산하며, 공개된 월간 토큰 예산이 양수인 반복 제공 풀 17개와 모델별 Groq 한도 5개를 포함합니다. 이용 약관 위험 카탈로그에서는 제공업체 13개가 피해야 할 대상으로 표시되므로 사용 여부는 직접 결정할 수 있습니다. 예산 막대에는 Mistral 1B, Nara 210M, LLM7 150M, xKiro 150M, Groq 30M(모델별 한도 5개) 및 더 작은 풀들이 포함됩니다. 첫 달 가입 크레딧과 토큰 한도가 없는 영구 무료 제공업체는 별도로 표시되므로 주요 수치를 부풀리지 않습니다. /dashboard/free-tiers에서 실시간 사용량/잔여량을 확인할 수 있습니다."/>
 
 > 실시간 `/dashboard/free-tiers` 페이지의 애니메이션 요약입니다. 전체 방법론(풀 중복 제거, 크레딧 티어, 제공업체 약관): **[docs/reference/FREE_TIERS.md](docs/reference/FREE_TIERS.md)**.
 >
-> <sub>이 수치는 2주마다 실제 카탈로그를 기준으로 재감사되며 **양방향으로 변동**합니다. 제공업체가 무료 티어를 종료하면 수치가 감소하고, 새로운 무료 티어가 추가되면 증가합니다. 저희는 상향 반올림한 최상의 경우가 아니라 카탈로그에서 실제로 계산된 값을 공개합니다.</sub>
+> <sub>이 수치는 2주마다 실시간 카탈로그를 기준으로 다시 감사되며 **양방향으로 변동**합니다. 제공업체가 무료 티어를 종료하면 수치가 내려가고, 새로운 무료 티어가 추가되면 올라갑니다. 우리는 반올림해 부풀린 최상의 경우가 아니라, 카탈로그가 실제로 계산한 값을 공개합니다.</sub>
 
 <br/>
 
@@ -37,18 +39,18 @@
 
 <h3>
 
-⭐ OMNIROUTE가 비용을 절감하고 작업을 더 쉽게 수행하는 데 도움이 되었다면 저장소에 Star를 눌러 주세요.
+⭐ OMNIROUTE가 비용을 절약하고 작업을 더 쉽게 하는 데 도움이 되었다면 저장소에 Star를 눌러 주세요.
 
 </h3>
 
-[![Star 수](https://img.shields.io/github/stars/diegosouzapw/OmniRoute?style=social)](https://github.com/diegosouzapw/OmniRoute)
+[![Star](https://img.shields.io/github/stars/diegosouzapw/OmniRoute?style=social)](https://github.com/diegosouzapw/OmniRoute)
 <a href="https://trendshift.io/repositories/23589" target="_blank"><img src="https://trendshift.io/api/badge/repositories/23589" alt="diegosouzapw%2FOmniRoute | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 [![Star 기록 순위](https://api.star-history.com/badge?repo=diegosouzapw/OmniRoute&theme=dark)](https://www.star-history.com/diegosouzapw/omniroute)
 [![olud.ai](https://olud.ai/badge.php?tool=diegosouzapw-omniroute)](https://olud.ai/project/diegosouzapw-omniroute.html)
 
 ### 💬 커뮤니티에 참여하세요
 
-**👋 유지관리자를 팔로우하고 새로운 제공업체, 릴리스 및 팁을 가장 먼저 받아보세요:**
+**👋 관리자를 팔로우하고 새로운 제공업체, 릴리스 및 팁을 가장 먼저 받아보세요:**
 
 [![LinkedIn에서 Diego 팔로우](https://img.shields.io/badge/Follow_Diego_on-LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/diegosouzapw/)
 [![GitHub에서 @diegosouzapw 팔로우](https://img.shields.io/github/followers/diegosouzapw?style=for-the-badge&logo=github&logoColor=white&label=Follow%20on%20GitHub&color=181717)](https://github.com/diegosouzapw)
@@ -63,20 +65,22 @@
 
 <br/>
 
-## 📈 계속 성장하는 게이트웨이
+## 📈 계속 성장하는 Gateway
 
 <div align="center">
 
-|                         | v3.8.49 |        **v3.8.50**        | `v3.8.51+` |
-| ----------------------- | :-----: | :-----------------------: | :--------: |
-| 🌐 제공업체             |   290   |          **357**          | 추가 예정  |
-| 🧠 고유 채팅 모델 ID    |  1185   |         **1312**          |     —      |
-| 🖼️ 모달리티 브리지      |    —    | 🆕 비전 + 오디오 + 비디오 |     —      |
-| 📡 Radar 무료 카탈로그  |    —    |      🆕 선택적 참여       |     —      |
-| ⚖️ 할당량 인식 스케줄링 |    —    |      🆕 Quota-Share       |     —      |
-| 📊 할당량 텔레메트리    |    —    |      🆕 실시간 제공       |     —      |
+|                         |          v3.8.50          | **v3.8.51** |      `v3.8.52+`       |
+| ----------------------- | :-----------------------: | :---------: | :-------------------: |
+| 🌐 제공업체             |            352            |   **358**   |          372          |
+| 🧠 고유 채팅 모델 ID    |           1320            |  **1374**   |         1443          |
+| 🖼️ 모달리티 브리지      | 🆕 비전 + 오디오 + 비디오 |      ✓      |           ✓           |
+| 📡 Radar 무료 카탈로그  |      🆕 선택적 사용       |      ✓      |           ✓           |
+| ⚖️ 할당량 인식 스케줄링 |      🆕 Quota-Share       |      ✓      |           ✓           |
+| 📊 할당량 텔레메트리    |         🆕 실시간         |      ✓      |           ✓           |
+| 🧰 헤드리스 모드        |             —             |      —      | 🆕 `serve --headless` |
+| 🛤️ LTS 레일 인프라      |             —             |      —      |    🆕 릴리스 채널     |
 
-**→ [로드맵](ROADMAP.md) — `v3.9.0 LTS`를 향해 순항 중**
+**→ [`v3.9.0 LTS`를 향해 나아가는 로드맵](ROADMAP.md)**
 
 </div>
 
@@ -96,13 +100,13 @@
     <td align="right"><b>🚀 시작</b></td>
     <td align="center"><a href="#-quick-start">🚀 빠른 시작</a></td>
     <td align="center"><a href="#-more-install-methods--docker-source-pnpm-arch">📦 설치</a></td>
-    <td align="center"><a href="#-works-the-second-you-install-it--no-keys-no-config">🆓 설정 불필요</a></td>
+    <td align="center"><a href="#first-run">🆓 제공업체 연결</a></td>
   </tr>
   <tr>
     <td align="right"><b>💡 알아보기</b></td>
     <td align="center"><a href="#-the-promise">💥 약속</a></td>
     <td align="center"><a href="#-why-omniroute">🤔 OmniRoute를 사용하는 이유</a></td>
-    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 OmniRoute의 차별점</a></td>
+    <td align="center"><a href="#-what-sets-omniroute-apart">🏆 차별점</a></td>
   </tr>
   <tr>
     <td align="right"><b>⚙️ 기능</b></td>
@@ -139,7 +143,7 @@
 </div>
 
 <div align="center">
-  <b>🌐 66개 언어로 제공</b>
+  <b>🌐 67개 언어로 제공</b>
   <br/><br/>
   <a href="README.md"><img src="docs/assets/flags/us.svg" width="30" alt="영어 (en)" title="영어 (en)"></a>
   <a href="docs/i18n/pt-BR/README.md"><img src="docs/assets/flags/br.svg" width="30" alt="포르투갈어 — 브라질 (pt-BR)" title="포르투갈어 — 브라질 (pt-BR)"></a>
@@ -194,7 +198,7 @@
   <a href="docs/i18n/ga/README.md"><img src="docs/assets/flags/ie.svg" width="30" alt="아일랜드어 (ga)" title="아일랜드어 (ga)"></a>
   <a href="docs/i18n/kn/README.md"><img src="docs/assets/flags/in.svg" width="30" alt="칸나다어 (kn)" title="칸나다어 (kn)"></a>
   <a href="docs/i18n/ml/README.md"><img src="docs/assets/flags/in.svg" width="30" alt="말라얄람어 (ml)" title="말라얄람어 (ml)"></a>
-  <a href="docs/i18n/or/README.md"><img src="docs/assets/flags/in.svg" width="30" alt="오리야어 (or)" title="오리야어 (or)"></a>
+  <a href="docs/i18n/or/README.md"><img src="docs/assets/flags/in.svg" width="30" alt="오디아어 (or)" title="오디아어 (or)"></a>
   <a href="docs/i18n/pa/README.md"><img src="docs/assets/flags/in.svg" width="30" alt="펀자브어 (pa)" title="펀자브어 (pa)"></a>
   <a href="docs/i18n/ne/README.md"><img src="docs/assets/flags/np.svg" width="30" alt="네팔어 (ne)" title="네팔어 (ne)"></a>
   <a href="docs/i18n/si/README.md"><img src="docs/assets/flags/lk.svg" width="30" alt="싱할라어 (si)" title="싱할라어 (si)"></a>
@@ -207,6 +211,7 @@
   <a href="docs/i18n/uz/README.md"><img src="docs/assets/flags/uz.svg" width="30" alt="우즈베크어 (uz)" title="우즈베크어 (uz)"></a>
   <a href="docs/i18n/ka/README.md"><img src="docs/assets/flags/ge.svg" width="30" alt="조지아어 (ka)" title="조지아어 (ka)"></a>
   <a href="docs/i18n/hy/README.md"><img src="docs/assets/flags/am.svg" width="30" alt="아르메니아어 (hy)" title="아르메니아어 (hy)"></a>
+  <a href="docs/i18n/bs/README.md"><img src="docs/assets/flags/ba.svg" width="30" alt="보스니아어 (bs)" title="보스니아어 (bs)"></a>
 </div>
 
 <br/>
@@ -214,22 +219,25 @@
 
 <div align="center">
 
-## 🆓 설치하는 즉시 작동 — 키도, 설정도 필요 없습니다
+<a id="first-run"></a>
+
+## 🆓 설치하고, 제공업체를 연결한 다음, 하나의 엔드포인트를 통해 라우팅하세요
 
 </div>
 
-<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="설치하는 즉시 작동 — 제로 설정. 세 단계: 1. 설치 — npm i -g omniroute, 서버가 localhost:20128에서 부팅됩니다. 2. 도구를 http://localhost:20128/v1로 연결 — 모든 OpenAI 호환 도구(Claude Code, Cursor, Cline). 3. 응답 — API 키, 가입, 설정 없이 즉시 응답을 위해 모델 auto를 호출합니다. 키리스 제공업체 OpenCode Free는 auto 콤보에 미리 연결되어 있어, 새로 설치하면 바로 작동합니다."/>
+<img src="./docs/diagrams/works-zero-config.svg" width="100%" alt="3단계: OmniRoute를 설치하고 시작한 다음, 본인 계정이나 API 키로 적격 제공업체를 연결하고, OmniRoute API 키와 auto 모델을 사용하여 도구가 localhost:20128/v1을 가리키도록 설정합니다. 라우팅은 사용 가능한 적격 연결과 제공업체 제한에 따라 달라집니다."/>
 
 ```bash
-# 새로 설치, 자격 증명 없음 — `auto`는 이미 작동합니다:
+# 제공업체를 연결한 후 Dashboard → Endpoints에서 OmniRoute 키를 복사하세요:
 curl http://localhost:20128/v1/chat/completions \
+  -H "Authorization: Bearer YOUR_OMNIROUTE_KEY" \
   -H "Content-Type: application/json" \
   -d '{"model":"auto","messages":[{"role":"user","content":"Hello!"}]}'
 ```
 
-<sub>특정 무료 백엔드를 선호하시나요? `oc/…` (OpenCode Free)를 직접 호출하세요. 그런 다음 `auto`로 전환하여 OmniRoute가 선택하도록 하세요.</sub>
+<sub>`auto`에는 적격 경로가 필요합니다. 새로 설치한 환경에는 적격한 키리스 대상이 없을 수 있으며, 키리스 제공업체가 서드파티 클라이언트를 거부할 수도 있습니다. OpenCode Free와 Kiro를 포함하여 `tos: avoid`로 표시된 제공업체는 기본적으로 자동 라우팅에서 제외되며, 계정을 연결해도 이 설정은 재정의되지 않습니다. 제공업체를 선택하기 전에 [무료 티어 가이드](docs/getting-started/FREE-TIERS-GUIDE.md)를 확인하세요.</sub>
 
-<sub>📦 **Python, Node.js, PHP, cURL**용 빠른 시작 스크립트 복사-붙여넣기 → [`examples/quickstart/`](examples/quickstart/)</sub>
+<sub>📦 **Python, Node.js, PHP 및 cURL**용 복사하여 붙여넣을 수 있는 빠른 시작 스크립트 → [`examples/quickstart/`](examples/quickstart/)</sub>
 
 <br/>
 
@@ -239,7 +247,7 @@ curl http://localhost:20128/v1/chat/completions \
 
 </div>
 
-<img src="./docs/diagrams/promise-pillars.svg" width="100%" alt="약속 — 하나의 엔드포인트와 358개의 제공업체. 자동 대체 기능은 다른 정상적인 대상이 사용 가능한 동안 라우팅을 유지합니다. 여섯 가지 핵심 요소: 358개 제공업체에 걸친 탄력적인 대체 기능 · 적격 워크로드에서 최대 95% 토큰 절약 · 150개 이상의 무료 티어와 54개의 반복/키리스 영구 무료 제공업체로 $0부터 시작 · 하나의 설정을 통해 36개의 CLI/에이전트 통합 · /v1에서 OpenAI, Claude, Gemini 및 Responses API 호환성 · 회로 차단기, TLS 스텔스, MCP 110 도구, A2A, 메모리, 가드레일, 평가 및 5,100개 이상의 추적된 테스트 파일에 걸친 39,000개 이상의 정적 테스트 선언을 포함한 프로덕션 제어."/>
+<img src="./docs/diagrams/promise-pillars.svg" width="100%" alt="약속 — 하나의 엔드포인트와 372개 제공업체. 정상 상태인 다른 대상이 사용 가능한 동안 자동 장애 조치로 라우팅이 계속됩니다. 6가지 핵심 요소: 372개 제공업체 전반의 탄력적 장애 조치 · 적격 워크로드에서 최대 95%의 토큰 절감 · 150개 이상의 무료 티어와 53개의 반복 제공/키리스 영구 무료 제공업체를 통해 $0로 시작 · 하나의 설정으로 36개의 CLI/에이전트 통합 · /v1에서 OpenAI, Claude, Gemini 및 Responses API 호환성 · 서킷 브레이커, TLS 스텔스, MCP 110개 도구, A2A, 메모리, 가드레일, 평가 및 추적 중인 5,100개 이상의 테스트 파일에 걸친 39,000개 이상의 정적 테스트 선언을 포함한 프로덕션 제어 기능."/>
 
 <br/>
 <br/>
@@ -250,11 +258,11 @@ curl http://localhost:20128/v1/chat/completions \
 
 </div>
 
-<img src="./docs/diagrams/why-pain-fix.svg" width="100%" alt="왜 OmniRoute인가 — 10개의 대시보드, 만료된 API 키, 예상치 못한 요금 청구에 시달리지 마세요. 10가지 일상적인 문제점 vs 해결책: 할당량 미사용 만료 → 구독 최대화; 코딩 중 속도 제한 → 4단계 자동 대체 (구독 → API → 저렴 → 무료); 도구 출력이 토큰 소모 → RTK + Caveman 압축 (15–95%); 비싼 API → 비용 최적화 라우팅; 모든 도구에 자체 설정 → 하나의 엔드포인트, 하나의 대시보드; AI 차단 → 3단계 프록시 + TLS 스텔스; 만료된 키 → 3단계 탄력성 (회로 차단기, 키 쿨다운, 모델 잠금); 팀이 하나의 구독 공유 → 공정한 할당량의 키 풀; 누군가의 클라우드를 통한 프롬프트 → AES-256-GCM 암호화 키를 사용한 로컬 우선; 지출 가시성 없음 → 실시간 분석 (사용량, 할당량, 절약, p95 지연 시간)."/>
+<img src="./docs/diagrams/why-pain-fix.svg" width="100%" alt="OmniRoute를 사용해야 하는 이유 — 10개의 대시보드, 작동하지 않는 API 키, 예상치 못한 요금 청구를 번갈아 관리하는 일을 멈추세요. 매일 겪는 10가지 문제와 해결책: 사용하지 못한 채 만료되는 할당량 → 구독 활용 극대화; 코딩 도중 발생하는 속도 제한 → 4단계 자동 장애 조치(구독 → API → 저가 → 무료); 토큰을 소모하는 도구 출력 → RTK + Caveman 압축(15~95%); 비싼 API → 비용 최적화 라우팅; 도구마다 별도 설정 필요 → 하나의 엔드포인트와 하나의 대시보드; 차단된 AI → 3단계 프록시 + TLS 스텔스; 작동하지 않는 키 → 3계층 복원력(서킷 브레이커, 키 쿨다운, 모델 잠금); 하나의 구독을 공유하는 팀 → 공정 분배 할당량이 적용된 키 풀; 타인의 클라우드를 통과하는 프롬프트 → AES-256-GCM으로 암호화된 키를 사용하는 로컬 우선 방식; 지출 가시성 부족 → 실시간 분석(사용량, 할당량, 절감액, p95 지연 시간)."/>
 
 <div align="center">
 
-<img src="./docs/diagrams/tier-cascade.svg" width="100%" alt="OmniRoute 요청 흐름: IDE 또는 CLI (Claude Code, Cursor, Cline…)가 하나의 로컬 엔드포인트 (http://localhost:20128/v1)를 호출합니다; OmniRoute 스마트 라우터 (RTK + Caveman 압축, 19가지 라우팅 전략, 회로 차단기, TLS 스텔스, MCP, A2A, 가드레일)는 적격하고 정상적인 대상이 남아있는 동안 4단계 제공업체 티어 (티어 1 구독, 티어 2 API 키, 티어 3 저렴, 티어 4 무료)를 통해 대체할 수 있습니다."/>
+<img src="./docs/diagrams/tier-cascade.svg" width="100%" alt="OmniRoute 요청 흐름: IDE 또는 CLI(Claude Code, Cursor, Cline…)가 하나의 로컬 엔드포인트(http://localhost:20128/v1)를 호출합니다. OmniRoute Smart Router(RTK + Caveman 압축, 19가지 라우팅 전략, 서킷 브레이커, TLS 스텔스, MCP, A2A, 가드레일)는 적격하고 정상 상태인 대상이 남아 있는 동안 4개 제공업체 티어에 걸쳐 장애 조치를 수행할 수 있습니다 — 티어 1 구독, 티어 2 API 키, 티어 3 저가, 티어 4 무료."/>
 
 </div>
 
@@ -488,11 +496,11 @@ curl http://localhost:20128/v1/chat/completions \
 
 <div align="center">
 
-## 🏆 OmniRoute가 차별화되는 점
+## 🏆 OmniRoute만의 차별점
 
 </div>
 
-<img src="./docs/diagrams/comparison-table.svg" width="100%" alt="OmniRoute가 차별화되는 점 — 9router, OpenRouter, CLIProxyAPI 및 LiteLLM과 비교한 13가지 기능에 대한 최신 기능 스냅샷. OmniRoute: 358개 공급자, 150개 이상의 무료 티어 내장, 19가지 라우팅 전략, 12개 엔진 토큰 압축, 110개 도구가 포함된 내장 MCP 서버, A2A 에이전트 프로토콜, 영구 메모리, 가드레일, 클라우드 에이전트, TLS 지문 스텔스, Desktop/Termux/PWA 및 42개 i18n UI 로케일. OmniRoute는 MIT 라이선스이며 자체 호스팅 가능합니다. 경쟁사 기능 및 개수는 변경될 수 있습니다. 연결된 방법론을 참조하십시오."/>
+<img src="./docs/diagrams/comparison-table.svg" width="100%" alt="OmniRoute의 차별점 — 13개 기능을 기준으로 9router, OpenRouter, CLIProxyAPI 및 LiteLLM과 비교한 특정 시점의 기능 현황입니다. OmniRoute: 372개 제공업체, 150개 이상의 무료 티어 내장, 19가지 라우팅 전략, 12개 엔진 기반 토큰 압축, 110개 도구를 갖춘 내장 MCP 서버, A2A 에이전트 프로토콜, 영구 메모리, 가드레일, 클라우드 에이전트, TLS 지문 은폐, Desktop/Termux/PWA 및 42개 다국어 UI 로케일. OmniRoute는 MIT 라이선스로 제공되며 자체 호스팅할 수 있습니다. 경쟁 제품의 기능과 수치는 변경될 수 있습니다. 링크된 방법론을 참조하세요."/>
 
 <sub>📊 9router, OpenRouter, CLIProxyAPI 및 LiteLLM과 비교한 전체 방법론 및 기능별 세부 정보 → [`docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md`](docs/comparison/OMNIROUTE_VS_ALTERNATIVES.md)</sub>
 
@@ -562,29 +570,29 @@ Radar는 선택적으로 사용할 수 있으며 GET 전용입니다. OmniRoute 
 
 </div>
 
-> **v3.8.20 → v3.8.50**의 주요 변경 사항입니다. 전체 변경 이력은 [`CHANGELOG.md`](CHANGELOG.md)에서 확인하세요.
+> **v3.8.20 → v3.8.50**의 주요 변경 사항입니다. 전체 내역은 [`CHANGELOG.md`](CHANGELOG.md)에서 확인하세요.
 
-- **🎛️ OmniConductor** — 에이전트 플릿으로의 인바운드 A2A 위임, Agent Card의 Conductor 스킬, Faro 푸시투토크 음성 채팅을 지원하는 대시보드 패널. → [A2A 서버](docs/frameworks/A2A-SERVER.md)
-- **🛂 적응형 요청 수용 및 과부하 보호** — 처리량이 큰 채팅 요청에 503을 반환하는 대신 대기열에 넣고, 연결별 원자적 RPM 롤링 리스를 적용합니다. → [복원력 가이드](docs/architecture/RESILIENCE_GUIDE.md)
-- **🗂️ 표준 `/v1/models` 정렬** — 공급자별로 하나의 연속된 블록으로 그룹화되며(콤보는 맨 앞에 고정), 모든 카탈로그 소스에서 안정적인 순서를 유지합니다. → [API 레퍼런스](docs/reference/API_REFERENCE.md)
-- **🗜️ 압축 강화** — 기본 활성화된 인플레이션 가드, DE / FR / JA 및 중국어(wényán)용 Caveman 팩, Gradle 및 .NET용 RTK 필터. → [압축](docs/compression/COMPRESSION_ENGINES.md)
-- **💸 정확한 정액제 비용** — 구독/코딩 플랜 공급자는 비용 분석에서 **$0**으로 표시되며, 예산, 할당량 및 라우팅에는 계속 추정값이 사용됩니다. → [API 레퍼런스](docs/reference/API_REFERENCE.md)
-- **⚖️ Quota-Share 라우팅** — 공유 계정의 할당량을 풀링된 키에 공정하게 분배하며, 유휴 할당분을 빌려주는 작업 보존 방식을 적용합니다. → [복원력 가이드](docs/architecture/RESILIENCE_GUIDE.md)
-- **🤖 단일 명령 CLI/에이전트 설정** — 등록된 `setup-*` 명령 13개, 7개 CLI(Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI)를 실행하는 `omniroute run`, 대화형 공급자+모델 선택기와 컨텍스트별 즐겨찾기를 통해 10개 대상을 지원하는 `omniroute configure`. → [CLI 통합](docs/guides/CLI-INTEGRATIONS.md)
-- **🛰️ 원격 모드** — 범위가 지정된 토큰(`connect` / `contexts` / `tokens`)과 VPS 설치용 `antigravity` OAuth 도우미를 사용해 원격 OmniRoute를 제어합니다. → [원격 모드](docs/guides/REMOTE-MODE.md)
-- **🧭 더 스마트한 자동 라우팅** — `auto/<category>:<tier>` 콤보, **Fusion**(모델 패널 + 판정 모델), 작업 인식 라우팅, 요청별 모델/모드/USD 예산 재정의. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
-- **🗜️ 플러그형 압축** — 조합 가능한 엔진 12개와 Compression Studios: LLMLingua-2, 2단계 Ultra, omniglyph, 단계별 충실도 게이트, GCF v3.2, 드래그 재정렬 편집기. → [압축](docs/compression/COMPRESSION_ENGINES.md)
-- **🕵️ 투명한 MITM 복호화(TPROXY)** — 프록시 환경 변수를 무시하는 CLI를 캡처하며, SNI별 CA와 신뢰 저장소 설치 프로그램을 제공합니다. → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
-- **💸 전 영역 비용 텔레메트리** — 모든 엔드포인트에 `X-OmniRoute-*` 비용/사용량 헤더, 캐시 HIT 절감액 헤더, 키별 USD 지출 할당량을 제공합니다. → [API 레퍼런스](docs/reference/API_REFERENCE.md)
-- **🧠 직접 제어하는 메모리** — 기본적으로 비활성화되며, 선택적으로 int8 벡터 양자화와 유형별 감쇠를 사용할 수 있고 요청별 `x-omniroute-no-memory`를 지원합니다. → [메모리](docs/frameworks/MEMORY.md)
-- **🛡️ 보안** — 모든 LLM 경로의 프롬프트 인젝션 가드(레드팀 제품군), 선택적으로 활성화하는 자격 증명 마스킹 가드레일(양방향으로 유출된 API 키/시크릿을 삭제 처리), 무료 DuckDuckGo 최후 수단 웹 검색, 대시보드용 선택적 OIDC 로그인 게이트(비밀번호 로그인은 항상 사용 가능). → [가드레일](docs/security/GUARDRAILS.md)
-- **🖼️ 새로운 엔드포인트** — `/v1/ocr`(Mistral OCR) 및 `/v1/audio/translations`(Whisper 스타일)가 미디어 기능을 완성합니다. → [API 레퍼런스](docs/reference/API_REFERENCE.md)
-- **🎨 이미지/동영상/오디오 생성** — 미디어를 위한 단일 API: xAI Grok Imagine 및 Novita AI 동영상, ComfyUI, Magnific, Adobe Firefly, Segmind, ElevenLabs와 같은 음성 공급자. → [API 레퍼런스](docs/reference/API_REFERENCE.md)
-- **🌍 배포 및 운영** — 리버스 프록시 `basePath`, 브라우저 언어 자동 감지, 키별 기기 추적, 루트 권한 없는 MITM 신뢰 설정, zh-TW 현지화. → [환경](docs/reference/ENVIRONMENT.md)
-- **🤝 더 많은 공급자 및 에이전트** — 클라우드 에이전트(Codex Cloud, Cursor, Devin, Jules), 브라우저 + OAuth 로그인을 지원하는 Grok Build(xAI), 일급 Ollama 카드, Claude Opus 5 및 Sonnet 5, Kimi 공식 파트너십(Code/Web/Moonshot), Zed, Requesty, SenseNova, Yuanbao, Agnes AI… 그리고 새롭게 개편된 **352개 공급자 카탈로그**. → [공급자](docs/reference/PROVIDER_REFERENCE.md)
-- **📡 투명한 라우팅** — 모든 응답에는 요청을 처리한 전략/공급자/지연 시간을 나타내는 `X-OmniRoute-Decision` 헤더가 포함됩니다. 새로운 `cache-optimized` 콤보 전략과 Auto-Combo `cacheAffinity` 요소는 반복 요청을 캐시된 접두사를 보유한 연결로 다시 라우팅하며, 읽기 전용 `/v1/auto-combo/{channel}/candidates` 엔드포인트는 `auto/*` 채널의 실시간 후보 풀을 노출합니다. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
-- **⚡ 로컬 성능 및 인프라** — 원클릭 로컬 Redis, Cloudflare Workers / Deno Deploy 릴레이 배포 도구, 감독형 임베디드 서비스로 제공되는 Bifrost 및 Mux. → [임베디드 서비스](docs/frameworks/EMBEDDED-SERVICES.md)
-- **🧩 함께 제공되는 기타 기능** — 플러그인 프레임워크 + 마켓플레이스, Omni/Agent/GitHub 스킬 프레임워크, Obsidian 볼트 통합(22개 MCP 도구), OpenAI 호환 Batch 및 Files API, 시맨틱 응답 캐시, 리더보드를 지원하는 게임화, ACP 에이전트 탐색(기본 제공 에이전트 15개), BigQuery로의 예약 로그 내보내기, `auto/chaos` 병렬 멀티모델 팬아웃, Telegram 봇 브리지, 앱 내 버전 관리자 및 LMArena-ELO 무료 공급자 순위. → [문서](docs/README.md)
+- **🎛️ OmniConductor** — 에이전트 플릿으로의 인바운드 A2A 위임, Agent Card의 Conductor 스킬, Faro 푸시투토크 음성 채팅이 포함된 대시보드 패널을 제공합니다. → [A2A 서버](docs/frameworks/A2A-SERVER.md)
+- **🛂 적응형 요청 수락 및 과부하 보호** — 무거운 채팅 요청이 503 오류를 반환하는 대신 대기열에 들어가며, 연결별 원자적 RPM 롤링 리스를 적용합니다. → [복원력 가이드](docs/architecture/RESILIENCE_GUIDE.md)
+- **🗂️ 표준화된 `/v1/models` 정렬** — 공급자별로 연속된 단일 블록을 구성하고(콤보를 맨 앞에 고정), 모든 카탈로그 소스에서 안정적인 순서를 유지합니다. → [API 레퍼런스](docs/reference/API_REFERENCE.md)
+- **🗜️ 압축 강화** — 기본적으로 활성화되는 인플레이션 가드, DE / FR / JA 및 중국어(문언문)용 Caveman 팩, Gradle 및 .NET용 RTK 필터를 제공합니다. → [압축](docs/compression/COMPRESSION_ENGINES.md)
+- **💸 정확한 정액제 비용** — 구독/코딩 플랜 공급자는 비용 분석에서 **$0**으로 표시되며, 예산·할당량·라우팅에서는 추정치를 계속 사용합니다. → [API 레퍼런스](docs/reference/API_REFERENCE.md)
+- **⚖️ Quota-Share 라우팅** — 공유 계정의 할당량을 풀링된 키 간에 공정하게 분배하고, 사용하지 않는 몫을 빌려주는 작업 보존 방식을 적용합니다. → [복원력 가이드](docs/architecture/RESILIENCE_GUIDE.md)
+- **🤖 단일 명령어 CLI/에이전트 설정** — 등록된 `setup-*` 명령어 13개를 제공합니다. `omniroute run`은 7개 CLI(Claude Code, Codex, Aider, Goose, OpenCode, Qwen Code, Gemini CLI)를 실행하며, `omniroute configure`는 대화형 공급자+모델 선택기와 컨텍스트별 즐겨찾기를 통해 10개 대상을 지원합니다. → [CLI 통합](docs/guides/CLI-INTEGRATIONS.md)
+- **🛰️ 원격 모드** — 범위가 지정된 토큰(`connect` / `contexts` / `tokens`)으로 원격 OmniRoute를 제어하고, VPS 설치를 위한 `antigravity` OAuth 도우미를 제공합니다. → [원격 모드](docs/guides/REMOTE-MODE.md)
+- **🧭 더 스마트한 자동 라우팅** — `auto/<category>:<tier>` 콤보, **Fusion**(모델 패널 + 심사 모델), 작업 인식 라우팅, 요청별 모델/모드/USD 예산 재정의를 제공합니다. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
+- **🗜️ 플러그형 압축** — 조합 가능한 엔진 12개와 Compression Studios를 제공합니다. LLMLingua-2, 2단계 Ultra, omniglyph, 단계별 충실도 게이트, GCF v3.2, 드래그 방식의 순서 변경 편집기가 포함됩니다. → [압축](docs/compression/COMPRESSION_ENGINES.md)
+- **🕵️ 투명한 MITM 복호화(TPROXY)** — 프록시 환경 변수를 무시하는 CLI의 트래픽을 캡처하며, SNI별 CA와 신뢰 저장소 설치 프로그램을 제공합니다. → [MITM/TPROXY](docs/security/MITM-TPROXY-DECRYPT.md)
+- **💸 모든 곳에서 제공되는 비용 텔레메트리** — 모든 엔드포인트에 `X-OmniRoute-*` 비용/사용량 헤더, 캐시 HIT 절감액 헤더, 키별 USD 지출 할당량을 제공합니다. → [API 레퍼런스](docs/reference/API_REFERENCE.md)
+- **🧠 직접 제어하는 메모리** — 기본적으로 비활성화되며, 선택적으로 int8 벡터 양자화와 유형별 감쇠를 활성화할 수 있고 요청별 `x-omniroute-no-memory`를 지원합니다. → [메모리](docs/frameworks/MEMORY.md)
+- **🛡️ 보안** — 모든 LLM 경로에 프롬프트 인젝션 가드(레드팀 테스트 모음)를 적용하고, 양방향으로 유출된 API 키/비밀 값을 가리는 선택적 자격 증명 마스킹 가드레일, 무료 DuckDuckGo 최후 수단 웹 검색, 대시보드용 선택적 OIDC 로그인 게이트를 제공합니다(비밀번호 로그인은 항상 사용할 수 있습니다). → [가드레일](docs/security/GUARDRAILS.md)
+- **🖼️ 새로운 엔드포인트** — `/v1/ocr`(Mistral OCR)과 `/v1/audio/translations`(Whisper 방식)가 미디어 기능을 완성합니다. → [API 레퍼런스](docs/reference/API_REFERENCE.md)
+- **🎨 이미지/비디오/오디오 생성** — 단일 미디어 API로 xAI Grok Imagine 및 Novita AI 비디오, ComfyUI, Magnific, Adobe Firefly, Segmind와 ElevenLabs 같은 음성 공급자를 지원합니다. → [API 레퍼런스](docs/reference/API_REFERENCE.md)
+- **🌍 배포 및 운영** — 리버스 프록시 `basePath`, 브라우저 언어 자동 감지, 키별 기기 추적, 루트 권한이 필요 없는 MITM 신뢰 설정, zh-TW 현지화를 제공합니다. → [환경](docs/reference/ENVIRONMENT.md)
+- **🤝 더 많은 공급자와 에이전트** — 클라우드 에이전트(Codex Cloud, Cursor, Devin, Jules), 브라우저 + OAuth 로그인을 지원하는 Grok Build(xAI), 일급 Ollama 카드, Claude Opus 5 및 Sonnet 5, Kimi 공식 파트너십(Code/Web/Moonshot), Zed, Requesty, SenseNova, Yuanbao, Agnes AI 등을 지원하며, 새롭게 개편된 **372개 공급자 카탈로그**를 제공합니다. → [공급자](docs/reference/PROVIDER_REFERENCE.md)
+- **📡 투명한 라우팅** — 모든 응답에는 해당 요청을 처리한 전략/공급자/지연 시간을 나타내는 `X-OmniRoute-Decision` 헤더가 포함됩니다. 새로운 `cache-optimized` 콤보 전략과 Auto-Combo `cacheAffinity` 요소는 반복 요청을 캐시된 접두사를 보유한 연결로 다시 라우팅하며, 읽기 전용 `/v1/auto-combo/{channel}/candidates` 엔드포인트는 `auto/*` 채널의 실시간 후보 풀을 노출합니다. → [Auto-Combo](docs/routing/AUTO-COMBO.md)
+- **⚡ 로컬 성능 및 인프라** — 원클릭 로컬 Redis, Cloudflare Workers / Deno Deploy 릴레이 배포 도구, 감독형 임베디드 서비스인 Bifrost 및 Mux를 제공합니다. → [임베디드 서비스](docs/frameworks/EMBEDDED-SERVICES.md)
+- **🧩 기본 제공되는 추가 기능** — 플러그인 프레임워크 + 마켓플레이스, Omni/Agent/GitHub 스킬 프레임워크, Obsidian 볼트 통합(22개 MCP 도구), OpenAI 호환 Batch 및 Files API, 시맨틱 응답 캐시, 순위표를 포함한 게임화, ACP 에이전트 검색(내장 에이전트 15개), BigQuery로 예약된 로그 내보내기, `auto/chaos` 병렬 다중 모델 팬아웃, Telegram 봇 브리지, 앱 내 버전 관리자, LMArena-ELO 무료 공급자 순위를 제공합니다. → [문서](docs/README.md)
 
 <br/>
 
@@ -665,11 +673,11 @@ omniroute configure codex          # 다음도 지원: claude opencode qwen aide
 
 <div align="center">
 
-## 🌐 372개 AI 제공업체 — 154개는 카탈로그에서 무료로 표시됨
+## 🌐 372개 AI 제공업체 — 카탈로그에 무료로 표시된 154개
 
 </div>
 
-> 정식 채팅, 미디어, 검색, 로컬, 클라우드 에이전트 및 시스템 컬렉션 전반에 걸쳐 **357개의 등록된 제공업체**가 있으며, 이 중 **152개에는 `hasFree: true` 검색 메타데이터가 포함되어 있습니다**. 채팅 모델 레지스트리는 **229개 제공업체 / 2,554개의 고유 제공업체-모델 조합 / 1,283개의 원시 모델 ID**를 포함하며, 별도의 무료 예산 카탈로그에는 **491개의 모델별 행**, **35개의 정기 갱신 풀**, **54개의 정기 갱신/키 불필요 영구 무료 제공업체**가 있습니다. 이는 의도적으로 서로 다른 분모를 사용합니다. 정의와 풀 중복을 제거한 계산 방식은 [제공업체 참고 자료](docs/reference/PROVIDER_REFERENCE.md)와 [무료 티어](docs/reference/FREE_TIERS.md)에서 확인할 수 있습니다.
+> 정식 채팅, 미디어, 검색, 로컬, 클라우드 에이전트 및 시스템 컬렉션 전반에 걸쳐 **372개의 등록된 제공업체**가 있으며, 이 중 **154개에는 `hasFree: true` 탐색 메타데이터가 지정되어 있습니다**. 채팅 모델 레지스트리에는 **237개 제공업체 / 3,009개의 고유한 제공업체-모델 조합 / 1,443개의 원시 모델 ID**가 포함되어 있으며, 별도의 무료 예산 카탈로그에는 **모델별 행 485개**, **반복 제공 풀 35개**, **반복 제공/키가 필요 없는 영구 무료 제공업체 53개**가 있습니다. 이 분모들은 의도적으로 서로 다릅니다. 정의와 풀 중복 제거 계산은 [제공업체 참고 자료](docs/reference/PROVIDER_REFERENCE.md) 및 [무료 티어](docs/reference/FREE_TIERS.md)에서 확인할 수 있습니다.
 
 <div align="center">
 
@@ -710,10 +718,10 @@ omniroute configure codex          # 다음도 지원: claude opencode qwen aide
 
 <table>
   <tr>
-    <td align="center" width="150"><img src="./public/providers/cli-generic.svg" width="42" alt="OpenCode Zen"/><br/><b>OpenCode Zen</b><br/><sub>DeepSeek V4, Nemotron 3<br/>토큰 제한 없음</sub></td>
+    <td align="center" width="150"><img src="./public/providers/cli-generic.svg" width="42" alt="OpenCode Zen"/><br/><b>OpenCode Zen</b><br/><sub>DeepSeek V4, Nemotron 3<br/>토큰 한도 없음</sub></td>
     <td align="center" width="150"><img src="./public/providers/cli-generic.svg" width="42" alt="Kilo Code"/><br/><b>Kilo Code</b><br/><sub>자동 라우터, Tencent Hy3<br/>영구 무료</sub></td>
     <td align="center" width="150"><img src="./public/providers/requesty.svg" width="42" alt="Requesty"/><br/><b>Requesty</b><br/><sub>GPT-OSS 120B, Nemotron<br/>영구 무료</sub></td>
-    <td align="center" width="150"><img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.91.0/icons/siliconcloud-color.svg" width="42" alt="SiliconFlow"/><br/><b>SiliconFlow</b><br/><sub>DeepSeek V3.2 / R1<br/>무료 티어</sub></td>
+    <td align="center" width="150"><img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.91.0/icons/siliconcloud-color.svg" width="42" alt="SiliconFlow"/><br/><b>SiliconFlow</b><br/><sub>DeepSeek V3.2 / R1<br/>무료 요금제</sub></td>
     <td align="center" width="150"><img src="./public/providers/zhipu.svg" width="42" alt="Z.AI GLM"/><br/><b>Z.AI GLM</b><br/><sub>GLM-4.7 / 4.5-Flash<br/>영구 무료</sub></td>
     <td align="center" width="150"><img src="./public/providers/baidu.svg" width="42" alt="Baidu ERNIE"/><br/><b>Baidu ERNIE</b><br/><sub>ERNIE 4.0<br/>영구 무료</sub></td>
   </tr>
@@ -721,13 +729,13 @@ omniroute configure codex          # 다음도 지원: claude opencode qwen aide
     <td align="center" width="150"><img src="https://cdn.jsdelivr.net/npm/@lobehub/icons-static-svg@1.91.0/icons/qoder-color.svg" width="42" alt="Qoder AI"/><br/><b>Qoder AI</b><br/><sub>Qwen3-Max, Kimi-K2<br/>무제한 무료</sub></td>
     <td align="center" width="150"><img src="./public/providers/pollinations.svg" width="42" alt="Pollinations"/><br/><b>Pollinations</b><br/><sub>GPT, Llama, Claude<br/>키 불필요</sub></td>
     <td align="center" width="150"><img src="./public/providers/cloudflare.svg" width="42" alt="Cloudflare AI"/><br/><b>Cloudflare AI</b><br/><sub>50개 이상의 모델<br/>일일 뉴런 10K개</sub></td>
-    <td align="center" width="150"><img src="./public/providers/nvidia.svg" width="42" alt="NVIDIA NIM"/><br/><b>NVIDIA NIM</b><br/><sub>GLM, MiniMax<br/>무료로 약 40 RPM</sub></td>
-    <td align="center" width="150"><img src="./public/providers/cerebras.svg" width="42" alt="Cerebras"/><br/><b>Cerebras</b><br/><sub>GLM 4.7, GPT-OSS<br/>일일 토큰 1M개</sub></td>
+    <td align="center" width="150"><img src="./public/providers/nvidia.svg" width="42" alt="NVIDIA NIM"/><br/><b>NVIDIA NIM</b><br/><sub>GLM, MiniMax<br/>분당 약 40회 무료</sub></td>
+    <td align="center" width="150"><img src="./public/providers/cerebras.svg" width="42" alt="Cerebras"/><br/><b>Cerebras</b><br/><sub>GLM 4.7, GPT-OSS<br/>일회성 $5 크레딧, 카드 필요</sub></td>
     <td align="center" width="150"><img src="./public/providers/openrouter.svg" width="42" alt="OpenRouter"/><br/><b>OpenRouter</b><br/><sub>:free 모델<br/>+$10 → 더 높은 RPM</sub></td>
   </tr>
 </table>
 
-📖 전체 머신 리더블 카탈로그 → [`docs/reference/PROVIDER_REFERENCE.md`](docs/reference/PROVIDER_REFERENCE.md)
+📖 전체 기계 판독 가능 카탈로그 → [`docs/reference/PROVIDER_REFERENCE.md`](docs/reference/PROVIDER_REFERENCE.md)
 
 <br/>
 </div>
@@ -903,11 +911,11 @@ claude mcp add-server omniroute --type http --url http://localhost:20128/api/mcp
 
 </div>
 
-### 📖 작동 방식 — 파이프라인, 아키텍처 및 절감 계산
+### 📖 작동 방식 — 파이프라인, 아키텍처 및 절감 계산법
 
-<img src="./docs/diagrams/compression-pipeline.svg" width="100%" alt="OmniRoute 압축 파이프라인: 10,000토큰의 클라이언트 요청이 Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra, OmniGlyph 등 조합 가능한 12개 엔진을 통과하며, 문서화된 스택 예시에서는 약 1,080토큰으로 공급자에게 전달될 수 있습니다. 구조화된 콘텐츠는 보존 가드와 단계별 충실도 게이트로 보호되며, 명시적인 손실 압축 또는 실험적 모드는 적용 가능한 콘텐츠를 변환할 수 있습니다."/>
+<img src="./docs/diagrams/compression-pipeline.svg" width="100%" alt="OmniRoute 압축 파이프라인: 10,000토큰의 클라이언트 요청이 조합 가능한 12개 엔진(Session-Dedup, CCR, Lite, RTK, Responses Tool Output, Headroom, Relevance, Caveman, Aggressive, LLMLingua-2, Ultra, OmniGlyph)을 통과하며, 문서화된 스택 조합 예시에서는 약 1,080토큰으로 제공업체에 도달할 수 있습니다. 구조화된 콘텐츠는 보존 가드와 단계별 충실도 게이트로 보호되며, 명시적인 손실 또는 실험적 모드는 적용 가능한 콘텐츠를 변환할 수 있습니다."/>
 
-기본 스택 조합은 `RTK → Caveman` 순서로 실행됩니다. 두 엔진이 동일한 도구/컨텍스트 페이로드에 적용되면 절감 효과가 복리로 누적됩니다.
+기본 스택 조합은 `RTK → Caveman`을 실행합니다. 둘 다 동일한 도구/컨텍스트 페이로드에 적용되면 절감 효과가 복리로 누적됩니다.
 
 ```txt
 combined = 1 − (1 − RTK) × (1 − Caveman_input)
@@ -917,32 +925,32 @@ range    = 78.4 – 94.6%
 
 코드 블록, URL, JSON 및 구조화된 데이터는 보존 엔진에 의해 **항상 보호됩니다**.
 
-> **적은 토큰으로 충분한데 왜 많은 토큰을 사용할까요?** 모든 요청은 클라이언트 변경 없이 OmniRoute의 압축 파이프라인을 **투명하게** 통과합니다. 이제 이 파이프라인은 순서대로 실행되고 라우팅 조합별로 자유롭게 구성할 수 있는 **12개의 조합 가능한 엔진 스택**입니다. [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua), [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR)의 아이디어를 기반으로 합니다.
+> **적은 토큰으로 충분한데 왜 많은 토큰을 사용할까요?** 모든 요청은 클라이언트 변경 없이 OmniRoute의 압축 파이프라인을 **투명하게** 통과합니다. 이제 파이프라인은 순서대로 실행되고 라우팅 조합별로 자유롭게 구성할 수 있는 **조합 가능한 12개 엔진 스택**입니다. [RTK](https://github.com/rtk-ai/rtk), [Caveman](https://github.com/JuliusBrussee/caveman) (⭐ 90K+), [LLMLingua-2](https://github.com/microsoft/LLMLingua), [Troglodita](https://github.com/leninejunior/troglodita) (PT-BR)의 아이디어를 기반으로 합니다.
 
 ### 🧱 12개 엔진 스택
 
-엔진은 파이프라인 순서대로 실행되며, 각 조합에서 개별적으로 활성화/비활성화하고 구성할 수 있습니다.
+엔진은 파이프라인 순서대로 실행되며, 각 조합에서 개별적으로 켜고 끄거나 구성할 수 있습니다.
 
 <table>
   <tr><th align="center">#</th><th align="left">엔진</th><th align="left">기능</th></tr>
-  <tr><td align="center" nowrap>1</td><td align="left" nowrap><b>Session-Dedup</b></td><td align="left">여러 턴에서 반복되는 콘텐츠 제거(콘텐츠 주소 지정 방식, 턴 간 적용)</td></tr>
+  <tr><td align="center" nowrap>1</td><td align="left" nowrap><b>Session-Dedup</b></td><td align="left">여러 턴에 걸쳐 반복되는 콘텐츠 제거(콘텐츠 주소 지정 방식, 턴 간 적용)</td></tr>
   <tr><td align="center" nowrap>2</td><td align="left" nowrap><b>CCR</b></td><td align="left">대용량 블록을 검색 마커 뒤에 보관하고 필요할 때 가져옴</td></tr>
-  <tr><td align="center" nowrap>3</td><td align="left" nowrap><b>Lite</b></td><td align="left">공백 + 이미지 URL 정리(지연 시간이 짧은 기준 모드)</td></tr>
+  <tr><td align="center" nowrap>3</td><td align="left" nowrap><b>Lite</b></td><td align="left">공백 + 이미지 URL 정리(지연 시간이 짧은 기준선)</td></tr>
   <tr><td align="center" nowrap>4</td><td align="left" nowrap><b>RTK</b></td><td align="left">스마트 도구 결과 필터링, 중복 제거 및 잘라내기(명령어 인식)</td></tr>
-  <tr><td align="center" nowrap>5</td><td align="left" nowrap><b>Responses Tool Output</b></td><td align="left">셸/패치/검색/빌드 출력에 대한 무손실 우선 JSON + 범위가 제한된 진단 압축(Responses API)</td></tr>
+  <tr><td align="center" nowrap>5</td><td align="left" nowrap><b>Responses Tool Output</b></td><td align="left">셸/패치/검색/빌드 출력에 대한 무손실 우선 JSON + 제한된 진단 압축(Responses API)</td></tr>
   <tr><td align="center" nowrap>6</td><td align="left" nowrap><b>Headroom</b></td><td align="left">벤더링된 <b>GCF</b> 코덱을 통한 JSON 배열의 무손실 표 형식 압축(~30%)</td></tr>
-  <tr><td align="center" nowrap>7</td><td align="left" nowrap><b>Relevance</b></td><td align="left">마지막 사용자 쿼리를 기준으로 문장을 추출해 점수화</td></tr>
-  <tr><td align="center" nowrap>8</td><td align="left" nowrap><b>Caveman</b></td><td align="left">규칙 기반 산문 압축(출력에서 ~65–75%)</td></tr>
-  <tr><td align="center" nowrap>9</td><td align="left" nowrap><b>Aggressive</b></td><td align="left">요약 + 이전 턴의 점진적 노후화</td></tr>
+  <tr><td align="center" nowrap>7</td><td align="left" nowrap><b>Relevance</b></td><td align="left">마지막 사용자 쿼리를 기준으로 추출형 문장 점수 산정</td></tr>
+  <tr><td align="center" nowrap>8</td><td align="left" nowrap><b>Caveman</b></td><td align="left">규칙 기반 산문 압축(출력 기준 ~65–75%)</td></tr>
+  <tr><td align="center" nowrap>9</td><td align="left" nowrap><b>Aggressive</b></td><td align="left">이전 턴의 요약 + 점진적 에이징</td></tr>
   <tr><td align="center" nowrap>10</td><td align="left" nowrap><b>LLMLingua-2</b></td><td align="left">MobileBERT ONNX를 통한 ML 의미론적 가지치기 — 코드 안전, 비동기</td></tr>
-  <tr><td align="center" nowrap>11</td><td align="left" nowrap><b>Ultra</b></td><td align="left">선택적 소형 모델(SLM) 계층을 사용한 휴리스틱 토큰 가지치기</td></tr>
-  <tr><td align="center" nowrap>12</td><td align="left" nowrap><b>OmniGlyph</b></td><td align="left">Anthropic 직접 연결에서 측정된 Claude Fable 5를 위한 실험적 이미지 기반 컨텍스트 인코딩. GPT 5.6 트랜스포머는 공급자 확인증이 제공될 때까지 실패 시 차단 상태로 유지됩니다. 4가지 압축 프로필(기본값인 공격적, 균형, 코딩 안전, 패스스루) 제공(가장 공격적이며 명시적으로 활성화해야 함)</td></tr>
+  <tr><td align="center" nowrap>11</td><td align="left" nowrap><b>Ultra</b></td><td align="left">선택적 소형 모델(SLM) 계층을 활용하는 휴리스틱 토큰 가지치기</td></tr>
+  <tr><td align="center" nowrap>12</td><td align="left" nowrap><b>OmniGlyph</b></td><td align="left">Anthropic 직접 연결에서 측정된 Claude Fable 5를 위한 실험적 컨텍스트-이미지 인코딩. GPT 5.6 트랜스포머는 제공업체 수신 확인 전까지 실패 시 차단 상태를 유지합니다. 네 가지 압축 프로필(기본값인 공격적, 균형, 코딩 안전, 패스스루)(가장 공격적, 명시적 사용 설정 필요)</td></tr>
 </table>
 
-코드 블록, URL 및 구조화된 데이터는 바이트 단위로 완벽하게 **항상 보존됩니다**. **원클릭 프리셋**으로 엔진을 조합할 수 있습니다.
+코드 블록, URL 및 구조화된 데이터는 **항상 바이트 단위까지 완벽하게 보존됩니다**. **원클릭 프리셋**으로 엔진을 조합할 수 있습니다.
 
 <table>
-  <tr><th align="left">모드</th><th align="left">절감률</th><th align="left">권장 용도</th></tr>
+  <tr><th align="left">모드</th><th align="left">절감률</th><th align="left">최적 용도</th></tr>
   <tr><td align="left" nowrap>🪶 <b>Lite</b></td><td align="left" nowrap>~15%</td><td align="left">항상 활성화할 수 있는 안전한 기본값</td></tr>
   <tr><td align="left" nowrap>🪨 <b>Standard (Caveman)</b></td><td align="left" nowrap>~30%</td><td align="left">일상적인 코딩</td></tr>
   <tr><td align="left" nowrap>⚡ <b>Aggressive</b></td><td align="left" nowrap>~50%</td><td align="left">도구 사용이 많은 장시간 세션</td></tr>
@@ -953,7 +961,7 @@ range    = 78.4 – 94.6%
 
 **실제 예시 — Standard 모드:**
 
-> **이전(69토큰):** _"React 컴포넌트가 다시 렌더링되는 이유는 렌더링 주기마다 새로운 객체 참조를 생성하고 있기 때문일 가능성이 높습니다. 인라인 객체를 prop으로 전달하면 React의 얕은 비교가 매번 이를 다른 객체로 인식하여 다시 렌더링됩니다. useMemo를 사용해 객체를 메모이제이션하는 것이 좋습니다."_
+> **이전(69토큰):** _"React 컴포넌트가 다시 렌더링되는 이유는 렌더링 주기마다 새로운 객체 참조를 생성하기 때문일 가능성이 큽니다. 인라인 객체를 prop으로 전달하면 React의 얕은 비교는 매번 이를 다른 객체로 인식하여 다시 렌더링합니다. useMemo를 사용하여 객체를 메모이제이션하는 것을 권장합니다."_
 >
 > **이후(19토큰):** _"렌더링마다 새 객체 참조 생성. 인라인 객체 prop = 새 참조 = 재렌더링. useMemo로 감싸세요."_
 >
@@ -961,28 +969,28 @@ range    = 78.4 – 94.6%
 
 **PT-BR 예시 — [Troglodita](https://github.com/leninejunior/troglodita) 모드:**
 
-> **이전(42토큰):** _"문제는 렌더링 주기마다 새로운 객체 참조가 생성되어 컴포넌트가 다시 렌더링된다는 것입니다. `useMemo`를 사용하는 것이 좋습니다."_
+> **이전(42 토큰):** _"문제는 렌더링 주기마다 새로운 객체 참조가 생성되어 컴포넌트가 다시 렌더링된다는 것입니다. `useMemo` 사용을 권장합니다."_
 >
-> **이후(12토큰):** _"재렌더링: 매 주기 새 참조 생성(인라인 객체 재생성). `useMemo` 사용."_
+> **이후(12 토큰):** _"재렌더링: 주기마다 새 참조 생성(인라인 객체 재생성). `useMemo` 사용."_
 >
-> **동일한 답변. 토큰은 약 70% 감소. 기술적 정확성은 그대로.** ✅
+> **동일한 답변. 토큰 약 70% 감소. 기술적 정확성은 그대로.** ✅
 
 <br/>
 
-### 🎚️ 엔진을 넘어서 — 출력 스타일, 적응형 다이얼 및 요청별 제어
+### 🎚️ 엔진 그 이상 — 출력 스타일, 적응형 다이얼 및 요청별 제어
 
-위의 12개 엔진은 **입력**을 줄입니다. 세 가지 추가 계층은 **어떻게**, **언제**, 그리고 무엇이 **출력되는지**를 조정합니다.
+위의 12개 엔진은 **입력되는** 내용을 줄입니다. 세 가지 추가 계층은 **어떻게**, **언제**, 그리고 무엇이 **출력되는지**를 결정합니다.
 
-- **🪄 출력 스타일** _(출력 축 조정)_ — 결정론적이고 캐시에 안전한 응답 형태 지정 지침을 주입합니다. 여러 스타일을 조합할 수 있으며, 각 스타일은 `lite` / `full` / `ultra` 강도를 지원합니다. 스타일 추가는 레지스트리에 한 줄만 등록하면 됩니다.
-  - **간결한 문체** — 군더더기 / 관사 / 유보적 표현을 제거하되 기술적 내용은 정확하게 유지합니다.
-  - **코드 최소화** — "게으른 시니어 개발자"식 YAGNI: 작동하는 최소한의 변경만 적용하고, 요청하지 않은 뼈대 코드는 만들지 않습니다.
-  - **Ponytail(게으른 시니어 개발자)** — YAGNI 단계를 따라 근본 원인을 해결하고, 작동하는 최소한의 diff만 만듭니다.
-  - **ADHD가 있어요(행동 우선)** — 다음 행동을 먼저 제시하고, 단계에 번호를 매기며, 구체적인 다음 단계 하나만 제공하고, 서문은 생략합니다.
+- **🪄 출력 스타일** _(출력 축 조정)_ — 결정론적이고 캐시 친화적인 응답 형식 지정 지침을 삽입합니다. 여러 스타일을 조합할 수 있으며 각각 `lite` / `full` / `ultra` 강도를 지원합니다. 스타일 추가는 레지스트리에 한 줄만 등록하면 됩니다.
+  - **간결한 문체** — 군더더기 / 관사 / 불확실한 표현을 제거하고 기술적 핵심은 정확히 유지합니다.
+  - **적은 코드** — "게으른 시니어 개발자"식 YAGNI: 요청하지 않은 스캐폴딩 없이 작동하는 최소 변경만 제공합니다.
+  - **포니테일(게으른 시니어 개발자)** — YAGNI 단계를 따라 근본 원인을 해결하고, 작동하는 최소 diff를 제공합니다.
+  - **ADHD가 있어요(행동 우선)** — 다음 행동부터 제시하고, 단계에 번호를 붙이며, 구체적인 다음 단계 하나만 제공하고, 서문은 생략합니다.
   - **간결한 CJK(文言)** — 고전 중국어 기반의 극도로 간결한 스타일입니다(`zh` 로케일에서만 활성화).
-- **🎯 적응형 컨텍스트 예산** _(다이얼)_ — 하나의 켜기/끄기 토큰 임계값 대신, **모델의 컨텍스트 창에 맞추는 데** 필요한 수준까지만 가장 저렴하고 정보 손실이 적은 엔진을 단계적으로 적용합니다. 정책: `reserve-output`(기본값, 모델 인식) · `percentage` · `absolute`. 모드: `floor`(크기 적합 보장) · `replace-autotrigger`(명시적 선택 우선) · `off`(레거시 임계값).
-- **🎛️ 압축 결정 위치** _(우선순위, 높음 → 낮음)_ — 요청별 `x-omniroute-compression` 헤더 › 라우팅 조합 재정의 › 활성화된 명명 프로필 › 적응형 / 자동 트리거 › 패널 기본값 › 끄기. 적용된 계획은 `X-OmniRoute-Compression: <mode>; source=<source>` 응답 헤더로 반환됩니다.
+- **🎯 적응형 컨텍스트 예산** _(다이얼)_ — 단일 온/오프 토큰 임계값 대신, **모델의 컨텍스트 윈도우에 맞추는 데** 필요한 수준까지만 가장 저렴하고 손실이 적은 엔진을 단계적으로 적용합니다. 정책: `reserve-output`(기본값, 모델 인식) · `percentage` · `absolute`. 모드: `floor`(적합 보장) · `replace-autotrigger`(명시적 선택 우선) · `off`(레거시 임계값).
+- **🎛️ 압축 결정 위치** _(우선순위, 높음 → 낮음)_ — 요청별 `x-omniroute-compression` 헤더 › 라우팅 조합 재정의 › 활성화된 명명 프로필 › 적응형 / 자동 트리거 › 패널 기본값 › 비활성화. 적용된 계획은 `X-OmniRoute-Compression: <mode>; source=<source>` 응답 헤더에 그대로 반환됩니다.
 
-토큰 임계값을 기준으로 자동 트리거하거나, 적응형 다이얼을 켜거나, 명명 프로필을 고정하거나, 요청별로 일회성 설정을 지정하거나, 라우팅 조합별로 파이프라인을 할당할 수 있습니다. 워크로드에 맞는 방식을 선택하세요. 선택적으로 사용할 수 있는 오프라인 **평가 하네스**(`npm run eval:compression`)는 변경 사항을 배포하기 전에 고정된 코퍼스를 기준으로 충실도와 절감 효과를 평가합니다.
+토큰 임계값 기반 자동 트리거를 사용하거나, 적응형 다이얼을 켜거나, 명명 프로필을 고정하거나, 요청별로 일회성 설정을 지정하거나, 라우팅 조합별로 파이프라인을 할당할 수 있습니다. 워크로드에 맞는 방식을 선택하세요. 선택적으로 사용할 수 있는 오프라인 **평가 하네스**(`npm run eval:compression`)는 변경 사항을 적용하기 전에 고정된 코퍼스에서 충실도와 절감률을 평가합니다.
 
 📖 [`COMPRESSION_GUIDE.md`](docs/compression/COMPRESSION_GUIDE.md) · [`RTK_COMPRESSION.md`](docs/compression/RTK_COMPRESSION.md) · [`COMPRESSION_ENGINES.md`](docs/compression/COMPRESSION_ENGINES.md)
 
@@ -1001,20 +1009,38 @@ npm install -g omniroute
 omniroute
 ```
 
-> 💡 `npm warn ERESOLVE` 또는 peer-dep 경고가 표시되나요? [무시해도 됩니다](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
+> 💡 `npm warn ERESOLVE` 또는 peer-dep 경고가 표시되나요? [문제없는 경고입니다](docs/guides/TROUBLESHOOTING.md#npm-install-warnings-eresolve--peer--deprecated).
+> **npm 11 이상을 사용하시나요?** 허용되지 않은 패키지 수명 주기 스크립트는 npm에서 차단할 수 있습니다. OmniRoute의 `postinstall`(`node scripts/build/postinstall.mjs`)은 네이티브 런타임 파일을 준비하는 데 필요합니다. 전역 설치 시 npm 경고에 표시된 패키지를 허용하세요. OmniRoute 3.8.51에서 보고된 패키지 집합의 경우:
+>
+> ```bash
+> npm install -g --allow-scripts=omniroute,keytar,onnxruntime-node,@parcel/watcher,@swc/core,protobufjs,esbuild omniroute
+> ```
+>
+> 이후 전역 설치에서도 이 허용 목록을 재사용하려면 한 번 구성한 다음 정상적으로 설치하세요.
+>
+> ```bash
+> npm config set allow-scripts=omniroute,keytar,onnxruntime-node,@parcel/watcher,@swc/core,protobufjs,esbuild --location=user
+> npm install -g omniroute
+> ```
+>
+> 종속성 목록은 릴리스마다 변경될 수 있습니다. npm에서 다른 목록을 보고하면 해당 경고에 표시된 패키지 이름을 사용하세요. 패키지를 허용하면 해당 패키지의 설치 스크립트 실행이 허용됩니다.
+> **Gemini Web 또는 다른 웹 쿠키 공급자를 사용하시나요?** npm 패키지에는
+> Playwright가 포함되어 있지만 Chromium 바이너리는 포함되어 있지 않습니다. 첫 번째 웹 공급자 요청을 보내기 전에
+> [Playwright Chromium 설정](docs/guides/TROUBLESHOOTING.md#gemini-web-and-playwright-chromium)
+> 안내를 확인하세요.
 
-대시보드: `http://localhost:20128` · API: `http://localhost:20128/v1`.
+대시보드는 `http://localhost:20128`, API는 `http://localhost:20128/v1`에서 사용할 수 있습니다.
 
-**2) 무료 제공업체 연결(가입 불필요)**
+**2) 자신의 계정을 사용하여 적격 공급자 연결**
 
-대시보드 → **제공업체** → **Kiro AI**(무료 Claude, 계정당 월 약 50크레딧) 또는 **OpenCode Free**(인증 불필요) 연결 → 완료.
+대시보드 → **공급자** → 현재 약관과 할당량이 사용 사례에 적합한 공급자를 선택 → API 키를 추가하거나 계정 연결 절차를 완료합니다. 무료 티어에도 가입, 승인 또는 결제 수단이 필요할 수 있습니다. [무료 티어 가이드](docs/getting-started/FREE-TIERS-GUIDE.md)를 확인하세요. 키 없는 이용 가능 여부는 보장되지 않으며, `tos: avoid`로 표시된 공급자는 기본적으로 `auto`에서 제외됩니다.
 
 **3) 코딩 도구 연결**
 
 ```txt
 기본 URL: http://localhost:20128/v1
 API 키:   [대시보드 → 엔드포인트에서 복사]
-모델:     auto            (설정 없는 스마트 라우팅 — 또는 임의의 제공업체/모델)
+모델:     auto            (적격 연결 사이에서 라우팅 — 또는 공급자/모델 선택)
 ```
 
 **4) 작동 여부 확인**
@@ -1023,9 +1049,9 @@ API 키:   [대시보드 → 엔드포인트에서 복사]
 curl http://localhost:20128/v1/models -H "Authorization: Bearer YOUR_KEY"
 ```
 
-연결된 모델 목록이 표시되어야 합니다. 🎉 이것으로 끝입니다. 코딩을 시작하면 OmniRoute가 자동으로 라우팅하고 필요할 때 대체 경로를 사용합니다.
+연결된 모델 목록이 표시되어야 합니다. 🎉 이것으로 끝입니다. 코딩을 시작하면 OmniRoute가 자동으로 라우팅하고 장애 조치를 수행합니다.
 
-클라이언트가 사용자 지정 헤더를 전송할 수 없는 경우 OmniRoute는 토큰이 포함된 호환성 별칭도 제공합니다.
+클라이언트에서 사용자 지정 헤더를 보낼 수 없는 경우 OmniRoute는 토큰이 포함된 호환성 별칭도 제공합니다.
 
 ```txt
 OpenAI 카탈로그: http://localhost:20128/vscode/YOUR_KEY/
@@ -1036,7 +1062,7 @@ Ollama 채팅:     http://localhost:20128/vscode/YOUR_KEY/api/chat
 Ollama 태그:     http://localhost:20128/vscode/YOUR_KEY/api/tags
 ```
 
-`Authorization: Bearer ...`를 첨부할 수 없는 클라이언트에서만 이 주소를 사용하세요. 헤더 인증이 여전히 권장되는 방식입니다.
+`Authorization: Bearer ...`를 첨부할 수 없는 클라이언트에서만 이를 사용하세요. 헤더 인증이 여전히 권장 방식입니다.
 
 <br/>
 
@@ -1264,19 +1290,19 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1도 이를 건너�
   <tr><td nowrap><b>런타임</b></td><td>Node.js 22.x / 24.x LTS — <code>&gt;=22.22.2 &lt;23 || &gt;=24.0.0 &lt;27</code></td></tr>
   <tr><td nowrap><b>언어</b></td><td>TypeScript 6.0 — <code>src/</code> 및 <code>open-sse/</code> 전체에 걸쳐 <b>100% TypeScript</b> 사용(v2.0부터 코어의 <code>any</code> 사용 0건)</td></tr>
   <tr><td nowrap><b>프레임워크</b></td><td>Next.js 16 + React 19 + Tailwind CSS 4</td></tr>
-  <tr><td nowrap><b>데이터베이스</b></td><td>better-sqlite3 (SQLite, WAL 저널링) + LowDB (레거시 JSON) — 137개 도메인 모듈, 202개 마이그레이션</td></tr>
+  <tr><td nowrap><b>데이터베이스</b></td><td>better-sqlite3 (SQLite, WAL 저널링) + LowDB (레거시 JSON) — 도메인 모듈 137개, 마이그레이션 206개</td></tr>
   <tr><td nowrap><b>메모리</b></td><td>SQLite FTS5 전문 검색 + int8 양자화 벡터 임베딩, 유형화된 감쇠</td></tr>
   <tr><td nowrap><b>스키마</b></td><td>Zod 4 — MCP 도구 입출력 검증 + API 계약</td></tr>
   <tr><td nowrap><b>프로토콜</b></td><td>MCP (stdio / HTTP / SSE) + A2A v0.3 (JSON-RPC 2.0 + SSE)</td></tr>
   <tr><td nowrap><b>스트리밍</b></td><td>Server-Sent Events (SSE) + WebSocket 브리지(<code>/v1/ws</code>)</td></tr>
   <tr><td nowrap><b>압축</b></td><td>12개 엔진 파이프라인 — RTK, Caveman, LLMLingua-2 (MobileBERT ONNX), GCF, OmniGlyph</td></tr>
-  <tr><td nowrap><b>인증 및 보안</b></td><td>OAuth 2.0 (PKCE) + JWT + API 키 + MCP 범위 지정 인증 · 저장 데이터 AES-256-GCM 암호화 · DOMPurify</td></tr>
+  <tr><td nowrap><b>인증 및 보안</b></td><td>OAuth 2.0 (PKCE) + JWT + API Keys + MCP 범위 지정 인증 · 저장 데이터 AES-256-GCM 암호화 · DOMPurify</td></tr>
   <tr><td nowrap><b>스텔스</b></td><td>wreq-js — JA3 / JA4 TLS 지문 위장, 3단계 프록시</td></tr>
-  <tr><td nowrap><b>복원력</b></td><td>서킷 브레이커, 지수 백오프, 썬더링 허드 방지, 자동 조합 자가 복구</td></tr>
+  <tr><td nowrap><b>복원력</b></td><td>서킷 브레이커, 지수 백오프, 동시 요청 폭주 방지, 자동 조합 자가 복구</td></tr>
   <tr><td nowrap><b>로깅</b></td><td>pino — 요청 컨텍스트가 포함된 구조화된 JSON 로그</td></tr>
-  <tr><td nowrap><b>테스트</b></td><td>Node.js 테스트 러너 + Vitest — 추적되는 5,100개 이상의 테스트 파일에서 <b>39,000개 이상의 정적 테스트 선언</b>(단위, 통합, E2E, 보안, 생태계)</td></tr>
+  <tr><td nowrap><b>테스트</b></td><td>Node.js 테스트 러너 + Vitest — 추적되는 5,100개 이상의 테스트 파일에 걸친 <b>39,000개 이상의 정적 테스트 선언</b>(단위, 통합, E2E, 보안, 생태계)</td></tr>
   <tr><td nowrap><b>플랫폼</b></td><td>데스크톱(Electron) · Android (Termux) · PWA(모든 브라우저)</td></tr>
-  <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — 릴리스 시 npm 및 Docker Hub에 자동 게시</td></tr>
+  <tr><td nowrap><b>CI/CD</b></td><td>GitHub Actions — 릴리스 시 npm 자동 게시 + Docker Hub 배포</td></tr>
   <tr><td nowrap><b>링크</b></td><td><a href="https://omniroute.online">웹사이트</a> · <a href="https://www.npmjs.com/package/omniroute">npm</a> · <a href="https://hub.docker.com/r/diegosouzapw/omniroute">Docker Hub</a></td></tr>
 </table>
 
@@ -1295,9 +1321,9 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1도 이를 건너�
   <tr><td nowrap><b><a href="docs/guides/USER_GUIDE.md">사용자 가이드</a></b></td><td>프로바이더, 콤보, CLI 통합, 배포</td></tr>
   <tr><td nowrap><b><a href="docs/guides/SETUP_GUIDE.md">설정 가이드</a></b></td><td>전체 설치 방법, CLI 도구 구성, 프로토콜 설정, 타임아웃 조정</td></tr>
   <tr><td nowrap><b><a href="docs/reference/CLI-TOOLS.md">CLI 도구 가이드</a></b></td><td>Claude Code, Codex, Cursor, Cline, OpenClaw, Kilo, Copilot의 도구별 설정</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/REMOTE-MODE.md">원격 모드</a></b></td><td>범위가 지정된 액세스 토큰을 사용해 노트북의 CLI에서 원격 OmniRoute(VPS) 제어</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/CLAUDE-CODE-CONFIGURATION.md">Claude Code 구성</a></b></td><td><code>launch</code> 및 모델별 프로필을 사용해 Claude Code를 OmniRoute(로컬/원격)에 연결</td></tr>
-  <tr><td nowrap><b><a href="README.md#-quick-start">빠른 시작</a></b></td><td>3단계: 설치 → 연결 → 구성</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/REMOTE-MODE.md">원격 모드</a></b></td><td>범위가 지정된 액세스 토큰을 통해 노트북 CLI에서 원격 OmniRoute(VPS) 제어</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/CLAUDE-CODE-CONFIGURATION.md">Claude Code 구성</a></b></td><td><code>launch</code> 및 모델별 프로필을 사용하여 Claude Code를 OmniRoute(로컬/원격)에 연결</td></tr>
+  <tr><td nowrap><b><a href="README.md#-quick-start">빠른 시작</a></b></td><td>3단계 설치 → 연결 → 구성</td></tr>
 </table>
 
 ### 🔧 운영 및 배포
@@ -1319,7 +1345,7 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1도 이를 건너�
 <table>
   <tr><th align="left">문서</th><th align="left">설명</th></tr>
   <tr><td nowrap><b><a href="docs/architecture/ARCHITECTURE.md">아키텍처</a></b></td><td>시스템 아키텍처, 데이터 흐름 및 내부 구조</td></tr>
-  <tr><td nowrap><b><a href="docs/compression/COMPRESSION_GUIDE.md">압축 가이드</a></b></td><td>7가지 옵션의 파이프라인: 끄기 / 경량 / 표준 / 적극적 / 울트라 / RTK / 스택형</td></tr>
+  <tr><td nowrap><b><a href="docs/compression/COMPRESSION_GUIDE.md">압축 가이드</a></b></td><td>7가지 옵션의 파이프라인: 끄기 / 경량 / 표준 / 적극적 / 초고강도 / RTK / 스택형</td></tr>
   <tr><td nowrap><b><a href="docs/compression/RTK_COMPRESSION.md">RTK 압축</a></b></td><td>명령 출력 압축, 필터, 신뢰, 검증, 원시 출력 복구</td></tr>
   <tr><td nowrap><b><a href="docs/compression/COMPRESSION_ENGINES.md">압축 엔진</a></b></td><td>Caveman, RTK, 스택형 파이프라인, 대시보드/API/MCP 인터페이스</td></tr>
   <tr><td nowrap><b><a href="docs/compression/COMPRESSION_RULES_FORMAT.md">압축 규칙 형식</a></b></td><td>Caveman 및 RTK 필터용 JSON 규칙 팩 스키마</td></tr>
@@ -1327,8 +1353,8 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1도 이를 건너�
   <tr><td nowrap><b><a href="docs/architecture/RESILIENCE_GUIDE.md">복원력 가이드</a></b></td><td>서킷 브레이커, 쿨다운, 큐, 동시 요청 폭주 방지, TLS 스푸핑</td></tr>
   <tr><td nowrap><b><a href="docs/routing/AUTO-COMBO.md">자동 콤보 엔진</a></b></td><td>16개 요소 기반 점수 산정, 모드 팩, 자가 복구</td></tr>
   <tr><td nowrap><b><a href="docs/ops/PROXY_GUIDE.md">프록시 가이드</a></b></td><td>3단계 프록시 시스템, 1proxy 마켓플레이스, 레지스트리 CRUD</td></tr>
-  <tr><td nowrap><b><a href="docs/reference/FREE_TIERS.md">무료 티어</a></b></td><td>통합 디렉터리: 문서화된 반복 제공 풀 35개 / 카탈로그에 등록된 무료 티어 항목 489개</td></tr>
-  <tr><td nowrap><b><a href="docs/guides/FEATURES.md">기능 갤러리</a></b></td><td>스크린샷과 함께 살펴보는 시각적 대시보드 둘러보기</td></tr>
+  <tr><td nowrap><b><a href="docs/reference/FREE_TIERS.md">무료 등급</a></b></td><td>통합 디렉터리: 문서화된 정기 갱신 풀 35개 / 카탈로그에 등록된 무료 등급 항목 485개</td></tr>
+  <tr><td nowrap><b><a href="docs/guides/FEATURES.md">기능 갤러리</a></b></td><td>스크린샷과 함께 살펴보는 대시보드</td></tr>
   <tr><td nowrap><b><a href="docs/architecture/CODEBASE_DOCUMENTATION.md">코드베이스 문서</a></b></td><td>초보자 친화적인 코드베이스 둘러보기</td></tr>
 </table>
 
@@ -1336,7 +1362,7 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1도 이를 건너�
 
 <table>
   <tr><th align="left">문서</th><th align="left">설명</th></tr>
-  <tr><td nowrap><b><a href="docs/reference/API_REFERENCE.md">API 참조</a></b></td><td>예제가 포함된 모든 엔드포인트</td></tr>
+  <tr><td nowrap><b><a href="docs/reference/API_REFERENCE.md">API 참조</a></b></td><td>예제를 포함한 모든 엔드포인트</td></tr>
   <tr><td nowrap><b><a href="docs/openapi.yaml">OpenAPI 명세</a></b></td><td>OpenAPI 3.0 명세</td></tr>
   <tr><td nowrap><b><a href="open-sse/mcp-server/README.md">MCP 서버</a></b></td><td>110개의 MCP 도구, IDE 구성, Python/TS/Go 클라이언트</td></tr>
   <tr><td nowrap><b><a href="docs/frameworks/MCP-SERVER.md">MCP 서버 가이드</a></b></td><td>MCP 설치, 전송 방식 및 도구 참조</td></tr>
@@ -1349,12 +1375,12 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1도 이를 건너�
 <table>
   <tr><th align="left">문서</th><th align="left">설명</th></tr>
   <tr><td nowrap><b><a href="CONTRIBUTING.md">기여하기</a></b></td><td>개발 환경 설정 및 지침</td></tr>
-  <tr><td nowrap><b><a href="docs/ops/BRANCHING_MODEL.md">브랜치 및 릴리스 모델</a></b></td><td>PR 대상 위치(<code>release/*</code>)와 <code>main</code> 및 태그의 의미</td></tr>
-  <tr><td nowrap><b><a href="CHANGELOG.md">변경 로그</a></b></td><td>버전별 전체 릴리스 기록</td></tr>
+  <tr><td nowrap><b><a href="docs/ops/BRANCHING_MODEL.md">브랜치 및 릴리스 모델</a></b></td><td>PR의 대상 위치(<code>release/*</code>)와 <code>main</code> 및 태그의 의미</td></tr>
+  <tr><td nowrap><b><a href="CHANGELOG.md">변경 로그</a></b></td><td>버전별 전체 릴리스 이력</td></tr>
   <tr><td nowrap><b><a href="SECURITY.md">보안 정책</a></b></td><td>취약점 보고 및 보안 관행</td></tr>
   <tr><td nowrap><b><a href="docs/guides/I18N.md">i18n 가이드</a></b></td><td>42개 언어 지원, 번역 워크플로, RTL</td></tr>
   <tr><td nowrap><b><a href="docs/ops/RELEASE_CHECKLIST.md">릴리스 체크리스트</a></b></td><td>릴리스 전 검증 단계</td></tr>
-  <tr><td nowrap><b><a href="docs/ops/COVERAGE_PLAN.md">커버리지 계획</a></b></td><td>추적되는 5,100개 이상의 테스트 파일에 포함된 39,000개 이상의 정적 테스트 선언을 위한 테스트 커버리지 전략</td></tr>
+  <tr><td nowrap><b><a href="docs/ops/COVERAGE_PLAN.md">커버리지 계획</a></b></td><td>추적되는 5,100개 이상의 테스트 파일에 걸친 39,000개 이상의 정적 테스트 선언을 위한 테스트 커버리지 전략</td></tr>
 </table>
 
 <br/>
@@ -1363,12 +1389,12 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1도 이를 건너�
 
 # ⭐ 주요 기여자
 
-> OmniRoute는 열정적인 오픈 소스 커뮤니티의 손길로 만들어집니다. 다음 기여자들은 프로젝트의 품질, 안정성 및 도달 범위에 직접적인 영향을 미치는 탁월한 기여를 해주셨습니다. **감사합니다.**
+> OmniRoute는 열정적인 오픈 소스 커뮤니티가 함께 만들어 갑니다. 다음 기여자들은 프로젝트의 품질, 안정성 및 도달 범위에 직접적인 영향을 미치는 탁월한 기여를 해주셨습니다. **감사합니다.**
 
 ### 병합된 풀 리퀘스트 기준 외부 기여자
 
 <table>
-  <tr><th align="center">순위</th><th align="left">기여자</th><th align="center">병합된 PR</th><th align="right">~변경된 줄 수</th></tr>
+  <tr><th align="center">순위</th><th align="left">기여자</th><th align="center">병합된 PR 수</th><th align="right">~변경된 줄 수</th></tr>
   <tr><td align="center">1</td><td align="left"><a href="https://github.com/backryun"><b>backryun</b></a></td><td align="center">190</td><td align="right">227,977</td></tr>
   <tr><td align="center">2</td><td align="left"><a href="https://github.com/oyi77"><b>oyi77</b></a></td><td align="center">180</td><td align="right">407,678</td></tr>
   <tr><td align="center">3</td><td align="left"><a href="https://github.com/rdself"><b>rdself</b></a></td><td align="center">145</td><td align="right">80,663</td></tr>
@@ -1392,7 +1418,7 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1도 이를 건너�
   <tr><td align="center">20</td><td align="left"><a href="https://github.com/Prudhvivuda"><b>Prudhvivuda</b></a></td><td align="center">24</td><td align="right">6,312</td></tr>
 </table>
 
-<sub>2026-08-24 05:26:03 UTC까지의 병합을 포함하여 라이브 <code>release/v3.8.50</code>의 최신 커밋 <code>dafb4ae808</code>을 기준으로 고정되었습니다. 페이지네이션된 GitHub GraphQL 집계에는 병합된 PR 5,911개가 포함되어 있으며, 저장소 소유자가 작성한 PR 2,707개, Dependabot이 작성한 PR 179개, 그리고 <b>서로 다른 기여자 535명이 작성한 외부 PR 3,025개</b>로 구성됩니다. “변경된 줄 수”는 GitHub의 추가 줄 수와 삭제 줄 수를 합한 값이며 생성된 파일, 잠금 파일, 카탈로그, 번역 및 문서를 포함합니다. 이는 변경량이지 작성된 LOC가 아닙니다. 순위 경계에서 동률인 기여자는 모두 포함했습니다.</sub>
+<sub>2026-08-24 05:26:03 UTC까지 병합된 내용을 포함하여 라이브 <code>release/v3.8.50</code>의 최신 커밋 <code>dafb4ae808</code>을 기준으로 확정되었습니다. 페이지가 매겨진 GitHub GraphQL 전수 조사에는 병합된 PR 5,911개가 포함되어 있으며, 그중 2,707개는 저장소 소유자, 179개는 Dependabot, <b>3,025개는 서로 다른 외부 기여자 535명이 제출한 PR</b>입니다. “변경된 줄 수”는 GitHub의 추가 줄 수와 삭제 줄 수를 합산한 값으로, 생성된 파일, 잠금 파일, 카탈로그, 번역 및 문서를 포함하며 작성된 LOC가 아닌 변경량입니다. 기준선에서 동률인 경우 모두 포함했습니다.</sub>
 
 ### GitHub에 귀속된 커밋
 
@@ -1403,42 +1429,42 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1도 이를 건너�
         <img src="https://github.com/backryun.png" width="40" style="border-radius:50%" alt="backryun"/><br/>
         <b>backryun</b>
       </a><br/>
-      <sub>🥇 GitHub 기준 커밋 220개</sub>
+      <sub>🥇 GitHub에 귀속된 커밋 220개</sub>
     </td>
     <td align="center" width="160">
       <a href="https://github.com/oyi77">
         <img src="https://github.com/oyi77.png" width="40" style="border-radius:50%" alt="Paijo"/><br/>
         <b>Paijo</b>
       </a><br/>
-      <sub>🥈 GitHub 기준 커밋 219개</sub>
+      <sub>🥈 GitHub에 귀속된 커밋 219개</sub>
     </td>
     <td align="center" width="160">
       <a href="https://github.com/rdself">
         <img src="https://github.com/rdself.png" width="40" style="border-radius:50%" alt="Randi"/><br/>
         <b>Randi</b>
       </a><br/>
-      <sub>🥉 GitHub 기준 커밋 108개</sub>
+      <sub>🥉 GitHub에 귀속된 커밋 108개</sub>
     </td>
     <td align="center" width="160">
       <a href="https://github.com/RaviTharuma">
         <img src="https://github.com/RaviTharuma.png" width="40" style="border-radius:50%" alt="Ravi Tharuma"/><br/>
         <b>Ravi Tharuma</b>
       </a><br/>
-      <sub>🏅 GitHub 기준 커밋 81개</sub>
+      <sub>🏅 GitHub에 귀속된 커밋 81개</sub>
     </td>
     <td align="center" width="160">
       <a href="https://github.com/christopher-s">
         <img src="https://github.com/christopher-s.png" width="40" style="border-radius:50%" alt="Chris"/><br/>
         <b>Chris</b>
       </a><br/>
-      <sub>🏅 GitHub 기준 커밋 70개</sub>
+      <sub>🏅 GitHub에 귀속된 커밋 70개</sub>
     </td>
     <td align="center" width="160">
       <a href="https://github.com/hartmark">
         <img src="https://github.com/hartmark.png" width="40" style="border-radius:50%" alt="Markus Hartung"/><br/>
         <b>Markus Hartung</b>
       </a><br/>
-      <sub>🏅 GitHub 기준 커밋 69개 · 공동 6위</sub>
+      <sub>🏅 GitHub에 귀속된 커밋 69개 · 공동 6위</sub>
     </td>
   </tr>
   <tr>
@@ -1447,42 +1473,42 @@ OMNIROUTE_SKIP_POSTINSTALL=1 npm install -g omniroute   # CI=1도 이를 건너�
         <img src="https://github.com/maxmad64bis.png" width="40" style="border-radius:50%" alt="Dizzle"/><br/>
         <b>Dizzle</b>
       </a><br/>
-      <sub>🏅 GitHub 기준 커밋 69개 · 공동 6위</sub>
+      <sub>🏅 GitHub에 귀속된 커밋 69개 · 공동 6위</sub>
     </td>
     <td align="center" width="160">
       <a href="https://github.com/JxnLexn">
         <img src="https://github.com/JxnLexn.png" width="40" style="border-radius:50%" alt="Jan Leon"/><br/>
         <b>Jan Leon</b>
       </a><br/>
-      <sub>🏅 GitHub 기준 커밋 64개</sub>
+      <sub>🏅 GitHub에 귀속된 커밋 64개</sub>
     </td>
     <td align="center" width="160">
       <a href="https://github.com/zen0bit">
         <img src="https://github.com/zen0bit.png" width="40" style="border-radius:50%" alt="zenobit"/><br/>
         <b>zenobit</b>
       </a><br/>
-      <sub>🏅 GitHub 기준 커밋 62개</sub>
+      <sub>🏅 GitHub에 귀속된 커밋 62개</sub>
     </td>
     <td align="center" width="160">
       <a href="https://github.com/HouMinXi">
         <img src="https://github.com/HouMinXi.png" width="40" style="border-radius:50%" alt="Bob.Hou"/><br/>
         <b>Bob.Hou</b>
       </a><br/>
-      <sub>🏅 GitHub 기준 커밋 51개 · 공동 10위</sub>
+      <sub>🏅 GitHub에 귀속된 커밋 51개 · 공동 10위</sub>
     </td>
     <td align="center" width="160">
       <a href="https://github.com/xz-dev">
         <img src="https://github.com/xz-dev.png" width="40" style="border-radius:50%" alt="Xiangzhe"/><br/>
         <b>Xiangzhe</b>
       </a><br/>
-      <sub>🏅 GitHub 기준 커밋 51개 · 공동 10위</sub>
+      <sub>🏅 GitHub에 귀속된 커밋 51개 · 공동 10위</sub>
     </td>
   </tr>
 </table>
 
-<sub>2026-08-24 06:14:31 UTC에 재확인: <code>release/v3.8.50</code> 기본 브랜치에 대해 저장소 Contributors API가 보고한 GitHub 기준 커밋입니다. API는 525개의 ID(사용자 415명, 봇 2개, 익명 108명)를 반환했습니다. 이 표에서는 메인테이너, 봇 및 익명 ID를 제외하고 공동 순위를 유지했습니다. 이 순위는 위의 병합된 PR 순위 및 아래의 639명 규모 Git 메타데이터 집계와는 별개입니다.</sub>
+<sub>2026-08-24 06:14:31 UTC에 재확인: 저장소 Contributors API가 기본 브랜치 <code>release/v3.8.50</code>에 대해 보고한 GitHub 귀속 커밋입니다. API는 525개의 ID(사용자 415명, 봇 2개, 익명 108명)를 반환했습니다. 이 표에서는 관리자, 봇 및 익명 ID를 제외하고 공동 순위는 유지했습니다. 이는 위의 병합된 PR 순위 및 아래의 639명 Git 메타데이터 전수 조사와는 별개입니다.</sub>
 
-> 🙏 이 기여자들이 제공한 기능, 버그 수정 및 인프라 개선은 OmniRoute를 안정적이고 풍부한 기능을 갖춘 프로젝트로 만드는 **핵심 요소**입니다. 모든 풀 리퀘스트, 모든 테스트 케이스, 모든 i18n 번역 파일이 중요합니다. 오픈 소스는 바로 이들과 같은 사람들이 만들어 갑니다.
+> 🙏 이 기여자들이 제공한 기능, 버그 수정 및 인프라 개선은 OmniRoute를 안정적이고 풍부한 기능을 갖춘 프로젝트로 만드는 **핵심 요소**입니다. 모든 풀 리퀘스트, 모든 테스트 사례, 모든 i18n 번역 파일이 중요합니다. 오픈 소스는 바로 이들과 같은 사람들이 만들어 갑니다.
 
 </div>
 

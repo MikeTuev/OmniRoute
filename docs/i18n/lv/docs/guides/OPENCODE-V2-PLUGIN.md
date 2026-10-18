@@ -72,28 +72,28 @@ norādot galapunktu un zaudēto informāciju — tādēļ pasliktinātas funkcio
 
 ## Opcijas
 
-| Atslēga                          | Noklusējums                                                 | Piezīmes                                                                                                             |
-| -------------------------------- | ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `providerId`                     | `"omniroute"`                                               | Pakalpojumu sniedzēja ID, integrācijas ID un prefikss, zem kura tiek attēloti modeļi                                 |
-| `baseURL`                        | obligāts                                                    | Vārtejas saknes URL, tikai `http(s)`; sufikss `/v1` tiek pievienots, kur nepieciešams                                |
-| `apiKey`                         | pievienotie akreditācijas dati, pēc tam `OMNIROUTE_API_KEY` | Tērzēšanas atslēga ceļiem `/v1/*`                                                                                    |
-| `managementReadToken`            | izmanto `apiKey`, ja nav norādīts                           | Atslēga ceļiem `/api/*` — parasti tā **nav** tā pati                                                                 |
-| `displayName`                    | `"OmniRoute"`                                               | Pakalpojumu sniedzēja nosaukums izvēlnē                                                                              |
-| `timeoutMs`                      | `10000`                                                     | Katra galapunkta izgūšanas noildze (automātiskajām kombinācijām tiek izmantotas 5 s)                                 |
-| `modelCacheTtlMs`                | `300000`                                                    | Kataloga kešatmiņas TTL; diska momentuzņēmums paātrina auksto palaišanu                                              |
-| `timeouts`                       | izmanto `timeoutMs`, ja nav norādīts                        | Katra galapunkta laika limiti milisekundēs: `models`, `combos`, `autoCombos`, `enrichment`                           |
-| `enrichment`                     | `true`                                                      | Iegūt nosaukumus, cenas un bezmaksas līmeņa limitus                                                                  |
-| `providerTag`                    | `true`                                                      | Attēlojamajam nosaukumam pievienot maršrutēšanas mērķa augšupējā pakalpojumu sniedzēja prefiksu                      |
-| `usableOnly`                     | `false`                                                     | Paturēt tikai tos pakalpojumu sniedzējus, kurus vārteja uzrāda kā nodrošinātus                                       |
-| `showcasePerOwner`               | `10`                                                        | Noklusējuma skatā paturēto ierakstu skaits katram pakalpojumu sniedzējam                                             |
-| `freshPerOwner`                  | `10`                                                        | Noklusējuma skatā paturēto jauno ierakstu skaits katram pakalpojumu sniedzējam                                       |
-| `freshWindowDays`                | `90`                                                        | Jaunuma laika periods dienās jauno ierakstu atzaram                                                                  |
-| `usageMemory`                    | `true`                                                      | Atjaunot statiski atmestos ierakstus, kas norādīti 30 dienu lietojuma analītikā (nepieciešams pārvaldības marķieris) |
-| `visibleModels` / `hiddenModels` | `[]`                                                        | Precīzas vai pēc sufiksa atbilstošas atļaušanas saraksti; aizliegums ir prioritārs                                   |
-| `geminiSanitization`             | `true`                                                      | No rīku shēmām noņemt JSON Schema atslēgvārdus, kurus Gemini noraida (rīki ar `$ref` tiek pārsūtīti nemainīti)       |
-| `apiFormat.allowAnthropic`       | `false`                                                     | Atļaušanas sarakstā iekļautos ID maršrutēt caur Anthropic API bloku                                                  |
-| `apiFormat.anthropicModels`      | `[]`                                                        | Pilnie modeļu ID, kas tiek maršrutēti uz Anthropic                                                                   |
-| `logLevel` / `startupDebug`      | `warn` / `false`                                            | Reģistrētāja detalizācijas līmenis                                                                                   |
+| Atslēga                          | Noklusējums                                                  | Piezīmes                                                                                                                             |
+| -------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `providerId`                     | `"omniroute"`                                                | Pakalpojuma sniedzēja ID, integrācijas ID un prefikss, zem kura tiek parādīti modeļi                                                 |
+| `baseURL`                        | obligāts                                                     | Vārtejas sakne, tikai `http(s)`; sufikss `/v1` tiek pievienots, kur nepieciešams                                                     |
+| `apiKey`                         | piesaistītie akreditācijas dati, pēc tam `OMNIROUTE_API_KEY` | Tērzēšanas atslēga galapunktiem `/v1/*`                                                                                              |
+| `managementReadToken`            | izmanto `apiKey`, ja nav norādīts                            | Atslēga galapunktiem `/api/*` — parasti tā **nav** tā pati                                                                           |
+| `displayName`                    | `"OmniRoute"`                                                | Pakalpojuma sniedzēja nosaukums izvēles sarakstā                                                                                     |
+| `timeoutMs`                      | `10000`                                                      | Katra galapunkta izgūšanas noildze (automātiskajām kombinācijām tiek izmantotas 5 s)                                                 |
+| `modelCacheTtlMs`                | `300000`                                                     | Kataloga kešatmiņas TTL; diska momentuzņēmums paātrina auksto palaišanu                                                              |
+| `timeouts`                       | izmanto `timeoutMs`, ja nav norādīts                         | Katra galapunkta laika ierobežojumi ms: `models`, `combos`, `autoCombos`, `enrichment`                                               |
+| `enrichment`                     | `true`                                                       | Iegūt nosaukumus, cenas un bezmaksas līmeņa limitus                                                                                  |
+| `providerTag`                    | `true`                                                       | Displeja nosaukumam pievienot tā augšupējā pakalpojuma sniedzēja prefiksu, uz kuru tas maršrutē                                      |
+| `usableOnly`                     | `false`                                                      | Paturēt tikai tos pakalpojuma sniedzējus, kurus vārteja uzrāda kā nodrošinātus                                                       |
+| `showcasePerOwner`               | `10`                                                         | Noklusējuma skatā paturamo ierakstu skaits katram pakalpojuma sniedzējam                                                             |
+| `freshPerOwner`                  | `10`                                                         | Noklusējuma skatā paturamo jauno ierakstu skaits katram pakalpojuma sniedzējam                                                       |
+| `freshWindowDays`                | `90`                                                         | Jaunuma periods dienās jauno ierakstu atzaram                                                                                        |
+| `usageMemory`                    | `true`                                                       | Atjaunot statiski atmestos ierakstus, kas minēti 30 dienu lietojuma analītikā (nepieciešams pārvaldības marķieris)                   |
+| `visibleModels` / `hiddenModels` | `[]`                                                         | Precīzas vai sufiksu atļaušanas saraksti; aizliegums ir prioritārs; `*` publicē visu katalogu (pārējie filtri joprojām tiek lietoti) |
+| `geminiSanitization`             | `true`                                                       | No rīku shēmām noņemt JSON Schema atslēgvārdus, kurus Gemini noraida (rīki ar `$ref` tiek pārsūtīti nemainīti)                       |
+| `apiFormat.allowAnthropic`       | `false`                                                      | Maršrutēt atļaušanas sarakstā iekļautos ID caur Anthropic API bloku                                                                  |
+| `apiFormat.anthropicModels`      | `[]`                                                         | Pilnie modeļu ID, kas tiek maršrutēti uz Anthropic                                                                                   |
+| `logLevel` / `startupDebug`      | `warn` / `false`                                             | Reģistrētāja detalizācijas līmenis                                                                                                   |
 
 Lietojuma atmiņa pēc noklusējuma ir ieslēgta. Bez pārvaldības marķiera tā paliek neaktīva
 (palaišanas laikā tiek reģistrēts paziņojums), un nekas netiek atjaunots.
@@ -117,11 +117,16 @@ Lai to izslēgtu, iestatiet `"geminiSanitization": false`.
 
 ## Problēmu novēršana
 
-| Pazīme                                           | Cēlonis                                                                                                          |
-| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| Atlasītājā nav redzams neviens OmniRoute modelis | Atslēga netika atrasta (pārbaudiet brīdinājumu palaišanas laikā), vai arī vārteja nav sasniedzama                |
-| Neapstrādāti modeļu ID, nav kombināciju un cenu  | Pārvaldības galapunkti noraidīja pilnvaru — iestatiet `managementReadToken`                                      |
-| Sesija ir piesaistīta `opencode-<id>/…`          | v1 spraudnis publicēja `opencode-<id>`; v2 publicē tikai `<id>`, tādēļ atkārtoti atlasiet modeli sadaļā `<id>/…` |
+| Simptoms                                                     | Cēlonis                                                                                                                                    |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Atlasītājā nav redzams neviens OmniRoute modelis             | Nav atrasta neviena atslēga (pārbaudiet brīdinājumu startēšanas laikā), vai arī vārteja nav sasniedzama                                    |
+| Neapstrādāti modeļu ID, nav kombināciju un cenu informācijas | Pārvaldības galapunkti noraidīja pilnvaru — iestatiet `managementReadToken`                                                                |
+| Īss vai tukšs `freeOnly` katalogs                            | Nav pārvaldības pilnvaras vai tā ir noraidīta — resursdatora žurnālā skatiet atsvaidzināšanas kopsavilkuma rindu (`unmatched-free` skaitu) |
+| Sesija ir piesaistīta `opencode-<id>/…`                      | v1 spraudnis publicēja `opencode-<id>`; v2 publicē tikai `<id>`, tāpēc atkārtoti atlasiet modeli sadaļā `<id>/…`                           |
+
+Vides mainīgajiem ir jāsasniedz opencode servera process: ja resursdators
+darbojas kā pakalpojums, čaulas, kurā tiek izpildīta komanda `opencode models`,
+un servera vides atšķiras, tāpēc eksportējiet atslēgu tur, kur serveris to nolasa.
 
 ## Skatiet arī
 

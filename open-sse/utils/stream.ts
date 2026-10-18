@@ -4,6 +4,7 @@ import { appendRequestLog } from "@/lib/usageDb";
 import { clearPendingRequestOnce } from "./pendingRequestCleanup.ts";
 import { resolveTrailingUsageSummary } from "./passthroughTrailingUsage.ts";
 import { createByteLengthQueueStrategies } from "./byteQueueStrategy.ts";
+import { initTranslateStreamState } from "./streamTranslateState.ts";
 import {
   extractUsage,
   hasValidUsage,
@@ -57,9 +58,13 @@ import {
   type StreamFailurePayload,
 } from "./streamErrorFormat.ts";
 import { createStreamFailureAborter } from "./streamFailureBoundary.ts";
+import { buildStreamFailureSnapshot } from "./streamFailureSnapshot.ts";
+import { nativeFinishFailure, readPassthroughChatId } from "./streamPassthroughFinish.ts";
 import { createReasoningStreamObserver } from "./responsesReasoningObservation.ts";
 import { recordToolLatency } from "../services/toolLatencyTracker.ts";
 import { extractToolSchemaMap } from "../translator/response/openai-responses/toolSchemas.ts";
+import { collectDeclaredToolNames } from "../translator/response/openai-responses/declaredToolName.ts";
+import { appendToolCallNameDelta } from "./toolCallName.ts";
 import {
   generateSessionId,
   markToolFinish,
@@ -91,8 +96,11 @@ import { restoreClaudeToolName } from "../services/claudeCodeToolRemapper.ts";
 import { normalizeFinalOpenAIStreamChunk } from "./openAIStreamChunk.ts";
 import { collectClaudeDelta } from "./streamClaudeDelta.ts";
 import { createStreamTiming, registerStreamTiming, type StreamTiming } from "./streamTiming.ts";
+import { trackStreamPartialUsage } from "./streamPartialUsage.ts";
 import { buildUsageOnlyChunk } from "./usageOnlyChunk.ts";
+import { createSSEOutputSink } from "./sseOutputSink.ts";
 import { normalizeArrayContentChunk } from "./arrayContentDelta.ts";
+import { drainTranslateFlushTail } from "./translateFlushTail.ts";
 
 /**
  * Race a response body read against a timeout.
@@ -233,6 +241,8 @@ type TranslateState = ReturnType<typeof initState> & {
   accumulatedReasoning?: string;
   /** #6951 — per-tool JSON Schema (from request `tools[]`), keyed by tool name. */
   toolSchemas?: Map<string, Record<string, unknown>> | null;
+  /** Every tool name the request declared (with or without a schema). */
+  declaredToolNames?: Set<string> | null;
   customToolNames?: ReadonlySet<string>;
   requestToolIdentityMap?: Map<string, { namespace: string; name: string }> | null;
   upstreamError?: {
@@ -240,6 +250,7 @@ type TranslateState = ReturnType<typeof initState> & {
     type: string;
     code: string;
     message: string;
+    streamSnapshot?: import("./streamErrorFormat.ts").StreamFailureSnapshot;
   } | null;
 };
 
@@ -799,12 +810,6 @@ export function createSSEStream(options: StreamOptions = {}) {
   // stream, marked from the transform below. ttft() = first-forwarded-SSE-chunk
   // latency (NOT token-level) — see streamTiming.ts.
   const timing: StreamTiming = createStreamTiming();
-  /** Forward a pre-encoded SSE chunk, marking TTFT/ITL on the way. */
-  const forward = (controller: TransformStreamDefaultController<Uint8Array>, bytes: Uint8Array) => {
-    timing.markForward();
-    timing.observeOutput(bytes);
-    controller.enqueue(bytes);
-  };
 
   // Drop internal commentary-phase Responses output before forwarding (#6199).
   // Explicit option wins; otherwise read the feature flag (default on) — resolved once per stream.
@@ -825,6 +830,9 @@ export function createSSEStream(options: StreamOptions = {}) {
     (mode === STREAM_MODE.PASSTHROUGH
       ? clientResponseFormat === FORMATS.CLAUDE
       : sourceFormat === FORMATS.CLAUDE) === true;
+  // Forward a pre-encoded SSE chunk: TTFT/ITL marks + opt-in coalescing (sseOutputSink.ts).
+  const outputSink = createSSEOutputSink(timing, { claudeClient: clientExpectsClaudeStream });
+  const forward = outputSink.forward;
 
   // Antigravity/cloudcode streams terminate naturally on their last
   // `data: {"response":{...}}` event, not on a `[DONE]` marker. Emitting
@@ -861,16 +869,16 @@ export function createSSEStream(options: StreamOptions = {}) {
   const state: TranslateState | null =
     mode === STREAM_MODE.TRANSLATE
       ? {
-          ...(initState(sourceFormat) as TranslateState),
+          ...(initTranslateStreamState(sourceFormat, connectionId, model) as TranslateState),
           provider,
           toolNameMap,
-          signatureNamespace: connectionId,
           copilotCompatibleReasoning,
           suppressThinkClose,
           requestedThinking,
           accumulatedContent: "",
           accumulatedReasoning: "",
           toolSchemas: extractToolSchemaMap(body),
+          declaredToolNames: collectDeclaredToolNames(body),
           customToolNames,
           requestToolIdentityMap,
         }
@@ -1157,7 +1165,13 @@ export function createSSEStream(options: StreamOptions = {}) {
     let failureHandled = false;
     if (onFailure) {
       try {
-        failureHandled = onFailure({ status: 502, message: msg, code: "empty_response" }) === true;
+        failureHandled =
+          onFailure({
+            status: 502,
+            message: msg,
+            code: "empty_response",
+            streamSnapshot: buildStreamFailureSnapshot(providerPayloadCollector),
+          }) === true;
       } catch (e) {
         console.debug(`[STREAM] onFailure callback error (empty_response):`, e);
       }
@@ -1346,6 +1360,7 @@ export function createSSEStream(options: StreamOptions = {}) {
   const abortStreamFailure = createStreamFailureAborter({
     onFailure,
     onComplete,
+    attachFailureSnapshot: () => buildStreamFailureSnapshot(providerPayloadCollector),
     getUsage: () => state?.usage,
     timing,
     buildProviderPayload: () =>
@@ -1365,6 +1380,7 @@ export function createSSEStream(options: StreamOptions = {}) {
   ): boolean => {
     const failure = prepareTranslatedStreamFailure(payload);
     if (!failure) return false;
+    failure.internalFailure.streamSnapshot ??= buildStreamFailureSnapshot(providerPayloadCollector);
     providerPayloadCollector.push(failure.providerPayload);
     const output = formatTranslatedStreamError(failure.record, sourceFormat);
     reqLogger?.appendConvertedChunk?.(output);
@@ -1378,7 +1394,7 @@ export function createSSEStream(options: StreamOptions = {}) {
   };
 
   const sseStream = new TransformStream(
-    {
+    outputSink.wrap({
       start(controller) {
         // Start idle watchdog — checks every 10s if provider has stopped sending
         if (STREAM_IDLE_TIMEOUT_MS > 0) {
@@ -1398,6 +1414,7 @@ export function createSSEStream(options: StreamOptions = {}) {
                       message: timeoutMsg,
                       code: "stream_idle_timeout",
                       type: "timeout_error",
+                      streamSnapshot: buildStreamFailureSnapshot(providerPayloadCollector),
                     }) === true;
                 } catch (e) {
                   console.debug(`[STREAM] onFailure callback error (idle_timeout):`, e);
@@ -1533,6 +1550,10 @@ export function createSSEStream(options: StreamOptions = {}) {
                 if (projectedFailure) {
                   parsed = projectedFailure.publicPayload;
                   failurePayload = projectedFailure.internalFailure;
+                  failurePayload.streamSnapshot ??= buildStreamFailureSnapshot(
+                    providerPayloadCollector,
+                    providerPayloadCollector.getEventCount() - 1
+                  );
                   publicFailureMessage = projectedFailure.publicMessage;
                   output = `data: ${JSON.stringify(parsed)}\n\n`;
                   injectedUsage = true;
@@ -2017,6 +2038,7 @@ export function createSSEStream(options: StreamOptions = {}) {
                   // Typed content-part arrays are folded into strings by
                   // sanitizeStreamingChunk, so the raw line must not be forwarded.
                   const hadArrayContent = Array.isArray(rawDelta?.content);
+                  const nativeFailure = nativeFinishFailure(parsed); // before sanitize drops it
 
                   if (!projectedFailure) {
                     parsed = sanitizeStreamingChunk(parsed);
@@ -2132,8 +2154,14 @@ export function createSSEStream(options: StreamOptions = {}) {
                         });
                       } else {
                         if (tc?.id) existing.id = existing.id || String(tc.id);
-                        if (tc?.function?.name && !existing.function.name)
-                          existing.function.name = tc.function.name;
+                        // Accumulate name deltas — a split declared name
+                        // (`functions__` + `exec`) must not be truncated to one
+                        // fragment (arguments already append below).
+                        if (tc?.function?.name)
+                          existing.function.name = appendToolCallNameDelta(
+                            existing.function.name,
+                            tc.function.name
+                          );
                         existing.function.arguments += deltaArgs;
                       }
                     }
@@ -2183,17 +2211,13 @@ export function createSSEStream(options: StreamOptions = {}) {
 
                   const isFinishChunk = parsed.choices?.[0]?.finish_reason;
 
-                  // Remember the upstream's chat-completion id so synthetic chunks
-                  // emitted at flush (e.g. the estimated usage-only chunk) carry the
-                  // stream's real string id instead of null on the chat path
-                  // (passthroughResponsesId is only ever set on the Responses path).
-                  if (typeof parsed.id === "string" && parsed.id) {
-                    passthroughLastChatId = parsed.id;
-                  } else if (typeof parsed.id === "number") {
-                    passthroughLastChatId = String(parsed.id);
-                  }
+                  passthroughLastChatId = readPassthroughChatId(parsed) ?? passthroughLastChatId;
 
+                  // Empty native-error finish → 502; repeated finish chunk → dropped.
                   if (isFinishChunk) {
+                    if (passthroughSawFinishReason) continue;
+                    if (nativeFailure && !totalContentLength && !passthroughHasToolCalls)
+                      return abortStreamFailure(controller, nativeFailure, nativeFailure.message);
                     passthroughSawFinishReason = true;
                   }
 
@@ -2637,6 +2661,11 @@ export function createSSEStream(options: StreamOptions = {}) {
                 bufferedProjectedFailure = projectStreamFailureEvent(bufferedPayload);
                 if (bufferedProjectedFailure) {
                   bufferedPayload = bufferedProjectedFailure.publicPayload;
+                  bufferedProjectedFailure.internalFailure.streamSnapshot ??=
+                    buildStreamFailureSnapshot(
+                      providerPayloadCollector,
+                      providerPayloadCollector.getEventCount() - 1
+                    );
                   output = `data: ${JSON.stringify(bufferedPayload)}\n\n`;
                 }
                 if (sanitizeUsagePayloadForRequest(bufferedPayload, body, clientResponseFormat))
@@ -2938,6 +2967,62 @@ export function createSSEStream(options: StreamOptions = {}) {
           }
 
           // Translate mode: process remaining buffer
+          // Held tail lines first, then the partial buffer below: exactly one
+          // of the two ever holds data (the normalizer clears `buffer` when it
+          // produces the tail), so the two paths never emit twice.
+          if (
+            drainTranslateFlushTail(normalizedTailLines, controller, {
+              targetFormat,
+              openaiFormat: FORMATS.OPENAI,
+              openaiResponsesFormat: FORMATS.OPENAI_RESPONSES,
+              body,
+              state: state as TranslateState & Record<string, unknown>,
+              sessionId,
+              now: () => Date.now(),
+              getLastToolCallChunkTime: () => lastToolCallChunkTime,
+              setLastToolCallChunkTime: (value) => {
+                lastToolCallChunkTime = value;
+              },
+              getToolFinishTime: () => toolFinishTime,
+              setToolFinishTime: (value) => {
+                toolFinishTime = value;
+              },
+              noteReasoning: (parsed, nowMs) => {
+                if (
+                  targetFormat === FORMATS.OPENAI_RESPONSES &&
+                  ((parsed as JsonRecord).type === "response.output_item.added" ||
+                    (parsed as JsonRecord).type === "response.output_item.done") &&
+                  (parsed as JsonRecord).item !== undefined
+                )
+                  reasoningObserver.note(parsed, nowMs);
+              },
+              isDuplicateSequence: (value) => isDuplicateResponsesSequence(value),
+              shouldDropCommentary: (parsed) =>
+                shouldDropResponsesCommentary ? dropCommentary(parsed as JsonRecord) : false,
+              pushProviderPayload: (payload) => providerPayloadCollector.push(payload),
+              emitFailureAndAbort: (ctrl, parsed) =>
+                emitTranslatedFailureAndAbort(
+                  ctrl as TransformStreamDefaultController<Uint8Array>,
+                  parsed
+                ),
+              translateAndEmit: (ctrl, parsed) => {
+                const translated = translateResponse(targetFormat, sourceFormat, parsed, state);
+                for (const item of getOpenAIIntermediateChunks(translated)) {
+                  const openaiOutput = formatSSE(item, FORMATS.OPENAI);
+                  reqLogger?.appendOpenAIChunk?.(openaiOutput);
+                }
+                if (translated?.length > 0) {
+                  for (const item of translated) {
+                    emitTranslatedClientItem(
+                      ctrl as TransformStreamDefaultController<Uint8Array>,
+                      item as Record<string, unknown>
+                    );
+                  }
+                }
+              },
+            })
+          )
+            return;
           if (buffer.trim()) {
             const parsed = parseSSELine(buffer.trim());
             if (parsed && !parsed.done) {
@@ -3009,6 +3094,7 @@ export function createSSEStream(options: StreamOptions = {}) {
 
             const errorBody = buildErrorBody(err.status, err.message);
             const publicErrorMessage = errorBody.error.message;
+            err.streamSnapshot ??= buildStreamFailureSnapshot(providerPayloadCollector);
             abortStreamFailure(controller, err, publicErrorMessage, { notifyComplete: true });
             return;
           }
@@ -3054,6 +3140,7 @@ export function createSSEStream(options: StreamOptions = {}) {
           if (state?.upstreamError) {
             const err = state.upstreamError;
             const publicErrorMessage = buildErrorBody(err.status, err.message).error.message;
+            err.streamSnapshot ??= buildStreamFailureSnapshot(providerPayloadCollector);
             abortStreamFailure(controller, err, publicErrorMessage, {
               notifyComplete: true,
               preserveQueuedChunks: true,
@@ -3240,12 +3327,11 @@ export function createSSEStream(options: StreamOptions = {}) {
           console.log(`[STREAM] Error in flush (${model || "unknown"}):`, error.message || error);
         }
       },
-      cancel(reason) {
-        clearIdleTimer();
-      },
-    },
+      cancel: () => clearIdleTimer(),
+    }),
     ...createByteLengthQueueStrategies(streamBufferBytes)
   );
+  trackStreamPartialUsage(sseStream, body, () => [state?.usage ?? usage, totalContentLength]);
   return registerStreamTiming(sseStream, timing);
 }
 

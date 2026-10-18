@@ -437,7 +437,7 @@ server/
 ## 4. `open-sse/` — Рабочее пространство потокового движка
 
 Отдельное рабочее пространство npm, публикуемое как `@omniroute/open-sse`. Отвечает за обработку
-запросов, исполнители, трансляторы, сервисы, преобразователь и MCP-сервер.
+запросов, исполнители, трансляторы, сервисы, трансформер и MCP-сервер.
 
 ```
 open-sse/
@@ -447,37 +447,40 @@ open-sse/
 ├── types.d.ts
 ├── config/                 Реестры провайдеров, профили заголовков, идентификация, …
 ├── handlers/               Обработчики запросов (чат, эмбеддинги, аудио, изображения, …)
-├── executors/              108 HTTP-исполнителей для различных провайдеров
+├── executors/              150 модулей исполнителей провайдеров (классы исполнителей + вспомогательные модули для отдельных провайдеров)
 ├── translator/             Преобразование форматов (OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro)
-├── transformer/            Преобразователь потоков Responses API ↔ Chat Completions
+├── transformer/            Трансформер потоков Responses API ↔ Chat Completions
 ├── services/               Более 80 сервисных модулей (комбинации, резервирование, квоты, идентификация, …)
 ├── utils/                  Вспомогательные средства для потоковой передачи, TLS-клиент, AWS SigV4, прокси-запросы, …
-└── mcp-server/             MCP-сервер (3 транспорта, 33 области доступа, 110 инструментов)
+└── mcp-server/             MCP-сервер (3 транспорта, 33 области, 110 инструментов)
 ```
 
 ### 4.1 `open-sse/handlers/`
 
-| Обработчик              | Назначение                                                                                     |
-| ----------------------- | ---------------------------------------------------------------------------------------------- |
-| `chatCore.ts`           | Основной конвейер чата (кеш, ограничение частоты, маршрутизация комбинаций, вызов исполнителя) |
-| `responsesHandler.ts`   | Точка входа OpenAI Responses API                                                               |
-| `embeddings.ts`         | Эмбеддинги                                                                                     |
-| `imageGeneration.ts`    | Генерация изображений                                                                          |
-| `audioSpeech.ts`        | Преобразование текста в речь                                                                   |
-| `audioTranscription.ts` | Преобразование речи в текст                                                                    |
-| `videoGeneration.ts`    | Генерация видео                                                                                |
-| `musicGeneration.ts`    | Генерация музыки                                                                               |
-| `rerank.ts`             | Повторное ранжирование                                                                         |
-| `moderations.ts`        | Модерация                                                                                      |
-| `search.ts`             | Веб-поиск                                                                                      |
-| `sseParser.ts`          | Парсер событий SSE                                                                             |
-| `usageExtractor.ts`     | Извлечение количества токенов из входящих потоков                                              |
-| `responseSanitizer.ts`  | Удаление специфичного для провайдера шума                                                      |
-| `responseTranslator.ts` | Связующее звено между ответом провайдера и слоем трансляции                                    |
+| Обработчик              | Назначение                                                                                                |
+| ----------------------- | --------------------------------------------------------------------------------------------------------- |
+| `chatCore.ts`           | Основной конвейер чата (кэш, ограничение частоты, маршрутизация комбинаций, диспетчеризация исполнителей) |
+| `responsesHandler.ts`   | Точка входа OpenAI Responses API                                                                          |
+| `embeddings.ts`         | Эмбеддинги                                                                                                |
+| `imageGeneration.ts`    | Генерация изображений                                                                                     |
+| `audioSpeech.ts`        | Преобразование текста в речь                                                                              |
+| `audioTranscription.ts` | Преобразование речи в текст                                                                               |
+| `videoGeneration.ts`    | Генерация видео                                                                                           |
+| `musicGeneration.ts`    | Генерация музыки                                                                                          |
+| `rerank.ts`             | Повторное ранжирование                                                                                    |
+| `moderations.ts`        | Модерация                                                                                                 |
+| `search.ts`             | Веб-поиск                                                                                                 |
+| `sseParser.ts`          | Парсер событий SSE                                                                                        |
+| `usageExtractor.ts`     | Извлечение количества токенов из вышестоящих потоков                                                      |
+| `responseSanitizer.ts`  | Удаление специфичного для провайдера шума                                                                 |
+| `responseTranslator.ts` | Связующее звено между ответом провайдера и слоем транслятора                                              |
 
 ### 4.2 `open-sse/executors/`
 
-108 исполнителей провайдеров, каждый из которых расширяет `BaseExecutor` (`base.ts`):
+150 модулей исполнителей верхнего уровня (`*.ts` за исключением `base.ts`, `index.ts` и тестов — это количество
+измеряется командой `npm run check:docs-counts`). Каждый класс исполнителя расширяет `BaseExecutor` (`base.ts`)
+напрямую либо через `DefaultExecutor` или другой исполнитель; остальные модули являются вспомогательными
+модулями отдельных провайдеров (схемы инструментов, адаптеры выборки/TTS, обработчики особенностей). Среди исполнителей:
 
 `antigravity`, `azure-openai`, `blackbox-web`, `cliproxyapi`,
 `chatgpt-web-codex`, `cloudflare-ai`, `codex`, `commandCode`, `cursor`, `default`, `devin-cli`,
@@ -485,8 +488,8 @@ open-sse/
 `pollinations`, `qoder`, `vertex`, `devin-desktop`, а также `claudeIdentity.ts`
 (общий вспомогательный модуль идентификации) и `index.ts` (реестр).
 
-> Примечание: провайдеры, не перечисленные здесь, обслуживаются `default.ts` с помощью универсального
-> исполнителя, совместимого с OpenAI. Полный каталог провайдеров (355 провайдеров) находится в
+> Примечание: провайдеры, не указанные здесь, обслуживаются `default.ts` с помощью универсального
+> OpenAI-совместимого исполнителя. Полный каталог провайдеров (372 провайдера) находится в
 > `src/shared/constants/providers.ts`.
 
 ### 4.3 `open-sse/translator/`
@@ -539,8 +542,8 @@ open-sse/
   модули памяти, навыков, GitHub-навыков, пула, геймификации, плагинов, Notion, Obsidian,
   локального корпуса и сжатия — объединение подсчитывается функцией `countUniqueMcpTools`).
 - **3 транспорта**: stdio, HTTP Streamable, SSE.
-- **33 области доступа**, контролируемые во время выполнения, — базовый список находится в `src/shared/constants/mcpScopes.ts`, а полный набор представляет собой объединение областей доступа, объявленных каждым модулем инструментов.
-- Таблица аудита: `mcp_tool_audit` (заполняется `audit.ts`).
+- **33 области доступа**, применяемые во время выполнения, — базовый список находится в `src/shared/constants/mcpScopes.ts`, а полный набор представляет собой объединение областей доступа, объявленных каждым модулем инструментов.
+- Таблица аудита: `mcp_tool_audit` (заполняется модулем `audit.ts`).
 - Файлы: `server.ts`, `index.ts`, `httpTransport.ts`, `audit.ts`, `scopeEnforcement.ts`,
   `runtimeHeartbeat.ts`, `descriptionCompressor.ts`, `schemas/{tools, a2a, audit, index}.ts`,
   `tools/{advancedTools, compressionTools, memoryTools, skillTools}.ts`,
@@ -550,7 +553,7 @@ open-sse/
 ### 4.7 `open-sse/config/`
 
 Реестры провайдеров (`providerRegistry.ts`, `providerModels.ts`,
-`providerHeaderProfiles.ts`), реестры моделей для каждого формата (`audioRegistry.ts`,
+`providerHeaderProfiles.ts`), реестры моделей для отдельных форматов (`audioRegistry.ts`,
 `embeddingRegistry.ts`, `imageRegistry.ts`, `moderationRegistry.ts`,
 `musicRegistry.ts`, `rerankRegistry.ts`, `searchRegistry.ts`, `videoRegistry.ts`),
 вспомогательные средства идентификации (`codexIdentity.ts`, `codexInstructions.ts`,
@@ -563,7 +566,7 @@ open-sse/
 
 ### 4.8 `open-sse/utils/`
 
-Примитивы потоковой передачи и вспомогательные средства провайдеров: `stream.ts`, `streamHandler.ts`,
+Примитивы потоковой передачи и вспомогательные модули провайдеров: `stream.ts`, `streamHandler.ts`,
 `streamHelpers.ts`, `streamPayloadCollector.ts`, `streamReadiness.ts`,
 `sseHeartbeat.ts`, `proxyFetch.ts`, `proxyDispatcher.ts`, `tlsClient.ts`,
 `networkProxy.ts`, `awsSigV4.ts`, `cacheControlPolicy.ts`,
@@ -656,7 +659,7 @@ bin/
 
 ## 8. `scripts/`
 
-Организованы в 6 подпапок по назначению.
+Организовано в 6 подпапок по назначению.
 
 - **`scripts/build/`** — `build-next-isolated.mjs`, `prepublish.ts`,
   `prepare-electron-standalone.mjs`, `pack-artifact-policy.ts`,

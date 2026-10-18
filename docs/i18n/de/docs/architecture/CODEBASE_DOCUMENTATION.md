@@ -435,24 +435,24 @@ In zweckgebundene Unterverzeichnisse aufgeteilt:
 
 ---
 
-## 4. `open-sse/` — Workspace für die Streaming-Engine
+## 4. `open-sse/` — Arbeitsbereich der Streaming-Engine
 
-Separater npm-Workspace, der als `@omniroute/open-sse` veröffentlicht wird. Zuständig für die Verarbeitung von Anfragen, Executoren, Übersetzer, Dienste, den Transformer und den MCP-Server.
+Separater npm-Arbeitsbereich, der als `@omniroute/open-sse` veröffentlicht wird. Verantwortlich für Anfrageverarbeitung, Executors, Übersetzer, Dienste, Transformer und den MCP-Server.
 
 ```
 open-sse/
 ├── index.ts                Öffentliche Exporte
-├── package.json            Workspace-Manifest
+├── package.json            Arbeitsbereichsmanifest
 ├── tsconfig.json
 ├── types.d.ts
-├── config/                 Anbieterregister, Header-Profile, Identität, …
+├── config/                 Provider-Registrierungen, Header-Profile, Identität, …
 ├── handlers/               Anfrage-Handler (Chat, Embeddings, Audio, Bilder, …)
-├── executors/              108 anbieterspezifische HTTP-Executoren
+├── executors/              150 Provider-Executor-Module (Executor-Klassen + Provider-spezifische Hilfsfunktionen)
 ├── translator/             Formatkonvertierung (OpenAI ↔ Claude ↔ Gemini ↔ Cursor ↔ Kiro)
 ├── transformer/            Stream-Transformer für Responses API ↔ Chat Completions
 ├── services/               Über 80 Dienstmodule (Kombinationen, Fallback, Kontingente, Identität, …)
-├── utils/                  Streaming-Hilfsfunktionen, TLS-Client, AWS SigV4, Proxy-Fetch, …
-└── mcp-server/             MCP-Server (3 Transportarten, 33 Bereiche, 110 Tools)
+├── utils/                  Streaming-Hilfsfunktionen, TLS-Client, AWS SigV4, Proxy-Abruf, …
+└── mcp-server/             MCP-Server (3 Transportarten, 33 Geltungsbereiche, 110 Werkzeuge)
 ```
 
 ### 4.1 `open-sse/handlers/`
@@ -472,21 +472,24 @@ open-sse/
 | `search.ts`             | Websuche                                                                                |
 | `sseParser.ts`          | SSE-Ereignisparser                                                                      |
 | `usageExtractor.ts`     | Extrahiert Token-Anzahlen aus Upstream-Streams                                          |
-| `responseSanitizer.ts`  | Entfernt anbieterspezifisches Rauschen                                                  |
-| `responseTranslator.ts` | Bindeglied zwischen Anbieterantwort und Übersetzungsschicht                             |
+| `responseSanitizer.ts`  | Entfernt Provider-spezifisches Rauschen                                                 |
+| `responseTranslator.ts` | Bindeglied zwischen Provider-Antwort und Übersetzungsschicht                            |
 
 ### 4.2 `open-sse/executors/`
 
-108 Anbieter-Executoren, die jeweils `BaseExecutor` (`base.ts`) erweitern:
+150 Executor-Module auf oberster Ebene (`*.ts` ohne `base.ts`, `index.ts` und Tests — diese Anzahl wird von
+`npm run check:docs-counts` ermittelt). Jede Executor-Klasse erweitert `BaseExecutor` (`base.ts`),
+entweder direkt oder über `DefaultExecutor` beziehungsweise einen anderen Executor; bei den übrigen Modulen handelt es sich um Provider-spezifische
+Hilfsfunktionen (Werkzeugschemata, Fetch-/TTS-Adapter, Handler für Besonderheiten). Zu den Executors gehören:
 
 `antigravity`, `azure-openai`, `blackbox-web`, `cliproxyapi`,
 `chatgpt-web-codex`, `cloudflare-ai`, `codex`, `commandCode`, `cursor`, `default`, `devin-cli`,
 `muse-spark-web`, `nlpcloud`, `opencode`, `perplexity-web`, `petals`,
 `pollinations`, `qoder`, `vertex`, `devin-desktop` sowie `claudeIdentity.ts`
-(gemeinsame Identitäts-Hilfsfunktion) und `index.ts` (Register).
+(gemeinsame Hilfsfunktion für Identitäten) und `index.ts` (Registrierung).
 
-> Hinweis: Hier nicht aufgeführte Anbieter werden von `default.ts` über den generischen
-> OpenAI-kompatiblen Executor bedient. Der vollständige Anbieterkatalog (355 Anbieter) befindet sich in
+> Hinweis: Hier nicht aufgeführte Provider werden von `default.ts` mithilfe des generischen
+> OpenAI-kompatiblen Executors bedient. Der vollständige Provider-Katalog (372 Provider) befindet sich in
 > `src/shared/constants/providers.ts`.
 
 ### 4.3 `open-sse/translator/`
@@ -511,17 +514,17 @@ Hub-and-Spoke-Übersetzung (OpenAI ist der Hub).
 ### 4.4 `open-sse/transformer/`
 
 - `responsesTransformer.ts` — Auf `TransformStream` basierender Konverter für Responses API ↔ Chat
-  Completions (wird von der Catch-all-Route `responses/` verwendet).
+  Completions (wird vom Catch-all der Route `responses/` verwendet).
 
 ### 4.5 `open-sse/services/`
 
 Highlights (vollständige Liste unter `open-sse/services/`):
 
-| Aspekt              | Dateien                                                                                                                                                                                                                                                  |
+| Bereich             | Dateien                                                                                                                                                                                                                                                  |
 | ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Combo-Routing       | `combo.ts` (19 Strategien), `comboConfig.ts`, `comboMetrics.ts`, `comboManifestMetrics.ts`, `comboAgentMiddleware.ts`                                                                                                                                    |
 | Auto-Combo-Engine   | `autoCombo/` — `engine.ts`, `scoring.ts`, `taskFitness.ts`, `virtualFactory.ts`, `modePacks.ts`, `autoPrefix.ts`, `persistence.ts`, `providerDiversity.ts`, `providerRegistryAccessor.ts`, `routerStrategy.ts`, `selfHealing.ts`, `index.ts`             |
-| Ausfallsicherheit   | `accountFallback.ts` (Abklingzeit + Sperrung), `errorClassifier.ts`, `requestRejectedStreak.ts`, `emergencyFallback.ts`, `rateLimitManager.ts`, `rateLimitSemaphore.ts`, `accountSemaphore.ts`, `accountSelector.ts`                                     |
+| Resilienz           | `accountFallback.ts` (Abklingzeit + Sperrung), `errorClassifier.ts`, `requestRejectedStreak.ts`, `emergencyFallback.ts`, `rateLimitManager.ts`, `rateLimitSemaphore.ts`, `accountSemaphore.ts`, `accountSelector.ts`                                     |
 | Kontingente         | `quotaMonitor.ts`, `quotaPreflight.ts`, `bailianQuotaFetcher.ts`, `codexQuotaFetcher.ts`, `deepseekQuotaFetcher.ts`, `openrouterQuotaFetcher.ts`, `openrouterFreeWindow.ts`, `llmgatewayQuotaFetcher.ts`, `crofUsageFetcher.ts`, `antigravityCredits.ts` |
 | Caching             | `reasoningCache.ts`, `searchCache.ts`, `signatureCache.ts`, `requestDedup.ts`                                                                                                                                                                            |
 | Routing-Intelligenz | `intentClassifier.ts`, `taskAwareRouter.ts`, `backgroundTaskDetector.ts`, `volumeDetector.ts`, `wildcardRouter.ts`, `workflowFSM.ts`, `specificityDetector.ts`, `specificityRules.ts`, `specificityTypes.ts`                                             |
@@ -536,21 +539,21 @@ Highlights (vollständige Liste unter `open-sse/services/`):
 ### 4.6 `open-sse/mcp-server/`
 
 - **110 eindeutige Tools**, verdrahtet in `server.ts` (45 kanonische in `schemas/tools.ts` +
-  Speicher-, Skills-, GitHub-Skills-, Pool-, Gamification-, Plugin-, Notion-, Obsidian-,
-  lokale Korpus- und Komprimierungsmodule — die Vereinigungsmenge wird von `countUniqueMcpTools` gezählt).
+  Module für Speicher, Skills, GitHub-Skills, Pool, Gamification, Plugins, Notion, Obsidian,
+  lokalen Korpus und Komprimierung — die Vereinigungsmenge wird von `countUniqueMcpTools` gezählt).
 - **3 Transporte**: stdio, HTTP Streamable, SSE.
-- **33 Scopes**, die zur Laufzeit erzwungen werden — die Basisliste befindet sich in `src/shared/constants/mcpScopes.ts`; der vollständige Satz ist die Vereinigungsmenge der von jedem Tool-Modul deklarierten Scopes.
+- **33 Geltungsbereiche**, die zur Laufzeit durchgesetzt werden — die Basisliste befindet sich in `src/shared/constants/mcpScopes.ts`; die vollständige Menge ist die Vereinigungsmenge der von jedem Tool-Modul deklarierten Geltungsbereiche.
 - Audit-Tabelle: `mcp_tool_audit` (befüllt durch `audit.ts`).
 - Dateien: `server.ts`, `index.ts`, `httpTransport.ts`, `audit.ts`, `scopeEnforcement.ts`,
   `runtimeHeartbeat.ts`, `descriptionCompressor.ts`, `schemas/{tools, a2a, audit, index}.ts`,
-  `tools/{advancedTools, compressionTools, memoryTools, skillTools}.ts`,
+  `tools/{advancedTools, compressionTools, memoryTools, skillTools}.ts`
   sowie Tests unter `__tests__/`.
 - Den vollständigen Tool-Katalog finden Sie unter [MCP-SERVER.md](../frameworks/MCP-SERVER.md).
 
 ### 4.7 `open-sse/config/`
 
-Provider-Registrierungen (`providerRegistry.ts`, `providerModels.ts`,
-`providerHeaderProfiles.ts`), modellspezifische Registrierungen je Format (`audioRegistry.ts`,
+Provider-Registrys (`providerRegistry.ts`, `providerModels.ts`,
+`providerHeaderProfiles.ts`), formatspezifische Modell-Registrys (`audioRegistry.ts`,
 `embeddingRegistry.ts`, `imageRegistry.ts`, `moderationRegistry.ts`,
 `musicRegistry.ts`, `rerankRegistry.ts`, `searchRegistry.ts`, `videoRegistry.ts`),
 Identitäts-Hilfsfunktionen (`codexIdentity.ts`, `codexInstructions.ts`,
@@ -563,7 +566,7 @@ Adapter (`azureAi.ts`, `bedrock.ts`, `datarobot.ts`, `glmProvider.ts`,
 
 ### 4.8 `open-sse/utils/`
 
-Streaming-Grundelemente und Anbieter-Hilfsfunktionen: `stream.ts`, `streamHandler.ts`,
+Streaming-Grundelemente und Provider-Hilfsfunktionen: `stream.ts`, `streamHandler.ts`,
 `streamHelpers.ts`, `streamPayloadCollector.ts`, `streamReadiness.ts`,
 `sseHeartbeat.ts`, `proxyFetch.ts`, `proxyDispatcher.ts`, `tlsClient.ts`,
 `networkProxy.ts`, `awsSigV4.ts`, `cacheControlPolicy.ts`,

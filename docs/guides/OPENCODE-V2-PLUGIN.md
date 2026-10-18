@@ -91,7 +91,7 @@ naming the endpoint and what was lost — so a degraded picker is never a myster
 | `freshPerOwner`                  | `10`                                           | Default-view fresh entries kept per provider                                                           |
 | `freshWindowDays`                | `90`                                           | Freshness window in days for the fresh branch                                                          |
 | `usageMemory`                    | `true`                                         | Restore statically dropped entries named by 30-day usage analytics (needs a management token)          |
-| `visibleModels` / `hiddenModels` | `[]`                                           | Exact-or-suffix allowlists; deny wins                                                                  |
+| `visibleModels` / `hiddenModels` | `[]`                                           | Exact-or-suffix allowlists; deny wins; `*` publishes the full catalog (other filters still apply)      |
 | `geminiSanitization`             | `true`                                         | Strip the JSON-Schema keywords Gemini rejects from tool schemas (`$ref` tools are forwarded untouched) |
 | `apiFormat.allowAnthropic`       | `false`                                        | Route allowlisted ids through the Anthropic API block                                                  |
 | `apiFormat.anthropicModels`      | `[]`                                           | Full model ids routed to Anthropic                                                                     |
@@ -127,11 +127,16 @@ Set `"geminiSanitization": false` to turn it off.
 
 ## Troubleshooting
 
-| Symptom                               | Cause                                                                                                    |
-| ------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Picker shows no OmniRoute model       | No key resolved (check the startup warning), or the gateway is unreachable                               |
-| Raw model ids, no combos, no pricing  | The management endpoints refused the token — set `managementReadToken`                                   |
-| A session pinned to `opencode-<id>/…` | The v1 plugin published `opencode-<id>`; v2 publishes `<id>` bare, so re-select the model under `<id>/…` |
+| Symptom                               | Cause                                                                                                           |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| Picker shows no OmniRoute model       | No key resolved (check the startup warning), or the gateway is unreachable                                      |
+| Raw model ids, no combos, no pricing  | The management endpoints refused the token — set `managementReadToken`                                          |
+| Short or empty `freeOnly` catalog     | No management token or a refused token — read the refresh summary line (`unmatched-free` count) in the host log |
+| A session pinned to `opencode-<id>/…` | The v1 plugin published `opencode-<id>`; v2 publishes `<id>` bare, so re-select the model under `<id>/…`        |
+
+Environment variables must reach the opencode server process: when the host
+runs as a service, the shell that runs `opencode models` and the server
+environment are different, so export the key where the server reads it.
 
 ## See also
 
