@@ -78,7 +78,7 @@ describe("feature-flags-settings count update", () => {
     // (#13505, default off) to 85; KIRO_TOOL_CALL_REPAIR_ENABLED (default on) to 86;
     // CLAUDE_OAUTH_SUMMARIZED_THINKING_UNREDACTED (#17003, default off) to 87;
     // ANTHROPIC_COMPATIBLE_MID_CONVERSATION_SYSTEM (#16236, default off) to 88.
-    assert.equal(FEATURE_FLAG_DEFINITIONS.length, 88);
+    assert.equal(FEATURE_FLAG_DEFINITIONS.length, 99);
     // MODELS_DEV_EFFORT_TIERS_ENABLED (#15944, default off) to 88.
     // CREDENTIAL_HEALTH_RETEST_AUTO_DISABLED (#16190, default off) to 88.
     // CREDENTIAL_GATE_AUTH_DIAGNOSES_ONLY (#16599, default off) to 88.
