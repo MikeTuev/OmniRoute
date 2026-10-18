@@ -1017,6 +1017,7 @@
   "featureFlagBatchAndFileAutoCleanupEnabledDescription": "自動クリーンアップ処理で、OMNIROUTE_BATCH_RETENTION_DAYS より古い終了済み（完了／失敗／キャンセル／期限切れ）の Batch API ジョブを行ごとのチェックポイントとともに削除し、それぞれの expires_at を過ぎたアップロード済みファイルの BLOB コンテンツを消去します。デフォルトではオフです。オペレーターが明示的に有効化するまで、既存のすべてのインストール環境では従来どおりデータが保持されます。オペレーターが実行する DELETE /api/v1/batches/delete-completed ルートは、設定の有効／無効にかかわらず影響を受けません。これは独立した無条件の公開 API 契約です。",
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "xai-oauth 接続では、固定された静的シードの代わりに、OAuth ベアラートークンを使用して https://api.x.ai/v1/models から最新の xAI モデルカタログを取得します。デフォルトではオフです。オフの場合、xai-oauth は従来どおり静的シードを提供します。解決エラーが発生した場合、ディスカバリーはシードにフォールバックします。",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "起動時のデータベース整合性／ヘルスチェックが完了するまで起動をブロックする代わりに、サーバーがリクエストの受け付けを開始した後でチェックを実行します。デフォルトではオフです。オフの場合、この変更前とまったく同様に、チェックが完了するまで起動がブロックされるため、破損したデータベースは引き続き最初のリクエストが処理される前に検出されます。",
+  "featureFlagAnthropicCompatibleMidConversationSystemDescription": "標準の anthropic 互換リレーでは、会話途中のシステムターンをトップレベルのシステムプロンプトへ移動せず、メッセージリスト内に保持します。これにより、キャッシュされたプロンプトのプレフィックスがターン間で安定します。クライアント自身が mid-conversation-system-2026-04-07 ベータを送信した場合にのみ適用されます。デフォルトでは無効です。そのベータに対応していないリレーはメッセージリスト内のシステムターンを拒否するため、従来どおり、すべてのシステムターンがシステムプロンプトへ移動されます。",
   "sidebar": {
     "home": "ホーム",
     "dashboard": "ダッシュボード",

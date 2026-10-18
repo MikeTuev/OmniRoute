@@ -1017,6 +1017,7 @@
   "featureFlagBatchAndFileAutoCleanupEnabledDescription": "ራስ-ሰር የማጽዳት ሂደቱ ከOMNIROUTE_BATCH_RETENTION_DAYS በላይ የቆዩ የተጠናቀቁ (completed/failed/cancelled/expired) Batch API ሥራዎችን ከየመስመራቸው ማረጋገጫ ነጥቦች ጋር እንዲሰርዝ እና የራሳቸው expires_at ያለፈባቸው የተሰቀሉ ፋይሎችን BLOB ይዘት እንዲያጸዳ ይፍቀዱ። በነባሪ የተሰናከለ ነው፦ ኦፕሬተር እስኪያነቃው ድረስ እያንዳንዱ ነባር ጭነት ይህን ውሂብ ልክ እንደበፊቱ ያቆያል። በኦፕሬተር የሚጀመረው DELETE /api/v1/batches/delete-completed መስመር በሁለቱም ሁኔታ አይነካም -- ይህ የተለየ፣ ቅድመ ሁኔታ የሌለው ይፋዊ API ውል ነው።",
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "የቆመውን የማይለወጥ የመነሻ ዝርዝር ከመጠቀም ይልቅ፣ የOAuth bearer tokenን በመጠቀም ለxai-oauth ግንኙነቶች ቀጥታውን የxAI ሞዴል ካታሎግ ከhttps://api.x.ai/v1/models ያምጡ። በነባሪ የተሰናከለ ነው፦ xai-oauth ያልተለወጠውን የማይለወጥ የመነሻ ዝርዝር ማቅረቡን ይቀጥላል። በማንኛውም የመፍታት ስህተት ጊዜ፣ ግኝቱ ወደ መነሻ ዝርዝሩ ይመለሳል።",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "አገልጋዩ ጥያቄዎችን መቀበል ከጀመረ በኋላ የማስጀመሪያውን የውሂብ ጎታ ታማኝነት/ጤና ምርመራ ያስኪዱ፤ እስኪጠናቀቅ ድረስ ማስጀመርን አያግዱ። በነባሪ የተሰናከለ ነው፦ ማስጀመር ከዚህ ለውጥ በፊት እንደነበረው ልክ ምርመራውን ይጠብቃል፤ ስለዚህ የተበላሸ የውሂብ ጎታ የመጀመሪያው ጥያቄ ከመስተናገዱ በፊት አሁንም ይገኛል።",
+  "featureFlagAnthropicCompatibleMidConversationSystemDescription": "በመደበኛ anthropic-ተኳሃኝ ሪሌዎች ላይ፣ የተሸጎጠው የፕሮምፕት ቅድመ ቅጥያ በየተራው የተረጋጋ ሆኖ እንዲቆይ፣ በውይይት መካከል ያሉ የስርዓት ተራዎችን ወደ ከፍተኛ ደረጃው የስርዓት ፕሮምፕት ከማዛወር ይልቅ በመልዕክት ዝርዝሩ ውስጥ ያቆዩ። ይህ የሚሠራው ደንበኛው ራሱ mid-conversation-system-2026-04-07 ቤታን ሲልክ ብቻ ነው። በነባሪነት ጠፍቷል፦ ያ ቤታ የሌላቸው ሪሌዎች በመልዕክት ዝርዝሩ ውስጥ ያሉ የስርዓት ተራዎችን ስለማይቀበሉ፣ እያንዳንዱ የስርዓት ተራ ልክ እንደበፊቱ ወደ የስርዓት ፕሮምፕቱ ይዛወራል።",
   "sidebar": {
     "home": "መነሻ",
     "dashboard": "ዳሽቦርድ",

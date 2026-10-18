@@ -1017,6 +1017,7 @@
   "featureFlagBatchAndFileAutoCleanupEnabledDescription": "允许自动清理任务删除早于 OMNIROUTE_BATCH_RETENTION_DAYS 的终态（已完成/失败/已取消/已过期）Batch API 作业及其逐行检查点，并清除超过各自 expires_at 的已上传文件的 BLOB 内容。默认关闭：在运维人员选择启用之前，所有现有安装都将继续像以前一样保留这些数据。无论是否启用，运维人员触发的 DELETE /api/v1/batches/delete-completed 路由均不受影响——它是一个独立且无条件执行的公共 API 契约。",
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "对于 xai-oauth 连接，使用 OAuth 持有者令牌从 https://api.x.ai/v1/models 获取实时 xAI 模型目录，而不是使用固定不变的静态种子数据。默认关闭：xai-oauth 将继续原样提供静态种子数据。出现任何解析错误时，发现功能都会回退到种子数据。",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "在服务器开始接受请求后运行启动时数据库完整性/健康检查，而不是阻塞启动直至检查完成。默认关闭：启动过程会像此更改之前一样等待检查完成，因此损坏的数据库仍会在处理第一个请求之前被发现。",
+  "featureFlagAnthropicCompatibleMidConversationSystemDescription": "对于普通的 Anthropic 兼容中继，将对话中途的 system 轮次保留在消息列表中，而不是将其移至顶层 system 提示词，这样缓存的提示词前缀就能在各轮次间保持稳定。仅当客户端自身发送了 mid-conversation-system-2026-04-07 beta 时适用。默认关闭：与之前完全相同，每个 system 轮次都会被移入 system 提示词，因为不支持该 beta 的中继会拒绝消息列表中的 system 轮次。",
   "sidebar": {
     "home": "首页",
     "dashboard": "仪表板",
