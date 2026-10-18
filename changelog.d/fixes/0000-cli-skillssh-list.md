@@ -1,0 +1,1 @@
+- **fix(cli):** `omniroute skills skillssh list` printed the raw response object instead of the skills, because it read `items` while the route answers `skills`. It now lists the skills.sh results (id, name, source, installs) and prints the server's message when the request is refused.

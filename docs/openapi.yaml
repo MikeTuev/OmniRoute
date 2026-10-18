@@ -12264,6 +12264,34 @@ paths:
       responses:
         "200":
           description: OK
+  /api/settings/database/integrity-check:
+    post:
+      tags:
+        - Settings
+      summary: "POST settings › database › integrity check"
+      description: >-
+        Runs SQLite `PRAGMA quick_check` on demand and stores the result. Reading the storage
+        settings (GET /api/settings/database) only returns the last stored result and never
+        runs the scan.
+      x-always-protected: true
+      responses:
+        "200":
+          description: Scan finished; returns the stored result.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  integrityCheck:
+                    type: string
+                    enum: [ok, error]
+                  lastIntegrityCheckAt:
+                    type: string
+                    format: date-time
+        "401":
+          description: Unauthorized
+        "500":
+          description: Failed to run integrity check
   /api/settings/database/refresh-stats:
     post:
       tags:

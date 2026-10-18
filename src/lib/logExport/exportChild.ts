@@ -68,7 +68,8 @@ async function run(start: ExportChildStart) {
         readDb,
         cursor,
         Math.min(start.batchSize, start.maxRowsPerRun - exported),
-        throughRowId
+        throughRowId,
+        { includeBodies: start.includeBodies }
       );
       if (!summaries.length) break;
       const batch = start.includeBodies

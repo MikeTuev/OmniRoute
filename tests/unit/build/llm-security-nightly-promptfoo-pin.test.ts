@@ -23,6 +23,7 @@ import * as yaml from "js-yaml";
 interface Step {
   name?: string;
   run?: string;
+  "working-directory"?: string;
 }
 
 const root = new URL("../../../", import.meta.url);
@@ -63,7 +64,24 @@ test("guard-validation runs an exact, network-isolated promptfoo that mirrors th
     pkg.devDependencies.promptfoo,
     "the workflow pin must equal the package.json devDependency pin (single version to bump)"
   );
-  assert.match(run, /-c promptfooconfig\.yaml/, "still evaluates the repo's promptfooconfig.yaml");
+  assert.match(
+    run,
+    /-c "\$GITHUB_WORKSPACE\/promptfooconfig\.yaml"/,
+    "still evaluates the repo's promptfooconfig.yaml, addressed from the workspace root"
+  );
+});
+
+test("guard-validation runs from outside the checkout so the repo's promptfoo cannot shadow the npx tree", () => {
+  // npx prefers the nearest node_modules. The devDependency pin (#17005) means the repo's
+  // own promptfoo satisfies `promptfoo@<pin>`, and that install is unusable on this branch
+  // (#17017: nested js-yaml 4.3.2). Run 39095530088 proved it: same command, run from the
+  // workspace, imported node_modules/promptfoo and died on `binaryTag`.
+  const step = guardStep();
+  assert.equal(
+    step["working-directory"],
+    "${{ runner.temp }}",
+    "working-directory must be runner.temp (no node_modules above it)"
+  );
 });
 
 test("promptfoo devDependency is pinned exactly and the lockfile agrees", () => {

@@ -76,8 +76,9 @@ describe("feature-flags-settings count update", () => {
     // default off) to 82; USAGE_LIMIT_IGNORE_UNPRICED (#14799, default off) to 83;
     // REASONING_REPLAY_ENABLED (#12486, default on) to 84; COMBO_AUTO_PRUNE_STALE_STEPS
     // (#13505, default off) to 85; KIRO_TOOL_CALL_REPAIR_ENABLED (default on) to 86;
-    // ANTHROPIC_COMPATIBLE_MID_CONVERSATION_SYSTEM (#16236, default off) to 87.
-    assert.equal(FEATURE_FLAG_DEFINITIONS.length, 87);
+    // CLAUDE_OAUTH_SUMMARIZED_THINKING_UNREDACTED (#17003, default off) to 87;
+    // ANTHROPIC_COMPATIBLE_MID_CONVERSATION_SYSTEM (#16236, default off) to 88.
+    assert.equal(FEATURE_FLAG_DEFINITIONS.length, 88);
   });
 });
 

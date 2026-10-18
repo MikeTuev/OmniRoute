@@ -1,0 +1,1 @@
+- **ci:** the nightly LLM-security guard eval runs its pinned `npx promptfoo` from `runner.temp`, so the repository's own (currently unimportable, #17017) promptfoo install can no longer shadow the isolated npx tree.

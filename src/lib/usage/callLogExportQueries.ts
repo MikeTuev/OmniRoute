@@ -236,7 +236,8 @@ export function getCallLogsForExport(
   db: CallLogReadDb,
   afterRowId: number,
   limit: number,
-  throughRowId: number = Number.MAX_SAFE_INTEGER
+  throughRowId: number = Number.MAX_SAFE_INTEGER,
+  options: { includeBodies?: boolean } = {}
 ): LogExportSourceRow[] {
   const rows = db
     .prepare(
@@ -253,5 +254,10 @@ export function getCallLogsForExport(
     )
     .all({ afterRowId, limit, throughRowId }) as ExportSourceRow[];
 
-  return rows.map((row) => ({ rowId: Number(row.row_id), record: mapExportRow(row) }));
+  // Never advance a body-export cursor past a write that can still publish payloads.
+  const pendingIndex = options.includeBodies
+    ? rows.findIndex((row) => row.detail_state === "pending")
+    : -1;
+  const exportable = pendingIndex < 0 ? rows : rows.slice(0, pendingIndex);
+  return exportable.map((row) => ({ rowId: Number(row.row_id), record: mapExportRow(row) }));
 }

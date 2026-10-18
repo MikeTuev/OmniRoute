@@ -19,6 +19,7 @@ import {
 import {
   attachExportBodies,
   countCallLogsAfterRowId,
+  expirePendingExportDetails,
   getCallLogsForExport,
   getMaxCallLogRowId,
 } from "@/lib/usage/callLogExportSource";
@@ -55,7 +56,8 @@ async function runBunExport(
   while (exported < start.maxRowsPerRun) {
     const summaries = getCallLogsForExport(
       cursor,
-      Math.min(start.batchSize, start.maxRowsPerRun - exported)
+      Math.min(start.batchSize, start.maxRowsPerRun - exported),
+      { includeBodies: start.includeBodies }
     ).filter((row) => row.rowId <= throughRowId);
     if (!summaries.length) break;
     const batch = start.includeBodies
@@ -169,6 +171,9 @@ export async function runDestinationExport(
     const cursor = reconcileCursor(destination);
     result.cursorRowId = cursor;
     const batchSize = Math.max(1, Math.min(destination.batchSize, 10_000));
+    // A body export stops at the first still-pending artifact write; expire abandoned
+    // ones first so a crashed writer cannot hold the cursor forever.
+    if (destination.includeBodies) expirePendingExportDetails();
     const run = selectLogExportRuntime() === "child" ? runExportChild : runBunExport;
     await run(
       {
