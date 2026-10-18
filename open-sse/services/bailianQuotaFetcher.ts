@@ -19,7 +19,12 @@
  * Registration: call registerBailianCodingPlanQuotaFetcher() once at server startup.
  */
 
-import { registerQuotaFetcher, registerQuotaWindows, type QuotaInfo } from "./quotaPreflight.ts";
+import {
+  registerQuotaCacheInvalidator,
+  registerQuotaFetcher,
+  registerQuotaWindows,
+  type QuotaInfo,
+} from "./quotaPreflight.ts";
 import { registerMonitorFetcher } from "./quotaMonitor.ts";
 import { throttleQuotaFetch } from "./quotaFetchThrottle.ts";
 import { fetchWithConnectionProxy } from "./connectionProxyFetch.ts";
@@ -332,6 +337,7 @@ export function invalidateBailianQuotaCache(connectionId: string): void {
  */
 export function registerBailianCodingPlanQuotaFetcher(): void {
   registerQuotaFetcher("bailian-coding-plan", fetchBailianQuota);
+  registerQuotaCacheInvalidator("bailian-coding-plan", invalidateBailianQuotaCache);
   registerMonitorFetcher("bailian-coding-plan", fetchBailianQuota);
   registerQuotaWindows("bailian-coding-plan", [
     BAILIAN_WINDOW_5H,

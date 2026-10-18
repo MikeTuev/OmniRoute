@@ -33,7 +33,11 @@
  * Registration: call registerGrokCliQuotaFetcher() once at server startup.
  */
 
-import { registerQuotaFetcher, type QuotaInfo } from "./quotaPreflight.ts";
+import {
+  registerQuotaCacheInvalidator,
+  registerQuotaFetcher,
+  type QuotaInfo,
+} from "./quotaPreflight.ts";
 import { registerMonitorFetcher } from "./quotaMonitor.ts";
 import { throttleQuotaFetch } from "./quotaFetchThrottle.ts";
 import { fetchWithConnectionProxy } from "./connectionProxyFetch.ts";
@@ -189,5 +193,6 @@ export function invalidateGrokCliQuotaCache(connectionId: string): void {
  */
 export function registerGrokCliQuotaFetcher(): void {
   registerQuotaFetcher("grok-cli", fetchGrokCliQuota);
+  registerQuotaCacheInvalidator("grok-cli", invalidateGrokCliQuotaCache);
   registerMonitorFetcher("grok-cli", fetchGrokCliQuota);
 }

@@ -1,4 +1,8 @@
-import { registerQuotaFetcher, type QuotaInfo } from "./quotaPreflight.ts";
+import {
+  registerQuotaCacheInvalidator,
+  registerQuotaFetcher,
+  type QuotaInfo,
+} from "./quotaPreflight.ts";
 import { registerMonitorFetcher } from "./quotaMonitor.ts";
 import { throttleQuotaFetch } from "./quotaFetchThrottle.ts";
 import { fetchWithConnectionProxy } from "./connectionProxyFetch.ts";
@@ -157,6 +161,7 @@ export function registerJinaQuotaFetcher(): void {
       alias,
       fetchJinaQuota as (id: string, conn?: Record<string, unknown>) => Promise<QuotaInfo | null>
     );
+    registerQuotaCacheInvalidator(alias, invalidateJinaQuotaCache);
     registerMonitorFetcher(
       alias,
       fetchJinaQuota as (id: string, conn?: Record<string, unknown>) => Promise<QuotaInfo | null>

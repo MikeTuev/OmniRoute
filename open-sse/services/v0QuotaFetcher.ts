@@ -19,7 +19,12 @@
  * Registration: call registerV0QuotaFetcher() once at server startup.
  */
 
-import { registerQuotaFetcher, registerQuotaWindows, type QuotaInfo } from "./quotaPreflight.ts";
+import {
+  registerQuotaCacheInvalidator,
+  registerQuotaFetcher,
+  registerQuotaWindows,
+  type QuotaInfo,
+} from "./quotaPreflight.ts";
 import { registerMonitorFetcher } from "./quotaMonitor.ts";
 import { throttleQuotaFetch } from "./quotaFetchThrottle.ts";
 import { fetchWithConnectionProxy } from "./connectionProxyFetch.ts";
@@ -267,6 +272,7 @@ export function invalidateV0QuotaCache(connectionId: string): void {
  */
 export function registerV0QuotaFetcher(): void {
   registerQuotaFetcher("v0-vercel", fetchV0Quota);
+  registerQuotaCacheInvalidator("v0-vercel", invalidateV0QuotaCache);
   registerMonitorFetcher("v0-vercel", fetchV0Quota);
   registerQuotaWindows("v0-vercel", [V0_WINDOW_CREDITS, V0_WINDOW_DAILY_OPS]);
 }

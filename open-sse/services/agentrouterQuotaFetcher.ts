@@ -25,7 +25,11 @@
  * Registration: call registerAgentrouterQuotaFetcher() once at server startup.
  */
 
-import { registerQuotaFetcher, type QuotaInfo } from "./quotaPreflight.ts";
+import {
+  registerQuotaCacheInvalidator,
+  registerQuotaFetcher,
+  type QuotaInfo,
+} from "./quotaPreflight.ts";
 import { registerMonitorFetcher } from "./quotaMonitor.ts";
 import { throttleQuotaFetch } from "./quotaFetchThrottle.ts";
 import { fetchWithConnectionProxy } from "./connectionProxyFetch.ts";
@@ -199,5 +203,6 @@ export function invalidateAgentrouterQuotaCache(connectionId: string): void {
  */
 export function registerAgentrouterQuotaFetcher(): void {
   registerQuotaFetcher("agentrouter", fetchAgentrouterQuota);
+  registerQuotaCacheInvalidator("agentrouter", invalidateAgentrouterQuotaCache);
   registerMonitorFetcher("agentrouter", fetchAgentrouterQuota);
 }

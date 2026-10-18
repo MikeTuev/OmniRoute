@@ -22,7 +22,11 @@
  * Registration: call registerDeepseekQuotaFetcher() once at server startup.
  */
 
-import { registerQuotaFetcher, type QuotaInfo } from "./quotaPreflight.ts";
+import {
+  registerQuotaCacheInvalidator,
+  registerQuotaFetcher,
+  type QuotaInfo,
+} from "./quotaPreflight.ts";
 import { registerMonitorFetcher } from "./quotaMonitor.ts";
 import { throttleQuotaFetch } from "./quotaFetchThrottle.ts";
 import { fetchWithConnectionProxy } from "./connectionProxyFetch.ts";
@@ -248,5 +252,6 @@ export function invalidateDeepseekQuotaCache(connectionId: string): void {
  */
 export function registerDeepseekQuotaFetcher(): void {
   registerQuotaFetcher("deepseek", fetchDeepseekQuota);
+  registerQuotaCacheInvalidator("deepseek", invalidateDeepseekQuotaCache);
   registerMonitorFetcher("deepseek", fetchDeepseekQuota);
 }

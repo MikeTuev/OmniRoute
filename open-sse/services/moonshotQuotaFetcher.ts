@@ -11,7 +11,11 @@
  */
 
 import { toNumber } from "@/shared/utils/numeric";
-import { registerQuotaFetcher, type QuotaInfo } from "./quotaPreflight.ts";
+import {
+  registerQuotaCacheInvalidator,
+  registerQuotaFetcher,
+  type QuotaInfo,
+} from "./quotaPreflight.ts";
 import { registerMonitorFetcher } from "./quotaMonitor.ts";
 import { throttleQuotaFetch } from "./quotaFetchThrottle.ts";
 import { fetchWithConnectionProxy } from "./connectionProxyFetch.ts";
@@ -263,6 +267,8 @@ function buildMoonshotBalanceQuotas(
 export function registerMoonshotQuotaFetcher(): void {
   registerQuotaFetcher("moonshot", fetchMoonshotQuota);
   registerQuotaFetcher("kimi", fetchMoonshotQuota);
+  registerQuotaCacheInvalidator("moonshot", invalidateMoonshotQuotaCache);
+  registerQuotaCacheInvalidator("kimi", invalidateMoonshotQuotaCache);
   registerMonitorFetcher("moonshot", fetchMoonshotQuota);
   registerMonitorFetcher("kimi", fetchMoonshotQuota);
 }
@@ -275,10 +281,12 @@ export function registerMoonshotFetchersForNodes(
     if (!origin && !isKimiCodingBaseUrl(node.baseUrl)) continue;
     if (typeof node.id === "string" && node.id) {
       registerQuotaFetcher(node.id, fetchMoonshotQuota);
+      registerQuotaCacheInvalidator(node.id, invalidateMoonshotQuotaCache);
       registerMonitorFetcher(node.id, fetchMoonshotQuota);
     }
     if (typeof node.prefix === "string" && node.prefix) {
       registerQuotaFetcher(node.prefix, fetchMoonshotQuota);
+      registerQuotaCacheInvalidator(node.prefix, invalidateMoonshotQuotaCache);
       registerMonitorFetcher(node.prefix, fetchMoonshotQuota);
     }
   }

@@ -20,7 +20,12 @@
  * are also used by `xaiOauthQuotaFetcher.ts` (connection OAuth token path).
  */
 
-import { registerQuotaFetcher, registerQuotaWindows, type QuotaInfo } from "./quotaPreflight.ts";
+import {
+  registerQuotaCacheInvalidator,
+  registerQuotaFetcher,
+  registerQuotaWindows,
+  type QuotaInfo,
+} from "./quotaPreflight.ts";
 import { fetchWithConnectionProxy } from "./connectionProxyFetch.ts";
 import { registerMonitorFetcher } from "./quotaMonitor.ts";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -514,6 +519,7 @@ export function invalidateGrokWebQuotaCache(connectionId: string): void {
  */
 export function registerGrokWebQuotaFetcher(): void {
   registerQuotaFetcher("grok-web", fetchGrokWebQuota);
+  registerQuotaCacheInvalidator("grok-web", invalidateGrokWebQuotaCache);
   registerMonitorFetcher("grok-web", fetchGrokWebQuota);
   registerQuotaWindows("grok-web", [GROK_WINDOW_WEEKLY]);
 }

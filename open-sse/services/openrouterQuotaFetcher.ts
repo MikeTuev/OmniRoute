@@ -33,7 +33,11 @@
  * Registration: call registerOpenrouterQuotaFetcher() once at server startup.
  */
 
-import { registerQuotaFetcher, type QuotaInfo } from "./quotaPreflight.ts";
+import {
+  registerQuotaCacheInvalidator,
+  registerQuotaFetcher,
+  type QuotaInfo,
+} from "./quotaPreflight.ts";
 import { registerMonitorFetcher } from "./quotaMonitor.ts";
 import { throttleQuotaFetch } from "./quotaFetchThrottle.ts";
 import { fetchWithConnectionProxy } from "./connectionProxyFetch.ts";
@@ -468,5 +472,6 @@ export async function fetchOpenrouterQuotaWithFreeWindowPreflight(
  */
 export function registerOpenrouterQuotaFetcher(): void {
   registerQuotaFetcher("openrouter", fetchOpenrouterQuotaWithFreeWindowPreflight);
+  registerQuotaCacheInvalidator("openrouter", invalidateOpenrouterQuotaCache);
   registerMonitorFetcher("openrouter", fetchOpenrouterQuotaWithFreeWindowPreflight);
 }
