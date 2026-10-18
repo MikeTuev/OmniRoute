@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "स्थिर स्टाटिक सिडको सट्टा OAuth bearer token प्रयोग गरेर https://api.x.ai/v1/models बाट xai-oauth जडानहरूका लागि प्रत्यक्ष xAI मोडेल क्याटलग प्राप्त गर्नुहोस्। पूर्वनिर्धारित रूपमा बन्द: xai-oauth ले स्टाटिक सिडलाई कुनै परिवर्तन नगरी उपलब्ध गराइरहन्छ। रिजोल्युसनसम्बन्धी कुनै त्रुटि भएमा, खोज प्रक्रिया सिडमा फर्कन्छ।",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "जाँच पूरा नहुन्जेल स्टार्टअप रोक्नुको सट्टा सर्भरले अनुरोधहरू स्वीकार गर्न थालेपछि स्टार्टअप डेटाबेस अखण्डता/स्वास्थ्य जाँच चलाउनुहोस्। पूर्वनिर्धारित रूपमा बन्द: स्टार्टअपले यस परिवर्तनअघिकै जस्तै जाँच पूरा नहुन्जेल प्रतीक्षा गर्छ, त्यसैले बिग्रिएको डेटाबेस पहिलो अनुरोध सेवा दिनुअघि नै पत्ता लाग्छ।",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "साधारण anthropic-संगत रिलेहरूमा, कुराकानीको बीचमा आउने system टर्नहरूलाई शीर्ष-स्तरको system prompt मा सार्नुको सट्टा सन्देश सूचीभित्रै राख्नुहोस्, ताकि क्यास गरिएको prompt prefix टर्नहरूबीच स्थिर रहोस्। यो client ले स्वयं mid-conversation-system-2026-04-07 beta पठाएको अवस्थामा मात्र लागू हुन्छ। पूर्वनिर्धारित रूपमा बन्द हुन्छ: पहिलेझैँ प्रत्येक system टर्नलाई system prompt मा सारिन्छ, किनभने उक्त beta नभएका रिलेहरूले सन्देश सूचीमा भएका system टर्नहरू अस्वीकार गर्छन्।",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "अपरेटर ओभरराइड वा प्रदायक रजिस्ट्रीमध्ये कुनैले पनि घोषणा नगरेको अवस्थामा models.dev ले प्रकाशित गर्ने तर्क प्रयासका तहहरू प्रयोग गर्नुहोस्, ज्ञात प्रयास स्तरहरू मात्र राख्नुहोस्, र घोषणा गरिएको खाली तह सूचीलाई \"कुनै तह छैन\" का रूपमा लिनुहोस्। पूर्वनिर्धारित रूपमा बन्द: मोडेल क्याटलग र समाधान गरिएका प्रयासका तहहरू पहिले जस्तै ठ्याक्कै रहन्छन्।",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "auto/* अनुरोधहरूलाई समाधान गरिएका मोडेल क्षमताहरू (भिजन, रिजनिङ, थिंकिङ) र अवलोकन गरिएका गुणस्तर स्कोरहरूसहित, एउटै बल्क पठनमा, उम्मेदवार पूल बनाउन दिन्छ। पूर्वनिर्धारित रूपमा बन्द: अनुरोधको समयका उम्मेदवार तौलहरू ठ्याक्कै पहिलेजस्तै रहन्छन्। सक्रिय हुँदा: यी संकेतहरू स्न्यापसट तौलहरूमा समावेश हुन्छन्, त्यसैले उम्मेदवार तौल र छनोट परिवर्तन हुन सक्छन्।",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "क्रेडेन्सियल स्वास्थ्य जाँचलाई गेटवेले आफैँ बन्द गरेका कनेक्सनहरू पुनः परीक्षण गर्न दिनुहोस् (प्रत्येकलाई बढीमा हरेक ६ घण्टामा एक पटक, प्रत्येक जाँचमा ५ वटा) र पुनः परीक्षण सफल हुँदा कुनै एकलाई फेरि सक्रिय गर्नुहोस्। पूर्वनिर्धारित रूपमा बन्द: अपरेटरले कारबाही नगरेसम्म त्यस्ता कनेक्सनहरू बन्द नै रहन्छन्। अपरेटरद्वारा निष्क्रिय गरिएका र स्थायी रूपमा प्रतिबन्धित कनेक्सनहरू कहिल्यै पुनः परीक्षण गरिँदैनन्।",
   "sidebar": {
     "home": "गृहपृष्ठ",
     "dashboard": "ड्यासबोर्ड",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "यो सदस्यतामा स्थानीय proxy core आवश्यक पर्ने नोडहरू छन् (SS/VMess/Trojan/VLESS); तपाईंले local-core SOCKS5 endpoint कन्फिगर नगरेसम्म तिनलाई रुट गरिँदैन।",
         "NO_USABLE_NODES": "सदस्यताबाट कुनै प्रयोगयोग्य नोडहरू प्राप्त भएनन् (http/https/socks5 वा स्थानीय core endpoint भएका नोडहरू)।",
         "SELECTOR_SWITCH_FAILED": "प्रोक्सी-कोर नियन्त्रण कल असफल भयो; अघिल्लो मार्ग सक्रिय रहन्छ। नियन्त्रण URL र सिक्रेट जाँचेर रिफ्रेस गर्नुहोस्।",
+        "SELECTOR_EARLY_NO_CONTROL": "कुनै नियन्त्रण URL छैन",
+        "SELECTOR_EARLY_UNMAPPED": "मिल्दो सदस्यता छैन",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "उत्पादन गरिएको मूल कन्फिगरेशनले अपनाइएको फाइल प्रतिस्थापन गर्न सकेन; यसको सट्टा पाखाको प्रतिलिपि राखियो।",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "सदस्यता सिर्जना गर्नुहोस्",
       "loading": "लोड हुँदैछ…",
       "noSubscriptions": "अहिलेसम्म कुनै सदस्यता छैन। सुरु गर्न \"सदस्यता थप्नुहोस्\" मा क्लिक गर्नुहोस्।",
+      "earlySkipsSinceRestart": "अन्तिम पुनः सुरुवातदेखि सेलेक्टरले छोडेका",
       "statusOk": "ठीक छ",
       "statusError": "त्रुटि",
       "statusEmpty": "खाली",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "असफलताहरूको सङ्ख्या",
       "retryAfterMs": "पुनः प्रयास गर्नुअघि (ms)",
-      "lastFailureKind": "पछिल्लो असफलताको प्रकार"
+      "lastFailureKind": "पछिल्लो असफलताको प्रकार",
+      "lastClose": "अन्तिम बन्द"
     },
     "empty": {
       "title": "कुनै कनेक्सन छैन",

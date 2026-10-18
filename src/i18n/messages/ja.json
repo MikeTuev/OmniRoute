@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "xai-oauth 接続では、固定された静的シードの代わりに、OAuth ベアラートークンを使用して https://api.x.ai/v1/models から最新の xAI モデルカタログを取得します。デフォルトではオフです。オフの場合、xai-oauth は従来どおり静的シードを提供します。解決エラーが発生した場合、ディスカバリーはシードにフォールバックします。",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "起動時のデータベース整合性／ヘルスチェックが完了するまで起動をブロックする代わりに、サーバーがリクエストの受け付けを開始した後でチェックを実行します。デフォルトではオフです。オフの場合、この変更前とまったく同様に、チェックが完了するまで起動がブロックされるため、破損したデータベースは引き続き最初のリクエストが処理される前に検出されます。",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "標準の anthropic 互換リレーでは、会話途中のシステムターンをトップレベルのシステムプロンプトへ移動せず、メッセージリスト内に保持します。これにより、キャッシュされたプロンプトのプレフィックスがターン間で安定します。クライアント自身が mid-conversation-system-2026-04-07 ベータを送信した場合にのみ適用されます。デフォルトでは無効です。そのベータに対応していないリレーはメッセージリスト内のシステムターンを拒否するため、従来どおり、すべてのシステムターンがシステムプロンプトへ移動されます。",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "オペレーターによる上書きもプロバイダーレジストリによる宣言もない場合は、models.dev が公開する推論エフォートのティアを使用し、既知のエフォートレベルのみを保持します。また、宣言されたティアのリストが空の場合は「ティアなし」として扱います。デフォルトでは無効です。モデルカタログと解決済みのエフォートティアは従来どおり変更されません。",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "auto/* リクエストが、解決済みのモデル機能（ビジョン、推論、思考）と観測された品質スコアを使って候補プールを構築できるようにします。これらは一括読み込みで取得されます。既定ではオフ：リクエスト時の候補の重みは以前とまったく同じままです。オン：これらのシグナルがスナップショットの重みに反映されるため、候補の重みと選択が変わる可能性があります。",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "認証情報の健全性スイープが、ゲートウェイによって自動的にオフにされた接続を再テストし（各接続につき最大6時間に1回、1回のスイープにつき5件）、再テストに合格した接続を再びオンにできるようにします。デフォルトではオフです。この場合、オペレーターが対応するまで該当する接続はオフのままになります。オペレーターによって無効化された接続と、恒久的に禁止された接続は再テストされません。",
   "sidebar": {
     "home": "ホーム",
     "dashboard": "ダッシュボード",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "このサブスクリプションにはローカルプロキシコア（SS/VMess/Trojan/VLESS）が必要なノードが含まれています。ローカルコアの SOCKS5 エンドポイントを設定するまでルーティングされません。",
         "NO_USABLE_NODES": "サブスクリプションから使用可能なノードが得られませんでした（http/https/socks5 またはローカルコアエンドポイントを持つノード）。",
         "SELECTOR_SWITCH_FAILED": "プロキシコアの制御呼び出しに失敗しました。以前のルートは有効のままです。制御URLとシークレットを確認してから更新してください。",
+        "SELECTOR_EARLY_NO_CONTROL": "制御URLがありません",
+        "SELECTOR_EARLY_UNMAPPED": "一致するサブスクリプションがありません",
         "CORE_CONFIG_NOT_GENERATED": "ローカルコアの設定が生成されませんでした。採用済みのファイルは変更されていません。パスを確認して更新してください。",
         "CORE_CONFIG_NOT_APPLIED": "生成されたコア設定を採用済みファイルに置き換えることができませんでした。代わりに、隣のコピーが保持されました。",
         "CORE_RELOAD_UNDECLARED": "置き換えたコア設定のリロード手段が宣言されていません。次のいずれかを宣言してください: 互換コアの制御 URL、JSON の引数配列としての OMNIROUTE_PROXY_CORE_RELOAD_COMMAND 変数、または外部の監視側に任せる場合は値 external。",
@@ -7171,6 +7176,7 @@
       "createSubscription": "サブスクリプションの作成",
       "loading": "読み込み中…",
       "noSubscriptions": "まだ購読はありません。 [サブスクリプションを追加] をクリックして開始します。",
+      "earlySkipsSinceRestart": "前回の再起動以降のセレクターのスキップ",
       "statusOk": "OK",
       "statusError": "エラー",
       "statusEmpty": "空の",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "失敗回数",
       "retryAfterMs": "再試行まで(ms)",
-      "lastFailureKind": "最終失敗種別"
+      "lastFailureKind": "最終失敗種別",
+      "lastClose": "前日終値"
     },
     "empty": {
       "title": "接続なし",

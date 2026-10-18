@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "고정된 정적 시드 대신 OAuth Bearer 토큰을 사용하여 https://api.x.ai/v1/models에서 xai-oauth 연결용 실시간 xAI 모델 카탈로그를 가져옵니다. 기본적으로 꺼져 있으며, xai-oauth는 변경 없이 정적 시드를 계속 제공합니다. 모델 확인 중 오류가 발생하면 검색은 시드로 대체됩니다.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "시작 데이터베이스 무결성/상태 검사가 완료될 때까지 서버 시작을 차단하는 대신, 서버가 요청을 수락하기 시작한 후 검사를 실행합니다. 기본적으로 꺼져 있습니다. 시작 과정은 이 변경 전과 정확히 동일하게 검사가 끝날 때까지 차단되므로, 손상된 데이터베이스는 여전히 첫 번째 요청이 처리되기 전에 감지됩니다.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "일반 Anthropic 호환 릴레이에서는 대화 중간의 시스템 턴을 최상위 시스템 프롬프트로 옮기지 않고 메시지 목록 안에 유지하여, 캐시된 프롬프트 접두사가 여러 턴에 걸쳐 안정적으로 유지되도록 합니다. 클라이언트 자체에서 mid-conversation-system-2026-04-07 베타를 전송한 경우에만 적용됩니다. 기본값은 꺼짐입니다. 해당 베타를 지원하지 않는 릴레이는 메시지 목록의 시스템 턴을 거부하므로, 이전과 동일하게 모든 시스템 턴이 시스템 프롬프트로 이동됩니다.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "운영자 재정의나 제공자 레지스트리에 추론 노력 단계가 선언되어 있지 않은 경우 models.dev에서 게시한 단계를 사용하되, 알려진 노력 수준만 유지하고 선언된 단계 목록이 비어 있으면 \"단계 없음\"으로 처리합니다. 기본값은 꺼짐입니다. 모델 카탈로그와 확인된 노력 단계는 이전과 정확히 동일하게 유지됩니다.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "auto/* 요청이 확인된 모델 기능(비전, 추론, 사고)과 관측된 품질 점수를 한 번의 일괄 읽기로 불러와 후보 풀을 구성하도록 합니다. 기본값은 꺼짐: 요청 시점의 후보 가중치는 이전과 정확히 동일하게 유지됩니다. 켜짐: 이 신호들이 스냅샷 가중치에 반영되므로 후보 가중치와 선택이 달라질 수 있습니다.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "자격 증명 상태 점검에서 게이트웨이가 자체적으로 비활성화한 연결을 다시 테스트하고(각 연결당 최대 6시간에 한 번, 점검당 5개), 재테스트를 통과하면 다시 활성화하도록 허용합니다. 기본값은 꺼짐입니다. 이 경우 운영자가 조치할 때까지 해당 연결은 비활성화 상태로 유지됩니다. 운영자가 비활성화했거나 영구 차단된 연결은 재테스트하지 않습니다.",
   "sidebar": {
     "home": "홈",
     "dashboard": "대시보드",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "이 구독에는 로컬 프록시 코어(SS/VMess/Trojan/VLESS)가 필요한 노드가 있습니다. local-core SOCKS5 엔드포인트를 구성하기 전까지는 라우팅되지 않습니다.",
         "NO_USABLE_NODES": "구독에서 사용할 수 있는 노드(http/https/socks5 또는 로컬 코어 엔드포인트가 있는 노드)가 반환되지 않았습니다.",
         "SELECTOR_SWITCH_FAILED": "프록시 코어 제어 호출에 실패했습니다. 이전 경로는 계속 유효합니다. 제어 URL과 시크릿을 확인한 뒤 새로고침하세요.",
+        "SELECTOR_EARLY_NO_CONTROL": "제어 URL 없음",
+        "SELECTOR_EARLY_UNMAPPED": "일치하는 구독이 없음",
         "CORE_CONFIG_NOT_GENERATED": "로컬 코어 구성이 생성되지 않았습니다. 적용된 파일은 변경되지 않았습니다. 경로를 확인하고 새로 고치세요.",
         "CORE_CONFIG_NOT_APPLIED": "생성된 코어 구성이 채택된 파일을 대체할 수 없었습니다. 대신 그 옆에 있는 사본이 유지되었습니다.",
         "CORE_RELOAD_UNDECLARED": "교체된 코어 구성에 대한 다시 로드 채널이 선언되지 않았습니다. 호환 코어의 제어 URL, JSON 인수 배열 형태의 OMNIROUTE_PROXY_CORE_RELOAD_COMMAND 변수, 또는 외부 관찰자를 위한 값 external 중 하나를 선언하세요.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "구독 만들기",
       "loading": "로드 중…",
       "noSubscriptions": "아직 구독이 없습니다. 시작하려면 \"구독 추가\"를 클릭하세요.",
+      "earlySkipsSinceRestart": "마지막 재시작 이후 선택기 건너뜀",
       "statusOk": "알았어",
       "statusError": "오류",
       "statusEmpty": "비어 있음",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "실패 횟수",
       "retryAfterMs": "재시도까지(ms)",
-      "lastFailureKind": "마지막 실패 유형"
+      "lastFailureKind": "마지막 실패 유형",
+      "lastClose": "최종 종가"
     },
     "empty": {
       "title": "연결 없음",

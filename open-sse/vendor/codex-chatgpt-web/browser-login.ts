@@ -1,3 +1,9 @@
+import {
+  releasePersistentChatGptPage,
+  openChatGptContext,
+  openChatGptPage,
+  usePersistentCdpProfile,
+} from "./persistent-cdp-context";
 /* Adapted from miuuyy/codex-chatgpt-web commit 09877fa21ffdbf20979623ef501046fc02a750d7 (MIT). */
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -115,33 +121,41 @@ async function inspectStoredState(
     ? await chromium.connectOverCDP(config.cdpEndpoint, cdpConnectOptions())
     : await chromium.launch({
         executablePath: config.chromeExecutablePath,
-        headless: false,
+        headless: !config.headed,
         ignoreDefaultArgs: ["--password-store=basic", "--use-mock-keychain"],
         args: ["--no-first-run", "--no-default-browser-check"],
       });
   try {
-    const { context: verifierContext, owned: ownsVerifierContext } =
-      await browserContextForStoredState(
-        verifierBrowser,
-        storageState,
-        Boolean(config.cdpEndpoint)
-      );
+    const persistent = usePersistentCdpProfile(config.cdpEndpoint);
+    const { context: verifierContext, owned: ownsVerifierContext } = persistent
+      ? { context: await openChatGptContext(verifierBrowser, storageState, true), owned: false }
+      : await browserContextForStoredState(
+          verifierBrowser,
+          storageState,
+          Boolean(config.cdpEndpoint)
+        );
     let verifierPage: Page | undefined;
     try {
-      verifierPage = await verifierContext.newPage();
-      await verifierPage.goto(CHATGPT_TEMPORARY_CHAT_URL, {
-        waitUntil: "domcontentloaded",
-        timeout: 60_000,
-      });
+      verifierPage = await openChatGptPage(verifierContext, persistent);
+      if (verifierPage.url() !== CHATGPT_TEMPORARY_CHAT_URL) {
+        await verifierPage.goto(CHATGPT_TEMPORARY_CHAT_URL, {
+          waitUntil: "load",
+          timeout: 60_000,
+        });
+      }
+      if (persistent) await verifierPage.bringToFront();
+      console.info("[ChatGPT validation] document loaded");
       await verifierPage
         .locator(CHATGPT_COMPOSER_SELECTOR)
         .first()
         .waitFor({ state: "visible", timeout: 60_000 });
+      console.info("[ChatGPT validation] composer visible");
       await assertAuthenticatedChatGptPage(verifierPage);
       await assertTemporaryChatPage(verifierPage);
       return { ...(await detectChatGptAccountCapabilities(verifierPage)), url: verifierPage.url() };
     } finally {
-      if (ownsVerifierContext) await verifierContext.close();
+      if (persistent && verifierPage) releasePersistentChatGptPage(verifierPage);
+      else if (ownsVerifierContext) await verifierContext.close();
       else await verifierPage?.close().catch(() => {});
     }
   } finally {

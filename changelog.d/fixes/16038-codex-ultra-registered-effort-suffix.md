@@ -1,0 +1,1 @@
+- **fix(codex):** registered Codex `-ultra` aliases (`gpt-6.1-sol-ultra`, `gpt-6-astra-ultra`, …) now resolve to their registry base like `-max`/`-xhigh`, so they are no longer hidden from a live-authoritative catalog that only reports the base ([#16038](https://github.com/diegosouzapw/OmniRoute/pull/16038)) — thanks @alltomatos

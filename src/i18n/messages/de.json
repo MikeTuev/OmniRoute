@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Ruft für xai-oauth-Verbindungen den aktuellen xAI-Modellkatalog mit dem OAuth-Bearer-Token von https://api.x.ai/v1/models ab, anstatt den unveränderlichen statischen Ausgangsbestand zu verwenden. Standardmäßig deaktiviert: xai-oauth stellt weiterhin unverändert den statischen Ausgangsbestand bereit. Bei jedem Auflösungsfehler greift die Erkennung auf den Ausgangsbestand zurück.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Führt die Integritäts-/Zustandsprüfung der Datenbank beim Start erst aus, nachdem der Server Anfragen annimmt, anstatt den Start bis zum Abschluss der Prüfung zu blockieren. Standardmäßig deaktiviert: Der Start wird durch die Prüfung genau wie vor dieser Änderung blockiert, sodass eine beschädigte Datenbank weiterhin erkannt wird, bevor die erste Anfrage verarbeitet wird.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Bei einfachen anthropic-kompatiblen Relays bleiben System-Turns innerhalb einer laufenden Konversation in der Nachrichtenliste, anstatt in den System-Prompt auf oberster Ebene verschoben zu werden, sodass das zwischengespeicherte Prompt-Präfix über mehrere Turns hinweg stabil bleibt. Dies gilt nur, wenn der Client selbst die Beta mid-conversation-system-2026-04-07 gesendet hat. Standardmäßig deaktiviert: Jeder System-Turn wird genau wie zuvor in den System-Prompt verschoben, da Relays ohne diese Beta System-Turns in der Nachrichtenliste ablehnen.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Verwende die von models.dev veröffentlichten Stufen für den Reasoning-Aufwand, wenn weder ein Betreiber-Override noch das Anbieterregister welche deklariert. Behalte dabei nur bekannte Aufwandsstufen bei und behandle eine leere Liste deklarierter Stufen als „keine Stufen“. Standardmäßig deaktiviert: Der Modellkatalog und die ermittelten Aufwandsstufen bleiben exakt wie bisher.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Lässt auto/*-Anfragen den Kandidatenpool mit aufgelösten Modellfähigkeiten (Vision, Reasoning, Thinking) und beobachteten Qualitätswerten aufbauen, die in einem einzigen Sammellesevorgang geladen werden. Standardmäßig aus: Die Kandidatengewichte zur Anfragezeit bleiben exakt wie bisher. An: Diese Signale fließen in die Snapshot-Gewichte ein, sodass sich Kandidatengewichte und Auswahl ändern können.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Lassen Sie die Überprüfung des Anmeldedatenstatus Verbindungen erneut testen, die das Gateway selbst deaktiviert hat (jeweils höchstens einmal alle 6 Stunden, 5 pro Überprüfung), und sie wieder aktivieren, wenn der erneute Test erfolgreich ist. Standardmäßig deaktiviert: Solche Verbindungen bleiben ausgeschaltet, bis ein Operator eingreift. Von einem Operator deaktivierte und dauerhaft gesperrte Verbindungen werden nie erneut getestet.",
   "sidebar": {
     "home": "Zuhause",
     "dashboard": "Dashboard",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Dieses Abonnement enthält Knoten, die einen lokalen Proxy-Core benötigen (SS/VMess/Trojan/VLESS); sie werden nicht geroutet, bis Sie den lokalen Core-SOCKS5-Endpunkt konfigurieren.",
         "NO_USABLE_NODES": "Abonnement lieferte keine nutzbaren Knoten (http/https/socks5 oder Knoten mit einem lokalen Core-Endpunkt).",
         "SELECTOR_SWITCH_FAILED": "Der Steueraufruf des Proxy-Cores ist fehlgeschlagen; die bisherige Route bleibt aktiv. Prüfen Sie Steuer-URL und Secret und aktualisieren Sie dann.",
+        "SELECTOR_EARLY_NO_CONTROL": "Keine Steuer-URL",
+        "SELECTOR_EARLY_UNMAPPED": "Kein passendes Abonnement",
         "CORE_CONFIG_NOT_GENERATED": "Die lokale Core-Konfiguration wurde nicht generiert; die übernommene Datei ist unverändert. Prüfen Sie den Pfad und aktualisieren Sie.",
         "CORE_CONFIG_NOT_APPLIED": "Die generierte Kernkonfiguration konnte die übernommene Datei nicht ersetzen; stattdessen wurde die danebenliegende Kopie beibehalten.",
         "CORE_RELOAD_UNDECLARED": "Für die ersetzte Core-Konfiguration ist kein Reload-Kanal deklariert. Deklarieren Sie einen: eine Steuer-URL bei einem kompatiblen Core, die Variable OMNIROUTE_PROXY_CORE_RELOAD_COMMAND als JSON-Argument-Array oder den Wert external für einen externen Beobachter.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Abonnement erstellen",
       "loading": "Laden…",
       "noSubscriptions": "Noch keine Abonnements. Klicken Sie auf „Abonnement hinzufügen“, um zu beginnen.",
+      "earlySkipsSinceRestart": "Selektor-Überspringungen seit dem letzten Neustart",
       "statusOk": "Okay",
       "statusError": "Fehler",
       "statusEmpty": "Leer",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Fehleranzahl",
       "retryAfterMs": "Erneut Versuchen Nach (ms)",
-      "lastFailureKind": "Letzte Fehlerart"
+      "lastFailureKind": "Letzte Fehlerart",
+      "lastClose": "Letzter Schlusskurs"
     },
     "empty": {
       "title": "Keine Verbindungen",

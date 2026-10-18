@@ -79,6 +79,12 @@ describe("feature-flags-settings count update", () => {
     // CLAUDE_OAUTH_SUMMARIZED_THINKING_UNREDACTED (#17003, default off) to 87;
     // ANTHROPIC_COMPATIBLE_MID_CONVERSATION_SYSTEM (#16236, default off) to 88.
     assert.equal(FEATURE_FLAG_DEFINITIONS.length, 88);
+    // MODELS_DEV_EFFORT_TIERS_ENABLED (#15944, default off) to 88.
+    // CREDENTIAL_HEALTH_RETEST_AUTO_DISABLED (#16190, default off) to 88.
+    // CREDENTIAL_GATE_AUTH_DIAGNOSES_ONLY (#16599, default off) to 88.
+    // STREAM_LATE_OUTPUT_PROBE_ENABLED (#16927 late-output stream probe, default off) to 88.
+    // LMARENA_SYNTHESIZED_CX_ENABLED (#16895, default off) to 88.
+    // NATIVE_CODEX_REACTIVE_COMPACTION_ENABLED (#16632, default off) to 88.
   });
 });
 

@@ -182,30 +182,41 @@ export function resolveBuiltinAutoSpec(modelStr: string, suffix: string): Builti
   return { variant: undefined };
 }
 
+/**
+ * `includeResolvedCapabilities` defaults to true (the /v1/models catalog caller).
+ * The request path (chatHelpers.ts) passes false unless the operator opts in:
+ * resolved capabilities feed the snapshot weights, so they change scoring.
+ */
 export async function prepareBuiltinAutoComboInputs(
-  resolutionSnapshot?: ModelCapabilityResolutionSnapshot
+  resolutionSnapshot?: ModelCapabilityResolutionSnapshot,
+  options: { includeResolvedCapabilities?: boolean } = {}
 ): Promise<PreparedVirtualAutoComboInputs> {
   const { prepareVirtualAutoComboInputs } = await import("./virtualFactory.ts");
   return prepareVirtualAutoComboInputs({
-    includeResolvedCapabilities: true,
+    includeResolvedCapabilities: options.includeResolvedCapabilities ?? true,
     resolutionSnapshot,
   });
 }
 
+/** Prepared inputs, or a loader that is only called when a combo is materialized. */
+export type BuiltinAutoComboPreparedSource =
+  PreparedVirtualAutoComboInputs | (() => Promise<PreparedVirtualAutoComboInputs>);
+
 export async function createBuiltinAutoCombo(
   modelStr: string,
   suffix: string,
-  prepared?: PreparedVirtualAutoComboInputs
+  prepared?: BuiltinAutoComboPreparedSource
 ) {
   const { createVirtualAutoCombo, createVirtualAutoComboFromPrepared } =
     await import("./virtualFactory.ts");
-  const materialize = (
+  const materialize = async (
     variant: AutoVariant | undefined,
     spec?: Parameters<typeof createVirtualAutoCombo>[1]
-  ) =>
-    prepared
-      ? createVirtualAutoComboFromPrepared(prepared, variant, spec)
-      : createVirtualAutoCombo(variant, spec);
+  ) => {
+    if (!prepared) return createVirtualAutoCombo(variant, spec);
+    const inputs = typeof prepared === "function" ? await prepared() : prepared;
+    return createVirtualAutoComboFromPrepared(inputs, variant, spec);
+  };
 
   const spec = resolveBuiltinAutoSpec(modelStr, suffix);
 

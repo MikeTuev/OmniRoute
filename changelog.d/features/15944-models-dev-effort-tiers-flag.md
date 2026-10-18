@@ -1,0 +1,1 @@
+- **feat(models):** opt-in `MODELS_DEV_EFFORT_TIERS_ENABLED` (default off) uses the reasoning effort tiers models.dev publishes when neither an override nor the registry declares any, and treats a declared empty tier list as "no tiers" in `/v1/models` ([#15944](https://github.com/diegosouzapw/OmniRoute/pull/15944)) — thanks @HouMinXi

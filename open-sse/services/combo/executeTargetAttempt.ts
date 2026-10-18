@@ -19,11 +19,13 @@ import {
 } from "../accountFallback.ts";
 import {
   errorResponse,
+  isContentPolicyRefusalComboStopEnabled,
   logRetryHintUnreadable,
   parseRetryAfterHeader,
   readProseRetryAfter,
 } from "../../utils/error.ts";
 import { recordComboFailure, clearComboFailureTracking } from "./failureTracker.ts";
+import { isContentPolicyRefusal } from "../../utils/contentPolicyError.ts";
 import { recordComboRequest, getComboMetrics } from "../comboMetrics.ts";
 import {
   expandComboSystemPromptIfPresent,
@@ -436,6 +438,12 @@ export async function executeTargetAttempt(
         });
         state.observeFailure(false, target.executionKey);
         if (handlePreContentStreamRetry(quality, retry, deps, modelStr)) continue;
+        // #15917 (opt-in): return a content-policy refusal instead of routing around it.
+        if (
+          isContentPolicyRefusal(quality.upstreamFailure) &&
+          isContentPolicyRefusalComboStopEnabled()
+        )
+          return qualityValidationFailure(quality);
         familyTried.add(modelStr);
         const familyNext = await getNextComboFamilyFallback({
           model: modelStr,
@@ -516,9 +524,14 @@ export async function executeTargetAttempt(
 
       // Reset cooldown on success
       if (provider && provider !== "unknown") {
-        recordProviderSuccess(provider, effectiveConnectionId || undefined, {
-          providerProbeSettled: isProviderProbeResponse(result),
-        });
+        recordProviderSuccess(
+          provider,
+          effectiveConnectionId || undefined,
+          {
+            providerProbeSettled: isProviderProbeResponse(result),
+          },
+          deps.log
+        );
       }
       if (
         getStrategyTraits(deps.strategy).stickyPin === "weighted" &&
@@ -843,6 +856,8 @@ export async function executeTargetAttempt(
     // let that case fall through, so only short-circuit when every remaining
     // target is the same model (the "retrying will fail identically" premise
     // only holds within a homogeneous same-model pool).
+    // #15917: with CONTENT_POLICY_REFUSAL_COMBO_STOP_ENABLED on, a content-policy refusal
+    // stops the combo even with different models remaining.
     const remainderHomogeneous = remainderIsHomogeneous(state.orderedTargets, i, modelStr);
     const isInputBoundFailure = shouldAbortOnInputBoundFailure({
       structuredError,
@@ -851,7 +866,7 @@ export async function executeTargetAttempt(
     if (isInputBoundFailure) {
       deps.log.warn(
         "COMBO",
-        `Input-bound request failure from ${modelStr} — aborting combo (same input will fail identically on every account)`
+        `Input-bound request failure from ${modelStr} — stopping combo and returning the refusal`
       );
       recordComboRequest(deps.combo.name, modelStr, {
         success: false,

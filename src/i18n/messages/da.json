@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Hent det aktuelle xAI-modelkatalog for xai-oauth-forbindelser fra https://api.x.ai/v1/models ved hjælp af OAuth-bærertokenet i stedet for det fastlåste statiske udgangspunkt. Slået fra som standard: xai-oauth fortsætter uændret med at levere det statiske udgangspunkt. Ved enhver fejl under opslaget falder modelregistreringen tilbage til udgangspunktet.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Kør integritets-/tilstandskontrollen af databasen ved opstart, efter at serveren er begyndt at acceptere anmodninger, i stedet for at blokere opstarten, indtil kontrollen er fuldført. Slået fra som standard: Opstarten blokeres af kontrollen præcis som før denne ændring, så en beskadiget database stadig opdages, før den første anmodning behandles.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "På almindelige Anthropic-kompatible relæer skal systembeskeder midt i samtalen forblive i beskedlisten i stedet for at blive flyttet til systemprompten på øverste niveau, så det cachede promptpræfiks forbliver stabilt på tværs af beskeder. Gælder kun, når klienten selv har sendt betaen mid-conversation-system-2026-04-07. Deaktiveret som standard: Alle systembeskeder flyttes til systemprompten nøjagtigt som før, fordi relæer uden denne beta afviser systembeskeder i beskedlisten.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Brug de niveauer for ræsonneringsindsats, som models.dev udgiver, når hverken en operatørtilsidesættelse eller udbyderregistret angiver nogen, behold kun kendte indsatsniveauer, og behandl en tom liste over angivne niveauer som \"ingen niveauer\". Deaktiveret som standard: Modelkataloget og de fastlagte indsatsniveauer forbliver præcis som før.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Lader auto/*-anmodninger opbygge kandidatpuljen med afklarede modelfunktioner (vision, ræsonnement, tænkning) og observerede kvalitetsscorer, læst i én samlet læsning. Slået fra som standard: kandidatvægte på anmodningstidspunktet forbliver præcis som før. Slået til: disse signaler indgår i snapshot-vægtene, så kandidatvægte og valg kan ændre sig.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Lad sundhedstjekket af legitimationsoplysninger genteste forbindelser, som gatewayen selv har deaktiveret (højst én gang hver 6. time pr. forbindelse, 5 pr. gennemgang), og aktivere dem igen, når gentesten lykkes. Deaktiveret som standard: Sådanne forbindelser forbliver deaktiveret, indtil en operatør griber ind. Forbindelser, der er deaktiveret af en operatør eller permanent udelukket, gentestes aldrig.",
   "sidebar": {
     "home": "Hjem",
     "dashboard": "Kontrolpanel",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Dette abonnement har noder, der kræver en lokal proxy-core (SS/VMess/Trojan/VLESS); de routes ikke, før du konfigurerer local-core SOCKS5-slutpunktet.",
         "NO_USABLE_NODES": "Abonnementet gav ingen brugbare noder (http/https/socks5 eller noder med et lokalt core-slutpunkt).",
         "SELECTOR_SWITCH_FAILED": "Proxy-coreens styreopkald mislykkedes; den forrige rute forbliver aktiv. Kontrollér styre-URL og hemmelighed, og opdatér derefter.",
+        "SELECTOR_EARLY_NO_CONTROL": "Ingen kontrol-URL",
+        "SELECTOR_EARLY_UNMAPPED": "Intet matchende abonnement",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Den genererede kernekonfiguration kunne ikke erstatte den adopterede fil; kopien ved siden af blev i stedet bevaret.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Opret abonnement",
       "loading": "Indlæser...",
       "noSubscriptions": "Ingen abonnementer endnu. Klik på \"Tilføj abonnement\" for at komme i gang.",
+      "earlySkipsSinceRestart": "Vælgeroverspringninger siden sidste genstart",
       "statusOk": "OK",
       "statusError": "Fejl",
       "statusEmpty": "Tom",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Antal Fejl",
       "retryAfterMs": "Prøv Igen Efter (ms)",
-      "lastFailureKind": "Seneste Fejltype"
+      "lastFailureKind": "Seneste Fejltype",
+      "lastClose": "Seneste luk"
     },
     "empty": {
       "title": "Ingen forbindelser",

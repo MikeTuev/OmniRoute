@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Récupérer le catalogue de modèles xAI en temps réel pour les connexions xai-oauth depuis https://api.x.ai/v1/models à l’aide du jeton d’accès OAuth, au lieu de la liste statique figée. Désactivé par défaut : xai-oauth continue d’utiliser la liste statique sans modification. En cas d’erreur de résolution, la découverte se rabat sur cette liste.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Exécuter le contrôle d’intégrité et d’état de la base de données au démarrage après que le serveur a commencé à accepter les requêtes, au lieu de bloquer le démarrage jusqu’à sa fin. Désactivé par défaut : le démarrage reste bloqué pendant le contrôle, exactement comme avant cette modification, afin qu’une base de données corrompue soit toujours détectée avant le traitement de la première requête.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Sur les relais simplement compatibles avec Anthropic, conservez les tours système en milieu de conversation dans la liste des messages au lieu de les déplacer vers l’invite système de premier niveau, afin que le préfixe d’invite mis en cache reste stable d’un tour à l’autre. Cela s’applique uniquement lorsque le client lui-même a envoyé la version bêta mid-conversation-system-2026-04-07. Désactivé par défaut : chaque tour système est déplacé vers l’invite système exactement comme auparavant, car les relais ne prenant pas en charge cette version bêta rejettent les tours système présents dans la liste des messages.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Utiliser les niveaux d’effort de raisonnement publiés par models.dev lorsque ni une dérogation de l’opérateur ni le registre des fournisseurs n’en déclare, en ne conservant que les niveaux d’effort connus et en traitant une liste de niveaux déclarée vide comme « aucun niveau ». Désactivé par défaut : le catalogue de modèles et les niveaux d’effort résolus restent exactement comme avant.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Permet aux requêtes auto/* de constituer le pool de candidats avec les capacités de modèle résolues (vision, raisonnement, réflexion) et les scores de qualité observés, lus en une seule lecture groupée. Désactivé par défaut : les poids des candidats au moment de la requête restent exactement comme avant. Activé : ces signaux alimentent les poids de l'instantané, de sorte que les poids des candidats et la sélection peuvent changer.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Autoriser l’analyse de l’état des identifiants à tester de nouveau les connexions que la passerelle a désactivées d’elle-même (au maximum une fois toutes les 6 heures pour chacune, 5 par analyse) et à en réactiver une lorsque son nouveau test réussit. Désactivé par défaut : ces connexions restent désactivées jusqu’à l’intervention d’un opérateur. Les connexions désactivées par un opérateur et celles bannies définitivement ne sont jamais testées de nouveau.",
   "sidebar": {
     "home": "Accueil",
     "dashboard": "Tableau de bord",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Cet abonnement contient des nœuds qui nécessitent un proxy core local (SS/VMess/Trojan/VLESS) ; ils ne sont pas routés tant que vous n'avez pas configuré le point de terminaison SOCKS5 du local-core.",
         "NO_USABLE_NODES": "L'abonnement n'a renvoyé aucun nœud utilisable (http/https/socks5 ou nœuds avec un point de terminaison de core local).",
         "SELECTOR_SWITCH_FAILED": "L'appel de contrôle du proxy-core a échoué ; la route précédente reste active. Vérifiez l'URL et le secret de contrôle, puis actualisez.",
+        "SELECTOR_EARLY_NO_CONTROL": "Aucun URL de contrôle",
+        "SELECTOR_EARLY_UNMAPPED": "Aucun abonnement correspondant",
         "CORE_CONFIG_NOT_GENERATED": "La configuration du cœur local n’a pas été générée ; le fichier adopté est inchangé. Vérifiez le chemin et actualisez.",
         "CORE_CONFIG_NOT_APPLIED": "La configuration de base générée n'a pas pu remplacer le fichier adopté ; la copie voisine a été conservée à la place.",
         "CORE_RELOAD_UNDECLARED": "Aucun canal de rechargement n’est déclaré pour la configuration du cœur remplacée. Déclarez-en un : une URL de contrôle sur un cœur compatible, la variable OMNIROUTE_PROXY_CORE_RELOAD_COMMAND comme tableau JSON d’arguments, ou la valeur external pour un observateur externe.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Créer un abonnement",
       "loading": "Chargement…",
       "noSubscriptions": "Aucun abonnement pour l'instant. Cliquez sur « Ajouter un abonnement » pour commencer.",
+      "earlySkipsSinceRestart": "Sauts du sélecteur depuis le dernier redémarrage",
       "statusOk": "D'accord",
       "statusError": "Erreur",
       "statusEmpty": "Vide",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Nombre d'Échecs",
       "retryAfterMs": "Réessayer Après (ms)",
-      "lastFailureKind": "Dernier Type d'Échec"
+      "lastFailureKind": "Dernier Type d'Échec",
+      "lastClose": "Dernière clôture"
     },
     "empty": {
       "title": "Aucune connexion",

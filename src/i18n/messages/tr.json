@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "xai-oauth bağlantıları için canlı xAI model kataloğunu, sabit statik başlangıç verisi yerine OAuth bearer belirtecini kullanarak https://api.x.ai/v1/models adresinden alın. Varsayılan olarak kapalıdır: xai-oauth, statik başlangıç verisini değişmeden sunmaya devam eder. Herhangi bir çözümleme hatasında keşif işlemi başlangıç verisine geri döner.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Başlangıç veritabanı bütünlük/sağlık denetimini, tamamlanana kadar başlangıcı engellemek yerine sunucu istekleri kabul etmeye başladıktan sonra çalıştırın. Varsayılan olarak kapalıdır: başlangıç, bu değişiklikten önce olduğu gibi denetim tamamlanana kadar engellenir; böylece bozuk bir veritabanı ilk istek sunulmadan önce yine tespit edilir.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Standart Anthropic uyumlu aktarıcılarda, önbelleğe alınan istem önekinin turlar arasında sabit kalması için konuşmanın ortasındaki sistem turlarını üst düzey sistem istemine taşımak yerine mesaj listesinde tutar. Yalnızca istemcinin kendisi mid-conversation-system-2026-04-07 beta sürümünü gönderdiğinde uygulanır. Varsayılan olarak kapalıdır: Bu beta sürümünü desteklemeyen aktarıcılar mesaj listesindeki sistem turlarını reddettiğinden, her sistem turu daha önce olduğu gibi sistem istemine taşınır.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Ne bir operatör geçersiz kılması ne de sağlayıcı kayıt defteri herhangi bir seviye belirttiğinde, models.dev tarafından yayımlanan akıl yürütme eforu seviyelerini kullanın; yalnızca bilinen efor seviyelerini koruyun ve boş bir seviye listesini \"seviye yok\" olarak değerlendirin. Varsayılan olarak kapalıdır: model kataloğu ve çözümlenmiş efor seviyeleri tam olarak önceki gibi kalır.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "auto/* isteklerinin aday havuzunu çözümlenmiş model yetenekleri (görme, akıl yürütme, düşünme) ve gözlemlenen kalite puanlarıyla, tek bir toplu okumada oluşturmasını sağlar. Varsayılan olarak kapalı: istek anındaki aday ağırlıkları tam olarak önceki gibi kalır. Açık: bu sinyaller anlık görüntü ağırlıklarına girer, bu nedenle aday ağırlıkları ve seçim değişebilir.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Kimlik bilgisi durumu taramasının, ağ geçidinin kendiliğinden kapattığı bağlantıları yeniden test etmesine (her biri en fazla 6 saatte bir, tarama başına 5 adet) ve yeniden testi geçen bir bağlantıyı tekrar açmasına izin verin. Varsayılan olarak kapalıdır: bu tür bağlantılar, bir operatör müdahale edene kadar kapalı kalır. Operatör tarafından devre dışı bırakılan ve kalıcı olarak yasaklanan bağlantılar hiçbir zaman yeniden test edilmez.",
   "sidebar": {
     "home": "Ana Sayfa",
     "dashboard": "Kontrol Paneli",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Bu abonelikte yerel bir proxy çekirdeğine (SS/VMess/Trojan/VLESS) ihtiyaç duyan düğümler var; yerel çekirdek SOCKS5 uç noktasını yapılandırana kadar bunlar yönlendirilmez.",
         "NO_USABLE_NODES": "Abonelik kullanılabilir hiçbir düğüm sağlamadı (http/https/socks5 veya yerel çekirdek uç noktasına sahip düğümler).",
         "SELECTOR_SWITCH_FAILED": "Proxy-core denetim çağrısı başarısız oldu; önceki rota etkin kalır. Denetim URL'sini ve parolasını denetleyip yenileyin.",
+        "SELECTOR_EARLY_NO_CONTROL": "Denetim URL'si yok",
+        "SELECTOR_EARLY_UNMAPPED": "Eşleşen abonelik yok",
         "CORE_CONFIG_NOT_GENERATED": "Yerel çekirdek yapılandırması oluşturulmadı; uygulanan dosya değişmedi. Yolu kontrol edip yenileyin.",
         "CORE_CONFIG_NOT_APPLIED": "Oluşturulan çekirdek yapılandırma, benimsenmiş dosyayı değiştiremedi; bunun yerine yanındaki kopya tutuldu.",
         "CORE_RELOAD_UNDECLARED": "Değiştirilen çekirdek yapılandırması için bir yeniden yükleme kanalı bildirilmemiş. Birini bildirin: uyumlu bir çekirdekte bir denetim URL'si, JSON bağımsız değişken dizisi olarak OMNIROUTE_PROXY_CORE_RELOAD_COMMAND değişkeni veya dışarıdaki bir gözlemci için external değeri.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Abonelik Oluştur",
       "loading": "Yükleniyor…",
       "noSubscriptions": "Henüz abonelik yok. Başlamak için \"Abonelik Ekle\"yi tıklayın.",
+      "earlySkipsSinceRestart": "Son yeniden başlatmadan bu yana seçici atlamaları",
       "statusOk": "tamam",
       "statusError": "Hata",
       "statusEmpty": "Boş",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Hata Sayısı",
       "retryAfterMs": "Sonra Yeniden Dene (ms)",
-      "lastFailureKind": "Son Hata Türü"
+      "lastFailureKind": "Son Hata Türü",
+      "lastClose": "Son Kapanış"
     },
     "empty": {
       "title": "Bağlantı yok",

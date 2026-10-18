@@ -1,0 +1,1 @@
+- **quality:** the two circuit-breaker tests added by #16594 (`circuit-breaker-degraded-decay`, `connection-test-closes-degraded-breaker`) are now listed in `stryker.conf.json` `tap.testFiles`, so `check:mutation-test-coverage --strict` passes again and their mutant kills count.

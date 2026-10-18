@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "xai-oauth ulanishlari uchun statik, oʻzgarmas boshlangʻich roʻyxat oʻrniga OAuth bearer tokenidan foydalanib https://api.x.ai/v1/models manzilidan amaldagi xAI modellar katalogini oling. Odatiy holatda oʻchiq: xai-oauth statik boshlangʻich roʻyxatni oʻzgartirmasdan taqdim etishda davom etadi. Aniqlashda har qanday xatolik yuz bersa, tizim statik boshlangʻich roʻyxatga qaytadi.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Server soʻrovlarni qabul qila boshlaganidan keyin ishga tushirishdagi maʼlumotlar bazasi yaxlitligi/holati tekshiruvini bajaring, yaʼni tekshiruv yakunlanguncha ishga tushishni bloklamang. Odatiy holatda oʻchiq: ishga tushish bu oʻzgarishdan avvalgidek tekshiruv tugashini kutadi, shuning uchun buzilgan maʼlumotlar bazasi birinchi soʻrovga xizmat koʻrsatilishidan oldin aniqlanadi.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Oddiy Anthropic bilan mos retranslyatorlarda suhbat o‘rtasidagi system navbatlarini yuqori darajadagi system promptiga ko‘chirish o‘rniga xabarlar ro‘yxatida saqlang, shunda keshlangan prompt prefiksi navbatlar davomida barqaror qoladi. Bu faqat mijozning o‘zi mid-conversation-system-2026-04-07 beta-versiyasini yuborganida qo‘llanadi. Sukut bo‘yicha o‘chiq: ushbu beta-versiyani qo‘llab-quvvatlamaydigan retranslyatorlar xabarlar ro‘yxatidagi system navbatlarini rad etgani sababli, har bir system navbati avvalgidek system promptiga ko‘chiriladi.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Operator tomonidan qayta belgilash ham, provayder reyestri ham hech qanday darajani eʼlon qilmaganida models.dev eʼlon qilgan fikrlash sarfi darajalaridan foydalaning, bunda faqat maʼlum sarf darajalarini saqlab qoling va eʼlon qilingan darajalar roʻyxati boʻsh boʻlsa, uni «darajalar yoʻq» deb hisoblang. Sukut boʻyicha oʻchiq: model katalogi va aniqlangan sarf darajalari avvalgidek qoladi.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "auto/* so‘rovlariga nomzodlar havzasini hal qilingan model imkoniyatlari (ko‘rish, mulohaza, fikrlash) va kuzatilgan sifat ballari bilan, bitta ommaviy o‘qishda, tuzish imkonini beradi. Standart holatda o‘chirilgan: so‘rov vaqtidagi nomzod vaznlari aynan avvalgidek qoladi. Yoqilganda: bu signallar snapshot vaznlariga kiradi, shuning uchun nomzod vaznlari va tanlov o‘zgarishi mumkin.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Hisob ma’lumotlari holatini tekshirish jarayoniga shlyuz o‘zi o‘chirgan ulanishlarni qayta sinashga (har birini ko‘pi bilan 6 soatda bir marta, har bir tekshiruvda 5 tadan) va qayta sinovdan muvaffaqiyatli o‘tgan ulanishni yana yoqishga ruxsat bering. Odatiy holatda o‘chiq: bunday ulanishlar operator chora ko‘rmaguncha o‘chiq qoladi. Operator o‘chirgan va doimiy ravishda taqiqlangan ulanishlar hech qachon qayta sinalmaydi.",
   "sidebar": {
     "home": "Bosh sahifa",
     "dashboard": "Boshqaruv paneli",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Bu obunada mahalliy proksi yadrosini talab qiladigan tugunlar mavjud (SS/VMess/Trojan/VLESS); mahalliy yadro uchun SOCKS5 endpoint sozlanmaguncha ular orqali trafik yo‘naltirilmaydi.",
         "NO_USABLE_NODES": "Obunada foydalanish mumkin bo‘lgan tugunlar topilmadi (http/https/socks5 yoki mahalliy yadro endpointiga ega tugunlar).",
         "SELECTOR_SWITCH_FAILED": "Proxy-core boshqaruv chaqiruvi bajarilmadi; avvalgi marshrut faol qoladi. Boshqaruv URL va sirrini tekshirib, yangilang.",
+        "SELECTOR_EARLY_NO_CONTROL": "Boshqaruv URL manzili yo'q",
+        "SELECTOR_EARLY_UNMAPPED": "Mos obuna yo'q",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Yaratilgan asosiy konfiguratsiya qabul qilingan faylni almashtira olmadi; o'rniga yonidagi nusxa saqlanib qoldi.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Obuna yaratish",
       "loading": "Yuklanmoqda…",
       "noSubscriptions": "Hali obunalar yo‘q. Boshlash uchun \"Obuna qo‘shish\" tugmasini bosing.",
+      "earlySkipsSinceRestart": "Oxirgi qayta ishga tushirishdan beri selektor o'tkazib yuborishlari",
       "statusOk": "OK",
       "statusError": "Xato",
       "statusEmpty": "Bo‘sh",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Muvaffaqiyatsizliklar soni",
       "retryAfterMs": "Qayta urinishgacha (ms)",
-      "lastFailureKind": "Soʻnggi muvaffaqiyatsizlik turi"
+      "lastFailureKind": "Soʻnggi muvaffaqiyatsizlik turi",
+      "lastClose": "Oxirgi yopilish"
     },
     "empty": {
       "title": "Ulanishlar yoʻq",

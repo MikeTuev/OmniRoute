@@ -1,0 +1,1 @@
+- **release:** three more unit regressions drained from the release branch — the two Antigravity quota tests follow the live Gemini 3.8 tier that #12608 switched to, and the free-tier budget card SVG is regenerated for the catalog after #16310 and #12608 (478 models, 12 providers).

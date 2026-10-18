@@ -1,0 +1,1 @@
+- **fix(providers):** Google AI Studio keys can serve native image generation through the new `gemini` image provider (`gemini/gemini-3-pro-image-preview`, `gemini/gemini-3.1-flash-image-preview`), with a timed upstream call and `n` served by bounded single-candidate requests ([#15976](https://github.com/diegosouzapw/OmniRoute/pull/15976)) — thanks @LuisAlejandro

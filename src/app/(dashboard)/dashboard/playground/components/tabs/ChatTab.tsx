@@ -13,6 +13,10 @@ import ImageResultsInline, {
 import { useStreamMetrics } from "../../hooks/useStreamMetrics";
 import { getModelPricing } from "@/lib/playground/types";
 import type { ConfigState } from "../StudioConfigPane";
+import {
+  PLAYGROUND_IMAGE_STREAM_HEADER,
+  restorePlaygroundImageResponse,
+} from "@/shared/utils/playgroundImageStream";
 import type { StreamMetrics } from "@/shared/schemas/playground";
 import { buildReasoningRequestFields } from "../reasoningControlUtils";
 import {
@@ -150,8 +154,10 @@ export default function ChatTab({ configState, onMetricsUpdate }: ChatTabProps) 
       const fetchHeaders: Record<string, string> = { "Content-Type": "application/json" };
       const chatEndpoint = isChatCompletionsEndpoint(configState.endpoint);
       const nativeCodex = isNativeCodexPlaygroundModel(configState.model);
+      const imageEndpoint = configState.endpoint === "images" && !nativeCodex;
       const nativeCodexTurnId = nativeCodex ? crypto.randomUUID() : "";
       if (nativeCodex) fetchHeaders.Originator = "codex_omniroute_playground";
+      if (imageEndpoint) fetchHeaders[PLAYGROUND_IMAGE_STREAM_HEADER] = "1";
       const requestBody = nativeCodex
         ? buildNativeCodexPlaygroundRequest({
             model: configState.model,
@@ -168,7 +174,7 @@ export default function ChatTab({ configState, onMetricsUpdate }: ChatTabProps) 
               configState.model
             );
 
-      const res = await fetch(
+      let res = await fetch(
         nativeCodex ? "/api/v1/responses" : resolveChatTabRequestPath(configState.endpoint),
         {
           method: "POST",
@@ -177,6 +183,9 @@ export default function ChatTab({ configState, onMetricsUpdate }: ChatTabProps) 
           signal: controller.signal,
         }
       );
+      if (imageEndpoint) {
+        res = await restorePlaygroundImageResponse(res, controller.signal);
+      }
 
       setResponseStatus(res.status);
 

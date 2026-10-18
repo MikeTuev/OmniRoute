@@ -46,6 +46,8 @@ export type ErrorBodyClassification = {
 
 const PUBLIC_ERROR_IDENTIFIER = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const SAFE_PUBLIC_ERROR_IDENTIFIERS = new Set([
+  "cyber_policy",
+  "content_policy_violation",
   "abort",
   "aborted",
   "account_semaphore_capacity",
@@ -705,6 +707,20 @@ function normalizeRetryAfterSeconds(retryAfter?: string | number | Date | null):
 export function isRetryAfterProvenanceEnabled(): boolean {
   try {
     return isFeatureFlagEnabled("RETRY_AFTER_PROVENANCE_ENABLED");
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * #15917 — opt-in CONTENT_POLICY_REFUSAL_COMBO_STOP_ENABLED (default off): stop a combo on an
+ * exact content-policy refusal even when the remaining targets are different models. Lives
+ * here because this module already reads feature flags (no new open-sse → src edge). Fails
+ * closed to the default (heterogeneous combos advance) when the flag store cannot be read.
+ */
+export function isContentPolicyRefusalComboStopEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("CONTENT_POLICY_REFUSAL_COMBO_STOP_ENABLED");
   } catch {
     return false;
   }

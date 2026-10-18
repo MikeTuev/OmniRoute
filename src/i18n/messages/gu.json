@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "સ્થિર સ્ટેટિક સીડને બદલે OAuth bearer token નો ઉપયોગ કરીને https://api.x.ai/v1/models પરથી xai-oauth કનેક્શન્સ માટે લાઇવ xAI મોડેલ કેટલોગ મેળવો. ડિફૉલ્ટ રૂપે બંધ: xai-oauth સ્ટેટિક સીડને કોઈ ફેરફાર વિના પ્રદાન કરવાનું ચાલુ રાખે છે. કોઈપણ રિઝોલ્યુશન ભૂલ થાય તો ડિસ્કવરી પાછી સીડનો ઉપયોગ કરે છે.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "સર્વર વિનંતીઓ સ્વીકારવાનું શરૂ કરે ત્યાર પછી સ્ટાર્ટઅપ ડેટાબેઝ ઇન્ટેગ્રિટી/હેલ્થ ચેક ચલાવો, તેના પૂર્ણ થવા સુધી સ્ટાર્ટઅપને અવરોધવાને બદલે. ડિફૉલ્ટ રૂપે બંધ: સ્ટાર્ટઅપ આ ફેરફાર પહેલાંની જેમ જ ચેક પૂર્ણ થાય ત્યાં સુધી અવરોધિત રહે છે, તેથી દૂષિત ડેટાબેઝ હજુ પણ પ્રથમ વિનંતી સર્વ થાય તે પહેલાં શોધાઈ જાય છે.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "સામાન્ય anthropic-સુસંગત રિલે પર, વાતચીતની વચ્ચે આવતા system turns ને ટોચ-સ્તરના system prompt માં ખસેડવાને બદલે message list માં જ રાખો, જેથી કૅશ કરાયેલ prompt prefix દરેક turn દરમિયાન સ્થિર રહે. આ ફક્ત ત્યારે લાગુ પડે છે જ્યારે ક્લાયન્ટે પોતે mid-conversation-system-2026-04-07 beta મોકલ્યું હોય. ડિફૉલ્ટ રૂપે બંધ: પહેલાની જેમ દરેક system turn ને ચોક્કસપણે system prompt માં ખસેડવામાં આવે છે, કારણ કે તે beta વિનાના રિલે message list માં system turns ને નકારે છે.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "જ્યારે ન તો ઑપરેટર ઓવરરાઇડ અને ન તો પ્રદાતા રજિસ્ટ્રી કોઈ રીઝનિંગ એફર્ટ ટિયર જાહેર કરે, ત્યારે models.dev દ્વારા પ્રકાશિત ટિયરનો ઉપયોગ કરો, માત્ર જાણીતા એફર્ટ લેવલ જ રાખો અને જાહેર કરેલી ખાલી ટિયર સૂચિને \"કોઈ ટિયર નથી\" તરીકે ગણો. ડિફૉલ્ટ રૂપે બંધ: મોડેલ કેટલોગ અને નિર્ધારિત એફર્ટ ટિયર પહેલાં જેવા હતા બરાબર તેવા જ રહે છે.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "auto/* વિનંતીઓને ઉકેલાયેલી મોડેલ ક્ષમતાઓ (વિઝન, રીઝનિંગ, થિંકિંગ) અને અવલોકિત ગુણવત્તા સ્કોર સાથે એક જ બલ્ક વાંચનમાં ઉમેદવાર પૂલ બનાવવા દે છે. ડિફોલ્ટ રીતે બંધ: વિનંતી સમયના ઉમેદવાર વજન બરાબર પહેલાં જેવા જ રહે છે. ચાલુ હોય ત્યારે: આ સંકેતો સ્નેપશોટ વજનમાં ઉમેરાય છે, તેથી ઉમેદવાર વજન અને પસંદગી બદલાઈ શકે છે.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "ક્રેડેન્શિયલ હેલ્થ સ્વીપને ગેટવેએ પોતાની મેળે બંધ કરેલાં કનેક્શનોનું ફરી પરીક્ષણ કરવા દો (દરેક કનેક્શનનું વધુમાં વધુ દર 6 કલાકે એક વાર, પ્રત્યેક સ્વીપમાં 5) અને ફરી પરીક્ષણ સફળ થાય ત્યારે તેને ફરી ચાલુ કરવા દો. ડિફૉલ્ટ રૂપે બંધ: ઑપરેટર કાર્યવાહી ન કરે ત્યાં સુધી આવાં કનેક્શનો બંધ જ રહે છે. ઑપરેટરે બંધ કરેલાં અને કાયમી રીતે પ્રતિબંધિત કનેક્શનોનું ફરી પરીક્ષણ ક્યારેય કરવામાં આવતું નથી.",
   "sidebar": {
     "home": "મુખ્ય પૃષ્ઠ",
     "dashboard": "ડૅશબોર્ડ",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "આ સબ્સ્ક્રિપ્શનમાં એવા નોડ્સ છે જેને લોકલ પ્રોક્સી કોર (SS/VMess/Trojan/VLESS) ની જરૂર છે; જ્યાં સુધી તમે લોકલ-કોર SOCKS5 એન્ડપોઇન્ટ કન્ફિગર ન કરો ત્યાં સુધી તેઓ રાઉટ થશે નહીં.",
         "NO_USABLE_NODES": "સબ્સ્ક્રિપ્શનમાંથી કોઈ ઉપયોગી નોડ્સ મળ્યા નથી (http/https/socks5 અથવા લોકલ કોર એન્ડપોઇન્ટવાળા નોડ્સ).",
         "SELECTOR_SWITCH_FAILED": "પ્રોક્સી-કોર નિયંત્રણ કૉલ નિષ્ફળ ગયો; અગાઉનો માર્ગ સક્રિય રહે છે. નિયંત્રણ URL અને સીક્રેટ તપાસો, પછી રિફ્રેશ કરો.",
+        "SELECTOR_EARLY_NO_CONTROL": "કોઈ નિયંત્રણ URL નથી",
+        "SELECTOR_EARLY_UNMAPPED": "કોઈ મેળ ખાતું સબસ્ક્રિપ્શન નથી",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "બનાવેલા કોર કન્ફિગરેશનથી અપનાવેલી ફાઇલને બદલી શકાયું નહીં; બાજુમાં રાખેલી નકલ રાખવામાં આવી હતી.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "સબ્સ્ક્રિપ્શન બનાવો",
       "loading": "લોડ કરી રહ્યું છે...",
       "noSubscriptions": "હજુ સુધી કોઈ સબ્સ્ક્રિપ્શન્સ નથી. પ્રારંભ કરવા માટે \"સબ્સ્ક્રિપ્શન ઉમેરો\" પર ક્લિક કરો.",
+      "earlySkipsSinceRestart": "છેલ્લા પુનઃપ્રારંભ પછી સિલેક્ટર દ્વારા છોડાયેલ",
       "statusOk": "ઠીક છે",
       "statusError": "ભૂલ",
       "statusEmpty": "ખાલી",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "નિષ્ફળતાની ગણતરી",
       "retryAfterMs": "પછી ફરી પ્રયાસ કરો (ms)",
-      "lastFailureKind": "છેલ્લો નિષ્ફળતા પ્રકાર"
+      "lastFailureKind": "છેલ્લો નિષ્ફળતા પ્રકાર",
+      "lastClose": "છેલ્લું બંધ"
     },
     "empty": {
       "title": "કોઈ કનેક્શન નથી",

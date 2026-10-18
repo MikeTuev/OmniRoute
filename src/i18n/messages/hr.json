@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Dohvati aktualni katalog xAI modela za xai-oauth veze s https://api.x.ai/v1/models koristeći OAuth token nositelja, umjesto nepromjenjivog statičkog početnog skupa. Prema zadanim postavkama isključeno: xai-oauth nastavlja posluživati nepromijenjeni statički početni skup. U slučaju bilo kakve pogreške pri razrješavanju, otkrivanje se vraća na početni skup.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Pokreni provjeru integriteta/stanja baze podataka pri pokretanju nakon što poslužitelj počne prihvaćati zahtjeve, umjesto da se pokretanje blokira dok se provjera ne dovrši. Prema zadanim postavkama isključeno: pokretanje se blokira radi provjere kao i prije ove promjene, pa se oštećena baza podataka i dalje otkriva prije posluživanja prvog zahtjeva.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Na običnim anthropic-compatible relejima zadržite sistemske unose usred razgovora na popisu poruka umjesto da ih premještate u sistemski prompt najviše razine kako bi predmemorirani prefiks prompta ostao stabilan između unosa. Primjenjuje se samo kada je sam klijent poslao beta-verziju mid-conversation-system-2026-04-07. Zadano je isključeno: svaki se sistemski unos premješta u sistemski prompt točno kao i prije jer releji bez te beta-verzije odbijaju sistemske unose na popisu poruka.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Upotrijebi razine intenziteta zaključivanja koje objavljuje models.dev kada ih ne navodi ni nadjačavanje operatora ni registar pružatelja usluga, zadržavajući samo poznate razine intenziteta, a prazan popis navedenih razina tretiraj kao „bez razina”. Prema zadanim postavkama isključeno: katalog modela i razriješene razine intenziteta ostaju potpuno isti kao i prije.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Omogućuje zahtjevima auto/* da izgrade skup kandidata s razriješenim mogućnostima modela (vid, rasuđivanje, razmišljanje) i uočenim ocjenama kvalitete, učitanima u jednom skupnom čitanju. Isključeno prema zadanim postavkama: težine kandidata u trenutku zahtjeva ostaju točno kao prije. Uključeno: ti signali ulaze u težine snimke, pa se težine kandidata i odabir mogu promijeniti.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Dopustite provjeri valjanosti vjerodajnica da ponovno testira veze koje je pristupnik sam isključio (svaku najviše jednom svakih 6 sati, 5 po provjeri) te ponovno uključi vezu kada uspješno prođe ponovno testiranje. Prema zadanim postavkama isključeno: takve veze ostaju isključene dok operater ne poduzme radnju. Veze koje je operater isključio i trajno zabranjene veze nikada se ponovno ne testiraju.",
   "sidebar": {
     "home": "Početna",
     "dashboard": "Nadzorna ploča",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Ova pretplata ima čvorove koji zahtijevaju lokalni proxy core (SS/VMess/Trojan/VLESS); neće se usmjeravati dok ne konfigurirate lokalnu SOCKS5 krajnju točku za local-core.",
         "NO_USABLE_NODES": "Pretplata nije dala nijedan upotrebljiv čvor (http/https/socks5 ili čvorove s lokalnom krajnjom točkom za core).",
         "SELECTOR_SWITCH_FAILED": "Upravljački poziv proxy-corea nije uspio; prethodna ruta ostaje aktivna. Provjerite upravljački URL i tajnu, a zatim osvježite.",
+        "SELECTOR_EARLY_NO_CONTROL": "Nema kontrolnog URL-a",
+        "SELECTOR_EARLY_UNMAPPED": "Nema odgovarajuće pretplate",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Generiranu osnovnu konfiguraciju nije bilo moguće zamijeniti prihvaćenu datoteku; umjesto toga zadržana je kopija pokraj nje.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Stvori pretplatu",
       "loading": "Učitavanje…",
       "noSubscriptions": "Još nema pretplata. Kliknite „Dodaj pretplatu” za početak.",
+      "earlySkipsSinceRestart": "Preskakanja odabira od posljednjeg ponovnog pokretanja",
       "statusOk": "U redu",
       "statusError": "Pogreška",
       "statusEmpty": "Prazno",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Broj neuspjeha",
       "retryAfterMs": "Pokušaj ponovno nakon (ms)",
-      "lastFailureKind": "Vrsta posljednjeg neuspjeha"
+      "lastFailureKind": "Vrsta posljednjeg neuspjeha",
+      "lastClose": "Zadnje Zatvaranje"
     },
     "empty": {
       "title": "Nema veza",

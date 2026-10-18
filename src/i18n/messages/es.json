@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Obtener el catálogo de modelos de xAI en tiempo real para las conexiones xai-oauth desde https://api.x.ai/v1/models mediante el token OAuth de tipo bearer, en lugar del conjunto inicial estático y fijo. Desactivado de forma predeterminada: xai-oauth sigue utilizando el conjunto inicial estático sin cambios. Si se produce algún error de resolución, la detección recurre al conjunto inicial.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Ejecuta la comprobación de integridad/estado de la base de datos durante el inicio después de que el servidor comience a aceptar solicitudes, en lugar de bloquear el inicio hasta que finalice. Desactivado de forma predeterminada: el inicio queda bloqueado durante la comprobación exactamente igual que antes de este cambio, por lo que una base de datos dañada se sigue detectando antes de atender la primera solicitud.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "En relés estándar compatibles con Anthropic, mantén los turnos de sistema que aparecen en mitad de la conversación dentro de la lista de mensajes, en lugar de moverlos al mensaje de sistema de nivel superior, para que el prefijo de la solicitud almacenado en caché permanezca estable entre turnos. Solo se aplica cuando el propio cliente ha enviado la beta mid-conversation-system-2026-04-07. Desactivado de forma predeterminada: cada turno de sistema se mueve al mensaje de sistema exactamente como antes, porque los relés que no admiten esa beta rechazan los turnos de sistema incluidos en la lista de mensajes.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Usa los niveles de esfuerzo de razonamiento que publica models.dev cuando ni una anulación del operador ni el registro del proveedor declaren ninguno; conserva únicamente los niveles de esfuerzo conocidos y considera una lista vacía de niveles declarados como «sin niveles». Desactivado de forma predeterminada: el catálogo de modelos y los niveles de esfuerzo resueltos permanecen exactamente como antes.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Permite que las solicitudes auto/* construyan el grupo de candidatos con las capacidades de modelo resueltas (visión, razonamiento, pensamiento) y las puntuaciones de calidad observadas, leídas en una sola lectura masiva. Desactivado por defecto: los pesos de los candidatos en el momento de la solicitud se mantienen exactamente como antes. Activado: esas señales alimentan los pesos de la instantánea, por lo que los pesos de los candidatos y la selección pueden cambiar.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Permite que el análisis de estado de credenciales vuelva a probar las conexiones que la puerta de enlace desactivó automáticamente (como máximo una vez cada 6 horas cada una y 5 por análisis) y reactive una cuando supere la prueba. Desactivado de forma predeterminada: dichas conexiones permanecen desactivadas hasta que intervenga un operador. Las conexiones desactivadas por un operador y las bloqueadas permanentemente nunca vuelven a probarse.",
   "sidebar": {
     "home": "Inicio",
     "dashboard": "Panel de control",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Esta suscripción tiene nodos que necesitan un núcleo de proxy local (SS/VMess/Trojan/VLESS); no se enrutarán hasta que configures el endpoint SOCKS5 de local-core.",
         "NO_USABLE_NODES": "La suscripción no produjo ningún nodo utilizable (http/https/socks5 o nodos con un endpoint de núcleo local).",
         "SELECTOR_SWITCH_FAILED": "La llamada de control del proxy-core falló; la ruta anterior sigue activa. Compruebe la URL y el secreto de control y actualice.",
+        "SELECTOR_EARLY_NO_CONTROL": "URL de control no disponible",
+        "SELECTOR_EARLY_UNMAPPED": "Ninguna suscripción coincide",
         "CORE_CONFIG_NOT_GENERATED": "No se generó la configuración del núcleo local; el archivo adoptado no ha cambiado. Comprueba la ruta y actualiza.",
         "CORE_CONFIG_NOT_APPLIED": "La configuración principal generada no pudo reemplazar el archivo adoptado; se mantuvo la copia de al lado.",
         "CORE_RELOAD_UNDECLARED": "No se ha declarado ningún canal de recarga para la configuración del núcleo sustituida. Declara uno: una URL de control en un núcleo compatible, la variable OMNIROUTE_PROXY_CORE_RELOAD_COMMAND como un array JSON de argumentos, o el valor external para un observador externo.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Crear suscripción",
       "loading": "Cargando…",
       "noSubscriptions": "Aún no hay suscripciones. Haga clic en \"Agregar suscripción\" para comenzar.",
+      "earlySkipsSinceRestart": "Omisiones del selector desde el último reinicio",
       "statusOk": "Aceptar",
       "statusError": "error",
       "statusEmpty": "vacio",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Cantidad de Fallos",
       "retryAfterMs": "Reintentar Después (ms)",
-      "lastFailureKind": "Último Tipo de Fallo"
+      "lastFailureKind": "Último Tipo de Fallo",
+      "lastClose": "Último cierre"
     },
     "empty": {
       "title": "Sin conexiones",

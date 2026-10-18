@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "使用 OAuth bearer token，從 https://api.x.ai/v1/models 擷取 xai-oauth 連線的即時 xAI 模型目錄，而非固定不變的靜態種子。預設關閉：xai-oauth 會繼續提供未變更的靜態種子。發生任何解析錯誤時，探索功能會回退至該種子。",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "伺服器開始接受請求後再執行啟動時的資料庫完整性／健康狀況檢查，而非在檢查完成前阻擋啟動程序。預設關閉：啟動程序會像此變更前一樣等待檢查完成，因此損壞的資料庫仍會在處理第一個請求前被偵測到。",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "在一般的 anthropic 相容中繼服務上，將對話中途的 system 回合保留在訊息清單內，而不是移至頂層 system 提示詞，讓快取的提示詞前綴在各回合之間保持穩定。僅在用戶端本身傳送了 mid-conversation-system-2026-04-07 beta 時適用。預設關閉：每個 system 回合都會像以往一樣移至 system 提示詞，因為不支援該 beta 的中繼服務會拒絕訊息清單中的 system 回合。",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "當操作員覆寫與提供者登錄檔皆未宣告任何推理投入程度分級時，使用 models.dev 發布的分級，僅保留已知的投入程度層級，並將空白的已宣告分級清單視為「無分級」。預設關閉：模型目錄與解析後的投入程度分級會與先前完全相同。",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "讓 auto/* 請求使用已解析的模型能力（視覺、推理、思考）與觀測到的品質分數建立候選池，這些資料透過一次批次讀取取得。預設關閉：請求時的候選權重與先前完全相同。開啟後：這些訊號會納入快照權重，因此候選權重與選擇可能會改變。",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "允許憑證健康狀態掃描重新測試閘道自行停用的連線（每個連線最多每 6 小時一次，每次掃描 5 個），並在重新測試通過時重新啟用連線。預設為關閉：這類連線會保持停用，直到操作員採取行動。由操作員停用及遭永久封鎖的連線一律不會重新測試。",
   "sidebar": {
     "home": "首頁",
     "dashboard": "儀表板",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "此訂閱包含需要本機 proxy core 的節點（SS/VMess/Trojan/VLESS）；在設定本機 core SOCKS5 端點之前，這些節點不會被路由。",
         "NO_USABLE_NODES": "訂閱未產生可用節點（http/https/socks5 或具有本機 core 端點的節點）。",
         "SELECTOR_SWITCH_FAILED": "代理核心控制呼叫失敗；上一條路由保持有效。請檢查控制 URL 和密鑰，然後重新整理。",
+        "SELECTOR_EARLY_NO_CONTROL": "沒有控制 URL",
+        "SELECTOR_EARLY_UNMAPPED": "沒有符合的訂閱",
         "CORE_CONFIG_NOT_GENERATED": "未產生本機核心設定；已採用的檔案維持不變。請檢查路徑後重新整理。",
         "CORE_CONFIG_NOT_APPLIED": "產生的核心設定無法取代已採用的檔案；因此保留了其旁的副本。",
         "CORE_RELOAD_UNDECLARED": "未為被取代的核心設定宣告重新載入管道。請宣告其中一種：相容核心上的控制 URL、以 JSON 引數陣列提供的 OMNIROUTE_PROXY_CORE_RELOAD_COMMAND 變數，或為外部觀察者設定值 external。",
@@ -7171,6 +7176,7 @@
       "createSubscription": "建立訂閱",
       "loading": "加載中...",
       "noSubscriptions": "還沒有訂閱。點擊“新增訂閱”即可開始。",
+      "earlySkipsSinceRestart": "自上次重新啟動以來的選擇器略過次數",
       "statusOk": "好的",
       "statusError": "錯誤",
       "statusEmpty": "空",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "失敗次數",
       "retryAfterMs": "重試間隔(ms)",
-      "lastFailureKind": "最近失敗類型"
+      "lastFailureKind": "最近失敗類型",
+      "lastClose": "最後收盤"
     },
     "empty": {
       "title": "無連線",

@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Dapatkan katalog model xAI semasa untuk sambungan xai-oauth daripada https://api.x.ai/v1/models menggunakan token pembawa OAuth, dan bukannya benih statik yang dibekukan. Dimatikan secara lalai: xai-oauth terus menyediakan benih statik tanpa perubahan. Jika berlaku sebarang ralat resolusi, penemuan akan kembali menggunakan benih tersebut.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Jalankan semakan integriti/kesihatan pangkalan data permulaan selepas pelayan mula menerima permintaan, dan bukannya menyekat permulaan sehingga semakan selesai. Dimatikan secara lalai: permulaan disekat oleh semakan sama seperti sebelum perubahan ini, jadi pangkalan data yang rosak masih dikesan sebelum permintaan pertama dilayan.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Pada geganti biasa yang serasi dengan anthropic, kekalkan giliran sistem di pertengahan perbualan dalam senarai mesej dan bukannya memindahkannya ke gesaan sistem peringkat teratas, supaya awalan gesaan yang dicache kekal stabil merentas giliran. Hanya terpakai apabila klien itu sendiri menghantar beta mid-conversation-system-2026-04-07. Dilumpuhkan secara lalai: setiap giliran sistem dipindahkan ke dalam gesaan sistem sama seperti sebelum ini, kerana geganti tanpa beta tersebut menolak giliran sistem dalam senarai mesej.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Gunakan peringkat usaha penaakulan yang diterbitkan oleh models.dev apabila penggantian operator mahupun daftar penyedia tidak mengisytiharkan sebarang peringkat, dengan hanya mengekalkan tahap usaha yang diketahui, dan anggap senarai peringkat yang diisytiharkan tetapi kosong sebagai \"tiada peringkat\". Dilumpuhkan secara lalai: katalog model dan peringkat usaha yang ditentukan kekal sama seperti sebelumnya.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Membenarkan permintaan auto/* membina kumpulan calon dengan keupayaan model yang telah diselesaikan (penglihatan, penaakulan, pemikiran) dan skor kualiti yang diperhatikan, dibaca dalam satu bacaan pukal. Dimatikan secara lalai: pemberat calon pada masa permintaan kekal sama seperti sebelum ini. Dihidupkan: isyarat tersebut dimasukkan ke dalam pemberat snapshot, jadi pemberat calon dan pemilihan boleh berubah.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Benarkan imbasan kesihatan kelayakan menguji semula sambungan yang dimatikan sendiri oleh get laluan (paling banyak sekali setiap 6 jam bagi setiap sambungan, 5 bagi setiap imbasan) dan menghidupkan semula sambungan apabila ujian semulanya berjaya. Dilumpuhkan secara lalai: sambungan sedemikian kekal dimatikan sehingga pengendali mengambil tindakan. Sambungan yang dilumpuhkan oleh pengendali dan dilarang secara kekal tidak akan diuji semula.",
   "sidebar": {
     "home": "Rumah",
     "dashboard": "Papan pemuka",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Langganan ini mempunyai nod yang memerlukan teras proksi tempatan (SS/VMess/Trojan/VLESS); nod tersebut tidak dihalakan sehingga anda mengkonfigurasi titik akhir SOCKS5 teras tempatan.",
         "NO_USABLE_NODES": "Langganan tidak menghasilkan nod yang boleh digunakan (http/https/socks5 atau nod dengan titik akhir teras tempatan).",
         "SELECTOR_SWITCH_FAILED": "Panggilan kawalan proxy-core gagal; laluan sebelumnya kekal aktif. Semak URL dan rahsia kawalan, kemudian muat semula.",
+        "SELECTOR_EARLY_NO_CONTROL": "Tiada URL kawalan",
+        "SELECTOR_EARLY_UNMAPPED": "Tiada langganan sepadan",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Konfigurasi teras yang dijana tidak dapat menggantikan fail yang diterima pakai; salinan di sebelahnya telah digunakan sebagai gantinya.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Buat Langganan",
       "loading": "Memuatkan…",
       "noSubscriptions": "Tiada langganan lagi. Klik \"Tambah Langganan\" untuk bermula.",
+      "earlySkipsSinceRestart": "Langkauan pemilih sejak mula semula terakhir",
       "statusOk": "OK",
       "statusError": "ralat",
       "statusEmpty": "kosong",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Bilangan Kegagalan",
       "retryAfterMs": "Cuba Semula Selepas (ms)",
-      "lastFailureKind": "Jenis Kegagalan Terakhir"
+      "lastFailureKind": "Jenis Kegagalan Terakhir",
+      "lastClose": "Penutupan Terakhir"
     },
     "empty": {
       "title": "Tiada sambungan",

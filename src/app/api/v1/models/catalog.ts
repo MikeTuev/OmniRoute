@@ -80,7 +80,10 @@ import {
 import type { ModelCapabilityEntry } from "@/lib/modelsDevSync";
 import { getModelSpec } from "@/shared/constants/modelSpecs";
 import { classifyModelSupportedEndpoints } from "@/shared/constants/modelSupportedEndpoints";
-import { getModelsCatalogPrefixMode } from "@/shared/utils/featureFlags";
+import {
+  getModelsCatalogPrefixMode,
+  isModelsDevEffortTiersEnabled,
+} from "@/shared/utils/featureFlags";
 import {
   isProviderNodePrefixReserved,
   selectCompatibleNodeForPrefix,
@@ -339,6 +342,7 @@ async function buildUnifiedModelsResponseCore(
       _qp === "alias" || _qp === "canonical" || _qp === "dual" ? _qp : getModelsCatalogPrefixMode();
     const includeAlias = prefixMode !== "canonical";
     const includeCanonical = prefixMode !== "alias";
+    const modelsDevEffortTiers = isModelsDevEffortTiersEnabled(); // #15944, default off
     const resolveCanonicalProviderId = (aliasOrProviderId: string, fallbackProviderId?: string) =>
       resolveCanonicalProviderIdFromMaps(aliasToProviderId, aliasOrProviderId, fallbackProviderId);
     const aliasMaps = { aliasToProviderId, providerIdToAlias };
@@ -646,7 +650,8 @@ async function buildUnifiedModelsResponseCore(
               eligibleConnectionIds,
               connectionCatalog || {},
               getRegistryModelThinkingEfforts(providerId, modelId),
-              getRegistryThinkingEfforts(providerId, modelId)
+              getRegistryThinkingEfforts(providerId, modelId),
+              modelsDevEffortTiers
             );
       if (
         connectionEfforts === undefined &&
@@ -741,7 +746,8 @@ async function buildUnifiedModelsResponseCore(
               canonical.capabilities.supportsThinking,
               getRegistryThinkingEfforts(providerId, modelId),
               true,
-              syncedReasoningEfforts
+              syncedReasoningEfforts,
+              modelsDevEffortTiers
             )
           : getThinkingCapabilityFields(
               providerId,
@@ -749,7 +755,8 @@ async function buildUnifiedModelsResponseCore(
               connectionEfforts.length > 0 ? true : canonical.capabilities.supportsThinking,
               connectionEfforts,
               true,
-              syncedReasoningEfforts
+              syncedReasoningEfforts,
+              modelsDevEffortTiers
             )
       );
 
@@ -1130,7 +1137,8 @@ async function buildUnifiedModelsResponseCore(
           !hasDeclaredEffortTiers,
           // Memory only. Do not call getSyncedCapabilities() here — that opens
           // SQLite and runs migrations on a pure catalog read.
-          peekCachedReasoningEfforts(canonicalProviderId, model.id)
+          peekCachedReasoningEfforts(canonicalProviderId, model.id),
+          modelsDevEffortTiers
         );
         const thinkingCapabilities =
           Object.keys(thinkingFields).length > 0 ? { capabilities: thinkingFields } : {};

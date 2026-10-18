@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Haal voor xai-oauth-verbindingen de actuele xAI-modelcatalogus op van https://api.x.ai/v1/models met behulp van het OAuth-bearertoken, in plaats van de bevroren statische basisset. Standaard uitgeschakeld: xai-oauth blijft de statische basisset ongewijzigd aanbieden. Bij elke fout bij het bepalen van de modellen valt de detectie terug op de basisset.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Voer de integriteits-/statuscontrole van de database bij het opstarten uit nadat de server verzoeken begint te accepteren, in plaats van het opstarten te blokkeren totdat de controle is voltooid. Standaard uitgeschakeld: het opstarten blijft precies zoals vóór deze wijziging op de controle wachten, zodat een beschadigde database nog steeds wordt gedetecteerd voordat het eerste verzoek wordt verwerkt.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Bij gewone Anthropic-compatibele relays blijven systeembeurten halverwege het gesprek in de berichtenlijst staan in plaats van ze naar de systeemprompt op het hoogste niveau te verplaatsen, zodat het in de cache opgeslagen promptvoorvoegsel tussen beurten stabiel blijft. Dit is alleen van toepassing wanneer de client zelf de bèta mid-conversation-system-2026-04-07 heeft verzonden. Standaard uitgeschakeld: elke systeembeurt wordt precies zoals voorheen naar de systeemprompt verplaatst, omdat relays zonder die bèta systeembeurten in de berichtenlijst weigeren.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Gebruik de niveaus voor redeneerinspanning die models.dev publiceert wanneer noch een operatoroverride, noch het providerregister niveaus opgeeft. Behoud alleen bekende inspanningsniveaus en behandel een lege lijst met opgegeven niveaus als \"geen niveaus\". Standaard uitgeschakeld: de modelcatalogus en de vastgestelde inspanningsniveaus blijven precies zoals voorheen.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Laat auto/*-verzoeken de kandidatenpool opbouwen met opgeloste modelmogelijkheden (vision, redeneren, denken) en waargenomen kwaliteitsscores, ingelezen in één bulkleesactie. Standaard uit: kandidaatgewichten op het moment van het verzoek blijven precies zoals voorheen. Aan: deze signalen voeden de snapshotgewichten, zodat kandidaatgewichten en selectie kunnen veranderen.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Laat de controle van de status van inloggegevens verbindingen opnieuw testen die de gateway zelf heeft uitgeschakeld (elk maximaal één keer per 6 uur, 5 per controle) en schakel een verbinding weer in wanneer deze de hertest doorstaat. Standaard uitgeschakeld: zulke verbindingen blijven uitgeschakeld totdat een operator ingrijpt. Door een operator uitgeschakelde en permanent geblokkeerde verbindingen worden nooit opnieuw getest.",
   "sidebar": {
     "home": "Thuis",
     "dashboard": "Dashboard",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Dit abonnement bevat nodes die een lokale proxy-core vereisen (SS/VMess/Trojan/VLESS); ze worden niet gerouteerd totdat u het SOCKS5-eindpunt van de lokale core configureert.",
         "NO_USABLE_NODES": "Abonnement heeft geen bruikbare nodes opgeleverd (http/https/socks5 of nodes met een lokaal core-eindpunt).",
         "SELECTOR_SWITCH_FAILED": "De besturingsaanroep van de proxy-core is mislukt; de vorige route blijft actief. Controleer de besturings-URL en het geheim en vernieuw daarna.",
+        "SELECTOR_EARLY_NO_CONTROL": "Geen besturings-URL",
+        "SELECTOR_EARLY_UNMAPPED": "Geen overeenkomend abonnement",
         "CORE_CONFIG_NOT_GENERATED": "De configuratie van de lokale core is niet gegenereerd; het overgenomen bestand is ongewijzigd. Controleer het pad en vernieuw.",
         "CORE_CONFIG_NOT_APPLIED": "De gegenereerde kernconfiguratie kon het overgenomen bestand niet vervangen; in plaats daarvan is de ernaast gemaakte kopie behouden.",
         "CORE_RELOAD_UNDECLARED": "Voor de vervangen core-configuratie is geen herlaadkanaal gedeclareerd. Declareer er een: een controle-URL op een compatibele core, de variabele OMNIROUTE_PROXY_CORE_RELOAD_COMMAND als JSON-argumentenarray, of de waarde external voor een externe waarnemer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Abonnement maken",
       "loading": "Laden…",
       "noSubscriptions": "Nog geen abonnementen. Klik op 'Abonnement toevoegen' om aan de slag te gaan.",
+      "earlySkipsSinceRestart": "Overgeslagen selectoracties sinds de laatste herstart",
       "statusOk": "Oké",
       "statusError": "Fout",
       "statusEmpty": "Leeg",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Aantal Mislukkingen",
       "retryAfterMs": "Opnieuw Proberen Na (ms)",
-      "lastFailureKind": "Laatste Foutsoort"
+      "lastFailureKind": "Laatste Foutsoort",
+      "lastClose": "Laatste slotkoers"
     },
     "empty": {
       "title": "Geen verbindingen",

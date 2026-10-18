@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Za povezave xai-oauth pridobi aktualni katalog modelov xAI z naslova https://api.x.ai/v1/models z uporabo nosilnega žetona OAuth namesto nespremenljivega statičnega začetnega nabora. Privzeto je izklopljeno: xai-oauth še naprej brez sprememb uporablja statični začetni nabor. Ob kakršni koli napaki pri razreševanju odkrivanje uporabi začetni nabor.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Preverjanje celovitosti/stanja podatkovne zbirke ob zagonu izvedi po tem, ko strežnik začne sprejemati zahteve, namesto da bi do zaključka preverjanja blokiral zagon. Privzeto je izklopljeno: preverjanje blokira zagon povsem enako kot pred to spremembo, zato je poškodovana podatkovna zbirka še vedno zaznana, preden je obdelana prva zahteva.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Pri običajnih posrednikih, združljivih z anthropic, naj sistemski vnosi sredi pogovora ostanejo na seznamu sporočil, namesto da se premaknejo v sistemski poziv na najvišji ravni, tako da predpomnjena predpona poziva ostane nespremenjena med posameznimi vnosi. Velja samo, če je odjemalec sam poslal različico beta mid-conversation-system-2026-04-07. Privzeto je izklopljeno: vsak sistemski vnos se tako kot prej premakne v sistemski poziv, ker posredniki brez te različice beta zavrnejo sistemske vnose na seznamu sporočil.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Uporabi stopnje napora sklepanja, ki jih objavlja models.dev, kadar jih ne določa niti preglasitev operaterja niti register ponudnikov, pri čemer ohrani le znane stopnje napora, prazen seznam navedenih stopenj pa obravnavaj kot »brez stopenj«. Privzeto izklopljeno: katalog modelov in razrešene stopnje napora ostanejo povsem enaki kot prej.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Zahtevam auto/* omogoči, da sestavijo nabor kandidatov z razrešenimi zmožnostmi modelov (vid, sklepanje, razmišljanje) in opaženimi ocenami kakovosti, prebranimi v enem skupnem branju. Privzeto izklopljeno: uteži kandidatov ob zahtevi ostanejo natanko takšne kot prej. Vklopljeno: ti signali vstopijo v uteži posnetka, zato se lahko uteži kandidatov in izbira spremenijo.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Dovolite, da preverjanje veljavnosti poverilnic znova preizkusi povezave, ki jih je prehod samodejno izklopil (vsako največ enkrat na 6 ur, 5 na preverjanje), in znova vklopi povezavo, ko uspešno prestane ponovni preizkus. Privzeto je izklopljeno: takšne povezave ostanejo izklopljene, dokler ne ukrepa skrbnik. Povezave, ki jih je onemogočil skrbnik, in trajno prepovedane povezave se nikoli ne preizkusijo znova.",
   "sidebar": {
     "home": "Domov",
     "dashboard": "Nadzorna plošča",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Ta naročnina vsebuje vozlišča, ki potrebujejo lokalno jedro posredniškega strežnika (SS/VMess/Trojan/VLESS); promet se prek njih ne usmerja, dokler ne konfigurirate končne točke SOCKS5 lokalnega jedra.",
         "NO_USABLE_NODES": "Naročnina ni vrnila nobenega uporabnega vozlišča (http/https/socks5 ali vozlišč s končno točko lokalnega jedra).",
         "SELECTOR_SWITCH_FAILED": "Krmilni klic proxy-core ni uspel; prejšnja pot ostane dejavna. Preverite krmilni URL in skrivnost, nato osvežite.",
+        "SELECTOR_EARLY_NO_CONTROL": "Ni nadzornega URL-ja",
+        "SELECTOR_EARLY_UNMAPPED": "Ni ustrezne naročnine",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Generirana osnovna konfiguracija ni mogla zamenjati sprejeto datoteko; namesto tega je bila ohranjena kopija ob njej.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Ustvari naročnino",
       "loading": "Nalaganje…",
       "noSubscriptions": "Naročnin še ni. Za začetek kliknite »Dodaj naročnino«.",
+      "earlySkipsSinceRestart": "Preskoki izbirnika od zadnjega ponovnega zagona",
       "statusOk": "V redu",
       "statusError": "Napaka",
       "statusEmpty": "Prazno",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Število napak",
       "retryAfterMs": "Ponovni poskus čez (ms)",
-      "lastFailureKind": "Vrsta zadnje napake"
+      "lastFailureKind": "Vrsta zadnje napake",
+      "lastClose": "Zadnje zaprtje"
     },
     "empty": {
       "title": "Ni povezav",

@@ -1,0 +1,1 @@
+- **fix(proxy-subscriptions):** count early selector skips (no control URL / unmapped key, in memory, reset on restart) and show them in the Subscriptions tab only when they concern a configured selector ([#16164](https://github.com/diegosouzapw/OmniRoute/pull/16164)) — thanks @maxmad64bis

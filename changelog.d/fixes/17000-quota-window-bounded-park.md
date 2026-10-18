@@ -1,0 +1,1 @@
+- **fix(quota):** opt-in `QUOTA_WINDOW_BOUNDED_PARK` lets the per-window quota policy honour the bounded exhaustion park, so a passed park deadline or an observation older than the park cap stops excluding an account until a fresh quota fetch; off by default ([#17000](https://github.com/diegosouzapw/OmniRoute/pull/17000)) — thanks @copystring

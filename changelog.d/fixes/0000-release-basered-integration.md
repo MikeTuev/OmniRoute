@@ -1,0 +1,1 @@
+- **release:** two more release-branch reds drained — the A6 keyless catalog integration cases stay keyless when CI exports `INITIAL_PASSWORD`, and the OpenCode usage happy-path test passes a connection id now that quota reads resolve the connection proxy (#16344).

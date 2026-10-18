@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "স্থির স্ট্যাটিক সিডের পরিবর্তে OAuth bearer token ব্যবহার করে https://api.x.ai/v1/models থেকে xai-oauth সংযোগগুলোর লাইভ xAI মডেল ক্যাটালগ আনুন। ডিফল্টভাবে বন্ধ: xai-oauth অপরিবর্তিত স্ট্যাটিক সিডই পরিবেশন করতে থাকবে। কোনো রেজোলিউশন ত্রুটি হলে ডিসকভারি সিডে ফিরে যাবে।",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "স্টার্টআপের সময় ডেটাবেসের অখণ্ডতা/স্বাস্থ্য পরীক্ষা সম্পন্ন না হওয়া পর্যন্ত অপেক্ষা না করে, সার্ভার অনুরোধ গ্রহণ শুরু করার পরে পরীক্ষাটি চালান। ডিফল্টভাবে বন্ধ: এই পরিবর্তনের আগের মতোই পরীক্ষাটি সম্পন্ন না হওয়া পর্যন্ত স্টার্টআপ আটকে থাকবে, ফলে প্রথম অনুরোধ পরিবেশনের আগেই একটি ক্ষতিগ্রস্ত ডেটাবেস শনাক্ত হবে।",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "সাধারণ anthropic-compatible রিলেতে, কথোপকথনের মাঝখানের system turn-গুলোকে top-level system prompt-এ সরিয়ে না নিয়ে message list-এর ভেতরেই রাখুন, যাতে cached prompt prefix প্রতিটি turn-এ স্থিতিশীল থাকে। এটি কেবল তখনই প্রযোজ্য, যখন client নিজেই mid-conversation-system-2026-04-07 beta পাঠিয়েছে। ডিফল্টভাবে বন্ধ: আগের মতোই প্রতিটি system turn-কে system prompt-এ সরিয়ে নেওয়া হয়, কারণ ওই beta ছাড়া রিলেগুলো message list-এ থাকা system turn প্রত্যাখ্যান করে।",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "অপারেটর ওভাররাইড বা প্রদানকারী রেজিস্ট্রি—কোনোটিই কোনো রিজনিং এফোর্ট টিয়ার ঘোষণা না করলে models.dev-এর প্রকাশিত টিয়ারগুলো ব্যবহার করুন, শুধু পরিচিত এফোর্ট লেভেলগুলো রাখুন এবং ঘোষিত টিয়ারের তালিকা খালি হলে সেটিকে \"কোনো টিয়ার নেই\" হিসেবে বিবেচনা করুন। ডিফল্টভাবে বন্ধ: মডেল ক্যাটালগ ও নির্ধারিত এফোর্ট টিয়ারগুলো ঠিক আগের মতোই থাকবে।",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "auto/* অনুরোধগুলিকে সমাধানকৃত মডেল সক্ষমতা (ভিশন, রিজনিং, থিংকিং) এবং পর্যবেক্ষিত গুণমান স্কোর দিয়ে এক বাল্ক পাঠে প্রার্থী পুল তৈরি করতে দেয়। ডিফল্টভাবে বন্ধ: অনুরোধের সময়ের প্রার্থী ওজন হুবহু আগের মতোই থাকে। চালু থাকলে: এই সংকেতগুলি স্ন্যাপশট ওজনে যুক্ত হয়, তাই প্রার্থী ওজন ও নির্বাচন বদলাতে পারে।",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "ক্রেডেনশিয়াল হেলথ সুইপকে গেটওয়ে নিজে থেকে বন্ধ করে দেওয়া সংযোগগুলো পুনরায় পরীক্ষা করতে দিন (প্রতিটি সর্বোচ্চ ৬ ঘণ্টায় একবার, প্রতি সুইপে ৫টি) এবং পুনঃপরীক্ষায় উত্তীর্ণ হলে সংযোগটি আবার চালু করতে দিন। ডিফল্টভাবে বন্ধ: অপারেটর পদক্ষেপ না নেওয়া পর্যন্ত এ ধরনের সংযোগ বন্ধই থাকে। অপারেটর কর্তৃক নিষ্ক্রিয় এবং স্থায়ীভাবে নিষিদ্ধ সংযোগগুলো কখনোই পুনরায় পরীক্ষা করা হয় না।",
   "sidebar": {
     "home": "হোম",
     "dashboard": "ড্যাশবোর্ড",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "এই সাবস্ক্রিপশনে এমন নোড রয়েছে যার জন্য একটি লোকাল প্রক্সি কোর (SS/VMess/Trojan/VLESS) প্রয়োজন; আপনি লোকাল-কোর SOCKS5 এন্ডপয়েন্ট কনফিগার না করা পর্যন্ত সেগুলো রাউট করা হবে না।",
         "NO_USABLE_NODES": "সাবস্ক্রিপশন থেকে কোনো ব্যবহারযোগ্য নোড পাওয়া যায়নি (http/https/socks5 বা লোকাল কোর এন্ডপয়েন্ট বিশিষ্ট নোড)।",
         "SELECTOR_SWITCH_FAILED": "প্রক্সি-কোর নিয়ন্ত্রণ কল ব্যর্থ হয়েছে; আগের রুট সক্রিয় থাকে। নিয়ন্ত্রণ URL ও সিক্রেট পরীক্ষা করে রিফ্রেশ করুন।",
+        "SELECTOR_EARLY_NO_CONTROL": "কোনো URL নিয়ন্ত্রণ নেই",
+        "SELECTOR_EARLY_UNMAPPED": "কোনো মিলিত সাবস্ক্রিপশন নেই",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "তৈরি করা কোর কনফিগারেশন গ্রহণকৃত ফাইলটি প্রতিস্থাপন করতে পারেনি; পাশে রাখা কপিটি রাখা হয়েছে।",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "সাবস্ক্রিপশন তৈরি করুন",
       "loading": "লোড হচ্ছে...",
       "noSubscriptions": "এখনো কোনো সদস্যতা নেই. শুরু করতে \"সাবস্ক্রিপশন যোগ করুন\" এ ক্লিক করুন।",
+      "earlySkipsSinceRestart": "শেষ পুনরারম্ভের পর থেকে নির্বাচকের এড়িয়ে যাওয়া",
       "statusOk": "ঠিক আছে",
       "statusError": "ত্রুটি",
       "statusEmpty": "খালি",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "ব্যর্থতার সংখ্যা",
       "retryAfterMs": "পরে পুনরায় চেষ্টা করুন (ms)",
-      "lastFailureKind": "সর্বশেষ ব্যর্থতার ধরন"
+      "lastFailureKind": "সর্বশেষ ব্যর্থতার ধরন",
+      "lastClose": "সর্বশেষ বন্ধ মূল্য"
     },
     "empty": {
       "title": "কোনো সংযোগ নেই",

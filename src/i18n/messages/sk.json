@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Načítať aktuálny katalóg modelov xAI pre pripojenia xai-oauth z https://api.x.ai/v1/models pomocou nosného tokenu OAuth namiesto nemennej statickej počiatočnej množiny. Predvolene vypnuté: xai-oauth naďalej bez zmien poskytuje statickú počiatočnú množinu. Pri akejkoľvek chybe zisťovania sa použije počiatočná množina.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Spustiť kontrolu integrity/stavu databázy pri štarte až po tom, čo server začne prijímať požiadavky, namiesto blokovania spustenia, kým sa kontrola nedokončí. Predvolene vypnuté: spustenie je kontrolou blokované presne ako pred touto zmenou, takže poškodená databáza sa naďalej odhalí ešte pred spracovaním prvej požiadavky.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Pri bežných relayoch kompatibilných s Anthropic ponechajte systémové vstupy uprostred konverzácie v zozname správ namiesto ich presúvania do systémovej výzvy najvyššej úrovne, aby prefix výzvy uložený vo vyrovnávacej pamäti zostal medzi jednotlivými vstupmi stabilný. Platí to iba vtedy, keď samotný klient odoslal beta príznak mid-conversation-system-2026-04-07. Predvolene je táto možnosť vypnutá: každý systémový vstup sa presunie do systémovej výzvy presne ako predtým, pretože relaye bez tohto beta príznaku odmietajú systémové vstupy v zozname správ.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Použiť úrovne úsilia pri uvažovaní, ktoré zverejňuje models.dev, ak žiadne neurčuje ani prepísanie operátorom, ani register poskytovateľa; ponechať iba známe úrovne úsilia a prázdny zoznam deklarovaných úrovní považovať za „žiadne úrovne“. Predvolene vypnuté: katalóg modelov a výsledné úrovne úsilia zostanú presne také ako predtým.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Umožňuje požiadavkám auto/* zostaviť skupinu kandidátov s vyriešenými schopnosťami modelov (videnie, uvažovanie, premýšľanie) a pozorovaným skóre kvality, načítanými jedným hromadným čítaním. Predvolene vypnuté: váhy kandidátov v čase požiadavky zostávajú presne ako predtým. Zapnuté: tieto signály vstupujú do váh snímky, takže váhy kandidátov a výber sa môžu zmeniť.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Povoľte kontrole stavu poverení opätovne testovať pripojenia, ktoré brána sama vypla (každé najviac raz za 6 hodín, 5 na jednu kontrolu), a znova zapnúť pripojenie, keď úspešne prejde opätovným testom. Predvolene je táto možnosť vypnutá: takéto pripojenia zostanú vypnuté, kým nezasiahne operátor. Pripojenia vypnuté operátorom a natrvalo zakázané pripojenia sa nikdy opätovne netestujú.",
   "sidebar": {
     "home": "Domov",
     "dashboard": "Prehľad",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Toto predplatné obsahuje uzly, ktoré vyžadujú lokálne proxy jadro (SS/VMess/Trojan/VLESS); nebudú smerované, kým nenakonfigurujete koncový bod SOCKS5 pre lokálne jadro.",
         "NO_USABLE_NODES": "Predplatné neposkytlo žiadne použiteľné uzly (http/https/socks5 alebo uzly s koncovým bodom lokálneho jadra).",
         "SELECTOR_SWITCH_FAILED": "Riadiace volanie proxy-core zlyhalo; predchádzajúca trasa zostáva aktívna. Skontrolujte riadiacu URL a tajný kľúč a obnovte.",
+        "SELECTOR_EARLY_NO_CONTROL": "Žiadna riadiaca URL",
+        "SELECTOR_EARLY_UNMAPPED": "Žiadne zodpovedajúce predplatné",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Vygenerovanú základnú konfiguráciu sa nepodahrilo nahradiť prevzatý súbor; namiesto toho bola zachovaná kópia vedľa neho.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Vytvoriť predplatné",
       "loading": "Načítava sa…",
       "noSubscriptions": "Zatiaľ žiadne odbery. Začnite kliknutím na „Pridať predplatné“.",
+      "earlySkipsSinceRestart": "Preskočenia selektora od posledného reštartu",
       "statusOk": "OK",
       "statusError": "Chyba",
       "statusEmpty": "Prázdny",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Počet Zlyhaní",
       "retryAfterMs": "Skúsiť Znova Po (ms)",
-      "lastFailureKind": "Posledný Typ Zlyhania"
+      "lastFailureKind": "Posledný Typ Zlyhania",
+      "lastClose": "Posledné zatvorenie"
     },
     "empty": {
       "title": "Žiadne pripojenia",

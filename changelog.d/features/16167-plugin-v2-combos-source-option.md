@@ -1,0 +1,1 @@
+- **feat(plugin):** opt-in `combosSource: "models"` for the v2 plugin publishes the combo rows `/v1/models` already serves and skips the `/api/combos` request; the default `"api"` source and its every-member filtering are unchanged ([#16167](https://github.com/diegosouzapw/OmniRoute/pull/16167)) — thanks @maxmad64bis

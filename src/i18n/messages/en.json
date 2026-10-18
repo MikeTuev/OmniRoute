@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Fetch the live xAI model catalog for xai-oauth connections from https://api.x.ai/v1/models using the OAuth bearer token, instead of the frozen static seed. Off by default: xai-oauth keeps serving the static seed unchanged. On any resolution error, discovery falls back to the seed.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Run the startup database integrity/health check after the server starts accepting requests instead of blocking startup until it completes. Off by default: startup blocks on the check exactly like before this change, so a corrupt database is still caught before the first request is served.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "On plain anthropic-compatible relays, keep mid-conversation system turns inside the message list instead of moving them into the top-level system prompt, so the cached prompt prefix stays stable across turns. Applies only when the client itself sent the mid-conversation-system-2026-04-07 beta. Off by default: every system turn is moved into the system prompt exactly as before, because relays without that beta reject system turns in the message list.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Use the reasoning effort tiers models.dev publishes when neither an operator override nor the provider registry declares any, keeping only known effort levels, and treat an empty declared tier list as \"no tiers\". Off by default: the model catalog and resolved effort tiers stay exactly as before.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Let auto/* requests build the candidate pool with resolved model capabilities (vision, reasoning, thinking) and observed quality scores, read in one bulk pass. Off by default: request-time candidate weights stay exactly as before. On: those signals feed the snapshot weights, so candidate weights and selection can change.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Let the credential health sweep retest connections the gateway switched off by itself (at most once every 6 hours each, 5 per sweep) and switch one back on when its retest passes. Off by default: such connections stay off until an operator acts. Operator-disabled and permanently banned connections are never retested.",
   "sidebar": {
     "home": "Home",
     "dashboard": "Dashboard",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "This subscription has nodes that need a local proxy core (SS/VMess/Trojan/VLESS); they are not routed until you configure the local-core SOCKS5 endpoint.",
         "NO_USABLE_NODES": "Subscription yielded no usable nodes (http/https/socks5 or nodes with a local core endpoint).",
         "SELECTOR_SWITCH_FAILED": "The proxy-core control call failed; the previous route stays active. Check the control URL and secret, then refresh.",
+        "SELECTOR_EARLY_NO_CONTROL": "No control URL",
+        "SELECTOR_EARLY_UNMAPPED": "No matching subscription",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "The generated core configuration could not replace the adopted file; the beside copy was kept instead.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Create Subscription",
       "loading": "Loading…",
       "noSubscriptions": "No subscriptions yet. Click \"Add Subscription\" to get started.",
+      "earlySkipsSinceRestart": "Selector skips since last restart",
       "statusOk": "OK",
       "statusError": "Error",
       "statusEmpty": "Empty",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Failure Count",
       "retryAfterMs": "Retry After (ms)",
-      "lastFailureKind": "Last Failure Kind"
+      "lastFailureKind": "Last Failure Kind",
+      "lastClose": "Last Close"
     },
     "empty": {
       "title": "No connections",

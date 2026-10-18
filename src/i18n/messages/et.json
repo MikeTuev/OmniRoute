@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Hangi xai-oauth ühenduste reaalajas xAI mudelikataloog aadressilt https://api.x.ai/v1/models, kasutades OAuthi kandjaluba, mitte fikseeritud staatilist algandmestikku. Vaikimisi väljas: xai-oauth jätkab staatilise algandmestiku muutmata kujul pakkumist. Mis tahes lahendamistõrke korral kasutatakse mudelite avastamisel algandmestikku.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Käivita andmebaasi terviklikkuse ja seisundi kontroll pärast seda, kui server on hakanud päringuid vastu võtma, selle asemel et käivitamist kontrolli lõpulejõudmiseni blokeerida. Vaikimisi väljas: käivitamine blokeeritakse kontrolli ajaks täpselt nagu enne seda muudatust, nii et rikutud andmebaas tuvastatakse endiselt enne esimese päringu teenindamist.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Tavalistes anthropic-ühilduvates vaheserverites hoitakse vestluse keskel olevaid süsteemisõnumeid sõnumiloendis, selle asemel et teisaldada need ülataseme süsteemiviipa, nii et vahemällu salvestatud viiba prefiks püsib voorude lõikes muutumatuna. Kehtib ainult siis, kui klient ise saatis beetalipu mid-conversation-system-2026-04-07. Vaikimisi välja lülitatud: iga süsteemisõnum teisaldatakse süsteemiviipa täpselt nagu varem, sest ilma selle beetafunktsioonita vaheserverid lükkavad sõnumiloendis olevad süsteemisõnumid tagasi.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Kasuta models.dev-i avaldatud arutluspingutuse tasemeid, kui neid pole määratud ei operaatori alistusega ega teenusepakkujate registris, säilitades ainult teadaolevad pingutustasemed, ning käsitle tühja deklareeritud tasemete loendit kui „tasemed puuduvad“. Vaikimisi välja lülitatud: mudelikataloog ja tuvastatud pingutustasemed jäävad täpselt endiseks.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Võimaldab auto/* päringutel koostada kandidaatide kogumi lahendatud mudelivõimekuste (nägemine, arutlemine, mõtlemine) ja täheldatud kvaliteediskooridega, mis loetakse ühe hulgilugemisega. Vaikimisi väljas: kandidaatide kaalud päringu ajal jäävad täpselt samaks nagu varem. Sees: need signaalid lähevad hetktõmmise kaaludesse, nii et kandidaatide kaalud ja valik võivad muutuda.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Luba mandaatide seisundi kontrollil uuesti testida ühendusi, mille lüüs ise välja lülitas (iga ühendust kõige rohkem kord 6 tunni jooksul, 5 ühendust kontrolli kohta), ja lülitada ühendus uuesti sisse, kui kordustest õnnestub. Vaikimisi väljas: sellised ühendused jäävad väljalülitatuks, kuni operaator sekkub. Operaatori poolt keelatud ja jäädavalt blokeeritud ühendusi ei testita kunagi uuesti.",
   "sidebar": {
     "home": "Avaleht",
     "dashboard": "Juhtpaneel",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Sellel tellimusel on sõlmi, mis vajavad kohalikku puhverserverituuma (SS/VMess/Trojan/VLESS); neid ei marsruudita enne, kui konfigureerite kohaliku tuuma SOCKS5 lõpp-punkti.",
         "NO_USABLE_NODES": "Tellimus ei tagastanud ühtegi kasutatavat sõlme (http/https/socks5 või kohaliku tuuma lõpp-punktiga sõlmed).",
         "SELECTOR_SWITCH_FAILED": "Puhversüdamiku juhtkõne ebaõnnestus; eelmine marsruut jääb aktiivseks. Kontrollige juht-URL-i ja saladust, seejärel värskendage.",
+        "SELECTOR_EARLY_NO_CONTROL": "Kontrolli-URL puudub",
+        "SELECTOR_EARLY_UNMAPPED": "Sobiv tellimus puudub",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Genereeritud põhikonfiguratsioon ei suutnud vastuvõetud faili asendada; selle asemel jäeti kõrvalolev koopia alles.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Loo tellimus",
       "loading": "Laadimine…",
       "noSubscriptions": "Tellimusi pole veel. Alustamiseks klõpsake nuppu „Lisa tellimus“.",
+      "earlySkipsSinceRestart": "Valija vahelejätmised alates viimasest taaskäivitusest",
       "statusOk": "OK",
       "statusError": "Viga",
       "statusEmpty": "Tühi",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Tõrgete arv",
       "retryAfterMs": "Korduskatse pärast (ms)",
-      "lastFailureKind": "Viimase tõrke liik"
+      "lastFailureKind": "Viimase tõrke liik",
+      "lastClose": "Viimane sulgemishind"
     },
     "empty": {
       "title": "Ühendusi pole",

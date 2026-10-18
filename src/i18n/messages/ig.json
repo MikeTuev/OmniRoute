@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Weta katalọgụ ụdị xAI dị ugbu a maka njikọ xai-oauth site na https://api.x.ai/v1/models, jiri OAuth bearer token, kama iji mkpụrụ static a kpọnwụrụ akpọnwụ. Agbanyụrụ ya na ndabara: xai-oauth ga-aga n’ihu inye mkpụrụ static ahụ n’enweghị mgbanwe. Ọ bụrụ na njehie ọ bụla emee mgbe a na-achọpụta ya, nchọpụta ahụ ga-alaghachi n’iji mkpụrụ ahụ.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Mee nyocha iguzosi ike n’ezi ihe/ahụike nke database mgbe server malitere ịnabata arịrịọ, kama igbochi mmalite ruo mgbe nyocha ahụ gwụchara. Agbanyụrụ ya na ndabara: mmalite ga-echere nyocha ahụ kpọmkwem dịka ọ dị tupu mgbanwe a, ya mere a ka ga-achọpụta database mebiri emebi tupu e jeere arịrịọ mbụ ozi.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Na relays nkịtị dakọtara na Anthropic, debe ntụgharị system ndị dị n’etiti mkparịta ụka n’ime ndepụta ozi kama ibuga ha na system prompt nke ọkwa kachasị elu, ka prefix nke prompt echekwara na cache wee nọgide otu ihe n’ofe ntụgharị. Nke a na-emetụta naanị mgbe client n’onwe ya zitere beta mid-conversation-system-2026-04-07. A gbanyụrụ ya na ndabara: a na-ebuga ntụgharị system ọ bụla n’ime system prompt kpọmkwem dịka ọ dị na mbụ, n’ihi na relays na-enweghị beta ahụ na-ajụ ntụgharị system dị na ndepụta ozi.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Jiri ọkwa mgbalị ntụgharị uche ndị models.dev na-ebipụta mgbe ma ntọala onye njikwa nke karịrị ndị ọzọ ma ndekọ onye na-eweta ọrụ ekwughị nke ọ bụla, na-edobe naanị ọkwa mgbalị ndị a maara, ma were ndepụta ọkwa ekwuputara nke tọgbọ chakoo dị ka \"enweghị ọkwa\". Agbanyụrụ ya na ndabara: katalọgụ ụdị na ọkwa mgbalị edoziri na-anọgide kpọmkwem dịka ha dịbu.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Na-ekwe ka arịrịọ auto/* wuo ọdọ ndị a na-atụle site na ikike ụdị ndị edoziri (ọhụhụ, ntụgharị uche, iche echiche) na akara ogo a hụrụ, a gụrụ n'otu ọgụgụ nnukwu. Agbanyụrụ na ndabara: ibu ndị a na-atụle n'oge arịrịọ ka dị kpọmkwem ka ọ dị na mbụ. Agbanyere: akara ndị ahụ na-abanye n'ibu foto oge ahụ, ya mere ibu ndị a na-atụle na nhọrọ nwere ike ịgbanwe.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Kwe ka nyocha ahụike nzere nwalee njikọ ndị ọnụ ụzọ ahụ gbanyụrụ n'onwe ya ọzọ (nke ọ bụla, ọ kachasị otu ugboro n'ime awa 6 ọ bụla; njikọ 5 n'otu nyocha) ma gbanye otu n'ime ha ọzọ mgbe ule ya gara nke ọma. A na-agbanyụ nke a na ndabara: njikọ ndị dị otu ahụ ga-anọgide na-agbanyụ ruo mgbe onye na-ahụ maka sistemụ mere ihe. A naghị anwale ọzọ njikọ ndị onye na-ahụ maka sistemụ gbanyụrụ ma ọ bụ ndị amachibidoro kpamkpam.",
   "sidebar": {
     "home": "Mbido",
     "dashboard": "Ogwe njikwa",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Ndenye aha a nwere node ndị chọrọ proxy core mpaghara (SS/VMess/Trojan/VLESS); agaghị ebugharị ha ruo mgbe ị haziri endpoint SOCKS5 nke local-core.",
         "NO_USABLE_NODES": "Ndenye aha ahụ enyeghị node ọ bụla enwere ike iji (http/https/socks5 ma ọ bụ node nwere endpoint core mpaghara).",
         "SELECTOR_SWITCH_FAILED": "Oku njikwa proxy-core dara; ụzọ gara aga na-anọgide na-arụ ọrụ. Lelee URL na nzuzo njikwa, wee mee ka ọ dị ọhụrụ.",
+        "SELECTOR_EARLY_NO_CONTROL": "Enweghị URL njikwa",
+        "SELECTOR_EARLY_UNMAPPED": "Enweghị ndebanye aha dabara",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "E weghachite ihe nchekwa e mepụtara ahụ iji gbanwee faịlụ e zụtara ya; e debanyaa n'akụkụ ya tinyere e.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Mepụta Ndenye aha",
       "loading": "Na-ebunye…",
       "noSubscriptions": "Enwebeghị ndenye aha. Pịa \"Tinye Ndenye aha\" ka ịmalite.",
+      "earlySkipsSinceRestart": "Ihe selector wụfere kemgbe mmalitegharị ikpeazụ",
       "statusOk": "Ọ DỊ MMA",
       "statusError": "Njehie",
       "statusEmpty": "Efu",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Ọnụọgụ Ọdịda",
       "retryAfterMs": "Nwaa Ọzọ Mgbe (ms) Gachara",
-      "lastFailureKind": "Ụdị Ọdịda Ikpeazụ"
+      "lastFailureKind": "Ụdị Ọdịda Ikpeazụ",
+      "lastClose": "Nkeikpegọ nke ọsọ nso"
     },
     "empty": {
       "title": "Enweghị njikọ",

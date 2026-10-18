@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "对于 xai-oauth 连接，使用 OAuth 持有者令牌从 https://api.x.ai/v1/models 获取实时 xAI 模型目录，而不是使用固定不变的静态种子数据。默认关闭：xai-oauth 将继续原样提供静态种子数据。出现任何解析错误时，发现功能都会回退到种子数据。",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "在服务器开始接受请求后运行启动时数据库完整性/健康检查，而不是阻塞启动直至检查完成。默认关闭：启动过程会像此更改之前一样等待检查完成，因此损坏的数据库仍会在处理第一个请求之前被发现。",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "对于普通的 Anthropic 兼容中继，将对话中途的 system 轮次保留在消息列表中，而不是将其移至顶层 system 提示词，这样缓存的提示词前缀就能在各轮次间保持稳定。仅当客户端自身发送了 mid-conversation-system-2026-04-07 beta 时适用。默认关闭：与之前完全相同，每个 system 轮次都会被移入 system 提示词，因为不支持该 beta 的中继会拒绝消息列表中的 system 轮次。",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "当运维方覆盖配置和提供者注册表均未声明推理强度层级时，使用 models.dev 发布的层级；仅保留已知的强度级别，并将声明的空层级列表视为“无层级”。默认关闭：模型目录和解析后的推理强度层级将与之前完全一致。",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "让 auto/* 请求使用已解析的模型能力（视觉、推理、思考）和观测到的质量评分构建候选池，这些数据通过一次批量读取获得。默认关闭：请求时的候选权重与之前完全相同。开启后：这些信号会计入快照权重，因此候选权重和选择可能发生变化。",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "允许凭据健康扫描重新测试由网关自动关闭的连接（每个连接最多每 6 小时测试一次，每轮扫描测试 5 个），并在重新测试通过后重新启用该连接。默认关闭：此类连接会保持关闭状态，直到操作员采取措施。操作员禁用和永久封禁的连接不会被重新测试。",
   "sidebar": {
     "home": "首页",
     "dashboard": "仪表板",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "此订阅包含需要本地代理核心 (SS/VMess/Trojan/VLESS) 的节点；在配置本地核心 SOCKS5 端点之前，它们不会被路由。",
         "NO_USABLE_NODES": "订阅未产生可用节点 (http/https/socks5 或具有本地核心端点的节点)。",
         "SELECTOR_SWITCH_FAILED": "代理核心控制调用失败；上一条路由保持有效。请检查控制 URL 和密钥，然后刷新。",
+        "SELECTOR_EARLY_NO_CONTROL": "无控制 URL",
+        "SELECTOR_EARLY_UNMAPPED": "无匹配订阅",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "生成的核心配置无法替换已采纳的文件；已改为保留旁边的副本。",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "创建订阅",
       "loading": "加载中…",
       "noSubscriptions": "还没有任何订阅。点击「新增订阅」开始吧。",
+      "earlySkipsSinceRestart": "自上次重启以来的选择器跳过次数",
       "statusOk": "正常",
       "statusError": "错误",
       "statusEmpty": "空",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "失败次数",
       "retryAfterMs": "重试间隔(ms)",
-      "lastFailureKind": "最近失败类型"
+      "lastFailureKind": "最近失败类型",
+      "lastClose": "最近收盘"
     },
     "empty": {
       "title": "无连接",

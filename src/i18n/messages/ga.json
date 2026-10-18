@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Faigh catalóg bheo samhlacha xAI do naisc xai-oauth ó https://api.x.ai/v1/models ag úsáid an chomhartha iompróra OAuth, in ionad an tsíl stataigh reoite. Díchumasaithe de réir réamhshocraithe: leanann xai-oauth den síol statach a sholáthar gan athrú. Má tharlaíonn aon earráid réitigh, téann an aimsiú siar chuig an síol.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Rith seiceáil sláine/sláinte an bhunachair sonraí ag am tosaithe tar éis don fhreastalaí tosú ag glacadh le hiarratais, in ionad bac a chur ar an tosú go dtí go mbeidh sí críochnaithe. Díchumasaithe de réir réamhshocraithe: cuireann an tseiceáil bac ar an tosú díreach mar a rinne sí roimh an athrú seo, mar sin aimsítear bunachar sonraí truaillithe fós sula bhfreastalaítear ar an gcéad iarratas.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Ar athsheachadáin shimplí atá comhoiriúnach le Anthropic, coinnigh sealanna córais i lár an chomhrá laistigh den liosta teachtaireachtaí seachas iad a bhogadh isteach sa leid chórais ardleibhéil, ionas go bhfanfaidh réimír na leide taiscthe cobhsaí ó sheal go seal. Ní bhaineann sé seo ach le cásanna inar sheol an cliant féin an béite mid-conversation-system-2026-04-07. Díchumasaithe de réir réamhshocraithe: bogtar gach seal córais isteach sa leid chórais díreach mar a rinneadh roimhe seo, toisc go ndiúltaíonn athsheachadáin nach bhfuil an béite sin acu do shealanna córais sa liosta teachtaireachtaí.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Úsáid na sraitheanna iarrachta réasúnaíochta a fhoilsíonn models.dev nuair nach ndearbhaíonn sárú oibreora ná clárlann an tsoláthraí aon cheann, agus ná coinnigh ach leibhéil iarrachta aitheanta; caith le liosta folamh de shraitheanna dearbhaithe mar \"gan sraitheanna\". Díchumasaithe de réir réamhshocraithe: fanann catalóg na samhlacha agus na sraitheanna iarrachta réitithe díreach mar a bhí roimhe seo.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Ligeann sé d'iarratais auto/* an linn iarrthóirí a thógáil le cumais réitithe múnla (fís, réasúnaíocht, smaointeoireacht) agus scóir cháilíochta breathnaithe, léite in aon léamh mórchóir amháin. As de réir réamhshocraithe: fanann meáchain na n-iarrthóirí ag am an iarratais díreach mar a bhí. Ar siúl: cuireann na comharthaí sin le meáchain an ghrianghraif, mar sin is féidir le meáchain na n-iarrthóirí agus an rogha athrú.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Lig do scuabadh sláinte na ndintiúr naisc a mhúch an geata leis féin a atástáil (uair amháin ar a mhéad gach 6 huaire an chloig do gach ceann acu, 5 cinn in aghaidh an scuabtha) agus ceann acu a chur ar siúl arís nuair a éiríonn leis an atástáil. Díchumasaithe de réir réamhshocraithe: fanann naisc den sórt sin múchta go dtí go ndéanann oibreoir beart. Ní dhéantar naisc atá díchumasaithe ag oibreoir ná naisc atá coiscthe go buan a atástáil riamh.",
   "sidebar": {
     "home": "Baile",
     "dashboard": "Deais",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Tá nóid sa tsíntiús seo a dteastaíonn croí-seachfhreastalaí áitiúil uathu (SS/VMess/Trojan/VLESS); ní dhéantar iad a ródú go dtí go gcumraíonn tú críochphointe SOCKS5 an chroí áitiúil.",
         "NO_USABLE_NODES": "Níor tháirg an síntiús aon nód inúsáidte (http/https/socks5 nó nód le críochphointe croí áitiúil).",
         "SELECTOR_SWITCH_FAILED": "Theip ar an nglao rialaithe proxy-core; fanann an bealach roimhe seo gníomhach. Seiceáil an URL agus an rún rialaithe, ansin athnuaigh.",
+        "SELECTOR_EARLY_NO_CONTROL": "Níl aon URL rialaithe",
+        "SELECTOR_EARLY_UNMAPPED": "Níl aon síntiús comhoiriúnach",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Níorbh in an príomhchumraíocht ghintithe an comhad ghlactaithe a athsholáthar; coinníodh an cóip atá ina dhiaidh ina áit.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Cruthaigh Síntiús",
       "loading": "Ag lódáil…",
       "noSubscriptions": "Níl aon síntiús fós. Cliceáil \"Cuir Síntiús Leis\" chun tosú.",
+      "earlySkipsSinceRestart": "Scipeanna roghnóra ón atosú deireanach",
       "statusOk": "Ceart go leor",
       "statusError": "Earráid",
       "statusEmpty": "Folamh",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Líon na dTeipeanna",
       "retryAfterMs": "Bain triail eile as tar éis (ms)",
-      "lastFailureKind": "Cineál na teipe deireanaí"
+      "lastFailureKind": "Cineál na teipe deireanaí",
+      "lastClose": "Dúnadh Deireanach"
     },
     "empty": {
       "title": "Gan aon cheangail",

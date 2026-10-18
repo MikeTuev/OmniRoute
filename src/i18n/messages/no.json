@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Hent den oppdaterte xAI-modellkatalogen for xai-oauth-tilkoblinger fra https://api.x.ai/v1/models ved hjelp av OAuth-bærertokenet, i stedet for det fastlåste statiske utgangspunktet. Av som standard: xai-oauth fortsetter å bruke det statiske utgangspunktet uendret. Ved feil under oppslag faller modelloppdagelsen tilbake til utgangspunktet.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Kjør databasens integritets-/helsesjekk ved oppstart etter at serveren begynner å ta imot forespørsler, i stedet for å blokkere oppstarten til sjekken er fullført. Av som standard: Oppstarten blokkeres av sjekken akkurat som før denne endringen, slik at en skadet database fortsatt oppdages før den første forespørselen behandles.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "På vanlige anthropic-kompatible reléer beholdes systemmeldinger midt i samtalen i meldingslisten i stedet for å flyttes til systeminstruksen på toppnivå, slik at det bufrede instruksjonsprefikset forblir stabilt på tvers av meldingene. Gjelder bare når klienten selv har sendt betaen mid-conversation-system-2026-04-07. Deaktivert som standard: Hver systemmelding flyttes til systeminstruksen akkurat som før, fordi reléer uten denne betaen avviser systemmeldinger i meldingslisten.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Bruk nivåene for resonneringsinnsats som models.dev publiserer når verken en operatøroverstyring eller leverandørregisteret angir noen, behold bare kjente innsatsnivåer, og behandle en tom liste over angitte nivåer som «ingen nivåer». Deaktivert som standard: Modellkatalogen og de fastsatte innsatsnivåene forblir nøyaktig som før.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Lar auto/*-forespørsler bygge kandidatpoolen med avklarte modellegenskaper (syn, resonnering, tenkning) og observerte kvalitetspoeng, lest i én samlet lesing. Av som standard: kandidatvektene ved forespørselstidspunktet forblir nøyaktig som før. På: disse signalene inngår i øyeblikksbildevektene, så kandidatvekter og valg kan endres.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "La helsekontrollen for legitimasjon teste på nytt tilkoblinger som gatewayen har slått av automatisk (maksimalt én gang hver 6. time per tilkobling, 5 per kontroll), og slå dem på igjen når den nye testen er vellykket. Av som standard: Slike tilkoblinger forblir av til en operatør griper inn. Tilkoblinger som er deaktivert av en operatør eller permanent utestengt, testes aldri på nytt.",
   "sidebar": {
     "home": "Hjem",
     "dashboard": "Dashbord",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Dette abonnementet har noder som krever en lokal proxykjerne (SS/VMess/Trojan/VLESS); de rutes ikke før du konfigurerer SOCKS5-endepunktet for den lokale kjernen.",
         "NO_USABLE_NODES": "Abonnementet ga ingen brukbare noder (http/https/socks5 eller noder med et lokalt kjerne-endepunkt).",
         "SELECTOR_SWITCH_FAILED": "Proxy-coreens styrekall mislyktes; den forrige ruten forblir aktiv. Kontroller styre-URL og hemmelighet, og oppdater deretter.",
+        "SELECTOR_EARLY_NO_CONTROL": "Ingen kontroll-URL",
+        "SELECTOR_EARLY_UNMAPPED": "Ikke noe samsvarende abonnement",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Den genererte kjernekonfigurasjonen kunne ikke erstatte den adopterte filen; kopien ved siden av ble beholdt i stedet.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Opprett abonnement",
       "loading": "Laster inn …",
       "noSubscriptions": "Ingen abonnement ennå. Klikk \"Legg til abonnement\" for å komme i gang.",
+      "earlySkipsSinceRestart": "Velgeroverhopp siden siste omstart",
       "statusOk": "OK",
       "statusError": "Feil",
       "statusEmpty": "Tom",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Antall Feil",
       "retryAfterMs": "Prøv Igjen Etter (ms)",
-      "lastFailureKind": "Siste Feiltype"
+      "lastFailureKind": "Siste Feiltype",
+      "lastClose": "Siste lukking"
     },
     "empty": {
       "title": "Ingen tilkoblinger",

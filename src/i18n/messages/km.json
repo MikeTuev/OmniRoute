@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "ទាញយកកាតាឡុកម៉ូដែល xAI ផ្ទាល់សម្រាប់ការតភ្ជាប់ xai-oauth ពី https://api.x.ai/v1/models ដោយប្រើ OAuth bearer token ជំនួសឱ្យ seed ឋិតិវន្តដែលបានកំណត់ជាប់។ តាមលំនាំដើម មុខងារនេះត្រូវបានបិទ៖ xai-oauth បន្តផ្តល់ seed ឋិតិវន្តដោយមិនផ្លាស់ប្តូរ។ ប្រសិនបើមានកំហុសក្នុងការដោះស្រាយណាមួយ ការស្វែងរកនឹងត្រឡប់ទៅប្រើ seed វិញ។",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "ដំណើរការការត្រួតពិនិត្យសុចរិតភាព/សុខភាពមូលដ្ឋានទិន្នន័យពេលចាប់ផ្តើម បន្ទាប់ពីម៉ាស៊ីនមេចាប់ផ្តើមទទួលសំណើ ជំនួសឱ្យការរារាំងការចាប់ផ្តើមរហូតដល់ការត្រួតពិនិត្យបានបញ្ចប់។ តាមលំនាំដើម មុខងារនេះត្រូវបានបិទ៖ ការចាប់ផ្តើមនឹងរង់ចាំការត្រួតពិនិត្យដូចមុនការផ្លាស់ប្តូរនេះ ដូច្នេះមូលដ្ឋានទិន្នន័យដែលខូចនៅតែត្រូវបានរកឃើញ មុនពេលសំណើដំបូងត្រូវបានបម្រើ។",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "នៅលើ relay ដែលឆបគ្នាជាមួយ Anthropic ធម្មតា សូមរក្សា system turn នៅកណ្ដាលការសន្ទនាទុកក្នុងបញ្ជីសារ ជំនួសឱ្យការផ្លាស់ទីវាទៅកាន់ system prompt កម្រិតកំពូល ដើម្បីឱ្យបុព្វបទ prompt ដែលបានរក្សាទុកក្នុងឃ្លាំងសម្ងាត់មានស្ថិរភាពនៅគ្រប់ turn។ វាអនុវត្តតែនៅពេល client ខ្លួនឯងបានផ្ញើ beta mid-conversation-system-2026-04-07 ប៉ុណ្ណោះ។ តាមលំនាំដើម វាត្រូវបានបិទ៖ រាល់ system turn ត្រូវបានផ្លាស់ទីទៅក្នុង system prompt ដូចពីមុន ព្រោះ relay ដែលគ្មាន beta នោះនឹងបដិសេធ system turn នៅក្នុងបញ្ជីសារ។",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "ប្រើកម្រិតនៃកិច្ចខិតខំប្រឹងប្រែងក្នុងការវែកញែកដែល models.dev បោះពុម្ពផ្សាយ នៅពេលដែលទាំងការកំណត់ជំនួសរបស់ប្រតិបត្តិករ និងបញ្ជីចុះឈ្មោះរបស់អ្នកផ្តល់សេវា មិនបានប្រកាសកម្រិតណាមួយ ដោយរក្សាទុកតែកម្រិតកិច្ចខិតខំប្រឹងប្រែងដែលស្គាល់ប៉ុណ្ណោះ ហើយចាត់ទុកបញ្ជីកម្រិតដែលបានប្រកាសទទេថាជា \"គ្មានកម្រិត\"។ បានបិទតាមលំនាំដើម៖ កាតាឡុកម៉ូដែល និងកម្រិតកិច្ចខិតខំប្រឹងប្រែងដែលបានដោះស្រាយ នឹងនៅដដែលដូចពីមុន។",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "អនុញ្ញាតឱ្យសំណើ auto/* បង្កើតក្រុមបេក្ខជនដោយប្រើសមត្ថភាពម៉ូដែលដែលបានដោះស្រាយ (ចក្ខុវិស័យ ការវែកញែក ការគិត) និងពិន្ទុគុណភាពដែលបានសង្កេត ដែលអានក្នុងការអានជាដុំតែមួយ។ បិទតាមលំនាំដើម៖ ទម្ងន់បេក្ខជននៅពេលសំណើនៅដដែលដូចមុនទាំងស្រុង។ បើក៖ សញ្ញាទាំងនោះបញ្ចូលទៅក្នុងទម្ងន់ snapshot ដូច្នេះទម្ងន់បេក្ខជន និងការជ្រើសរើសអាចផ្លាស់ប្តូរ។",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "អនុញ្ញាតឱ្យការស្កេនសុខភាពព័ត៌មានសម្ងាត់សាកល្បងការតភ្ជាប់ឡើងវិញ ដែល gateway បានបិទដោយស្វ័យប្រវត្តិ (ការតភ្ជាប់នីមួយៗច្រើនបំផុតម្តងរៀងរាល់ 6 ម៉ោង និង 5 ការតភ្ជាប់ក្នុងមួយការស្កេន) ហើយបើកការតភ្ជាប់ណាមួយឡើងវិញ នៅពេលការសាកល្បងឡើងវិញរបស់វាជោគជ័យ។ តាមលំនាំដើម វាត្រូវបានបិទ៖ ការតភ្ជាប់បែបនេះនៅតែបិទ រហូតដល់ប្រតិបត្តិករចាត់វិធានការ។ ការតភ្ជាប់ដែលត្រូវបានបិទដោយប្រតិបត្តិករ និងការតភ្ជាប់ដែលត្រូវបានហាមឃាត់ជាអចិន្ត្រៃយ៍ មិនត្រូវបានសាកល្បងឡើងវិញឡើយ។",
   "sidebar": {
     "home": "ទំព័រដើម",
     "dashboard": "ផ្ទាំងគ្រប់គ្រង",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "ការជាវនេះមាន node ដែលត្រូវការ proxy core ក្នុងម៉ាស៊ីន (SS/VMess/Trojan/VLESS)។ ពួកវានឹងមិនត្រូវបានកំណត់ផ្លូវទេ រហូតដល់អ្នកកំណត់រចនាសម្ព័ន្ធចំណុចបញ្ចប់ SOCKS5 របស់ local-core។",
         "NO_USABLE_NODES": "ការជាវនេះមិនមាន node ដែលអាចប្រើបានទេ (http/https/socks5 ឬ node ដែលមានចំណុចបញ្ចប់ local core)។",
         "SELECTOR_SWITCH_FAILED": "ការហៅបញ្ជា proxy-core បានបរាជ័យ; ផ្លូវមុននៅតែសកម្ម។ សូមពិនិត្យ URL និង secret បញ្ជា រួចផ្ទុកឡើងវិញ។",
+        "SELECTOR_EARLY_NO_CONTROL": "មិនមាន URL គ្រប់គ្រងទេ",
+        "SELECTOR_EARLY_UNMAPPED": "មិនមានការជាវដែលត្រូវគ្នា",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "ការតភ្ជាប់គោលការណ៍ខ្នាតដែលបានបង្កើតមិនអាចជំនួសឯកសារដែលបានអនុម័តបានទេ។ មានការថតមួយនៅក្បែរនោះជំនួសវិញ។",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "បង្កើតការជាវ",
       "loading": "កំពុងផ្ទុក…",
       "noSubscriptions": "មិនទាន់មានការជាវទេ។ ចុច \"បន្ថែមការជាវ\" ដើម្បីចាប់ផ្តើម។",
+      "earlySkipsSinceRestart": "ការរំលងរបស់ជម្រើស ចាប់តាំងពីការចាប់ផ្ដើមឡើងវិញចុងក្រោយ",
       "statusOk": "យល់ព្រម",
       "statusError": "កំហុស",
       "statusEmpty": "ទទេ",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "ចំនួនបរាជ័យ",
       "retryAfterMs": "ព្យាយាមម្ដងទៀតបន្ទាប់ពី (ms)",
-      "lastFailureKind": "ប្រភេទបរាជ័យចុងក្រោយ"
+      "lastFailureKind": "ប្រភេទបរាជ័យចុងក្រោយ",
+      "lastClose": "ការបិទចុងក្រោយ"
     },
     "empty": {
       "title": "គ្មានការតភ្ជាប់ទេ",

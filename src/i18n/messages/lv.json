@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Iegūt aktuālo xAI modeļu katalogu xai-oauth savienojumiem no https://api.x.ai/v1/models, izmantojot OAuth nesējtokenu, nevis fiksēto statisko sākotnējo kopu. Pēc noklusējuma izslēgts: xai-oauth turpina bez izmaiņām izmantot statisko sākotnējo kopu. Ja modeļu noteikšanas laikā rodas jebkāda kļūda, tiek izmantota sākotnējā kopa.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Palaist datubāzes integritātes un darbspējas pārbaudi pēc tam, kad serveris sāk pieņemt pieprasījumus, nevis bloķēt palaišanu līdz pārbaudes pabeigšanai. Pēc noklusējuma izslēgts: palaišana tiek bloķēta līdz pārbaudes pabeigšanai tieši tāpat kā pirms šīm izmaiņām, tāpēc bojāta datubāze joprojām tiek konstatēta pirms pirmā pieprasījuma apstrādes.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Vienkāršos ar anthropic saderīgos starpniekserveros sarunas vidū ievietotos sistēmas ziņojumus paturiet ziņojumu sarakstā, nevis pārvietojiet tos uz augstākā līmeņa sistēmas uzvedni, lai kešatmiņā saglabātais uzvednes prefikss starp sarunas posmiem paliktu nemainīgs. Attiecas tikai tad, ja klients pats ir nosūtījis mid-conversation-system-2026-04-07 beta. Pēc noklusējuma izslēgts: katrs sistēmas ziņojums tiek pārvietots uz sistēmas uzvedni tieši tāpat kā iepriekš, jo starpniekserveri bez šīs beta versijas noraida sistēmas ziņojumus ziņojumu sarakstā.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Izmantojiet models.dev publicētos spriešanas piepūles līmeņus, ja ne operatora pārrakstījums, ne pakalpojumu sniedzēju reģistrs tādus nedeklarē, saglabājot tikai zināmos piepūles līmeņus, un uzskatiet tukšu deklarēto līmeņu sarakstu par \"nav līmeņu\". Pēc noklusējuma izslēgts: modeļu katalogs un noteiktie piepūles līmeņi paliek tieši tādi paši kā iepriekš.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Ļauj auto/* pieprasījumiem veidot kandidātu kopu ar atrisinātām modeļu iespējām (redze, spriešana, domāšana) un novērotiem kvalitātes rādītājiem, kas nolasīti vienā lielapjoma nolasījumā. Pēc noklusējuma izslēgts: kandidātu svari pieprasījuma laikā paliek tieši tādi paši kā iepriekš. Ieslēgts: šie signāli tiek iekļauti momentuzņēmuma svaros, tāpēc kandidātu svari un izvēle var mainīties.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Ļaut akreditācijas datu stāvokļa pārbaudei atkārtoti testēt savienojumus, kurus vārteja pati izslēdza (katru ne biežāk kā reizi 6 stundās, 5 vienā pārbaudes reizē), un atkal ieslēgt savienojumu, ja atkārtotais tests ir sekmīgs. Pēc noklusējuma izslēgts: šādi savienojumi paliek izslēgti, līdz operators veic darbību. Operatora izslēgti un pastāvīgi bloķēti savienojumi nekad netiek atkārtoti testēti.",
   "sidebar": {
     "home": "Sākums",
     "dashboard": "Panelis",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Šajā abonementā ir mezgli, kuriem nepieciešams vietējais proxy core (SS/VMess/Trojan/VLESS); tie netiks maršrutēti, kamēr nebūs konfigurēts local-core SOCKS5 galapunkts.",
         "NO_USABLE_NODES": "Abonements nenodrošināja nevienu izmantojamu mezglu (http/https/socks5 vai mezglus ar vietējā kodola galapunktu).",
         "SELECTOR_SWITCH_FAILED": "Starpniekservera kodola vadības izsaukums neizdevās; iepriekšējais maršruts paliek aktīvs. Pārbaudiet vadības URL un noslēpumu, pēc tam atsvaidziniet.",
+        "SELECTOR_EARLY_NO_CONTROL": "Nav vadības URL",
+        "SELECTOR_EARLY_UNMAPPED": "Nav atbilstoša abonementa",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Ģenerēto pamatkonfigurāciju neizdevās aizstāt pieņemto failu; tā vietā tika saglabāta kopija blakus.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Izveidot abonementu",
       "loading": "Notiek ielāde…",
       "noSubscriptions": "Nav abonementu. Noklikšķiniet uz \"Pievienot abonementu\", lai sāktu.",
+      "earlySkipsSinceRestart": "Selektora izlaidumi kopš pēdējās restartēšanas",
       "statusOk": "Labi",
       "statusError": "Kļūda",
       "statusEmpty": "Tukšs",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Kļūmju skaits",
       "retryAfterMs": "Atkārtot pēc (ms)",
-      "lastFailureKind": "Pēdējās kļūmes veids"
+      "lastFailureKind": "Pēdējās kļūmes veids",
+      "lastClose": "Pēdējais aizvērums"
     },
     "empty": {
       "title": "Nav savienojumu",

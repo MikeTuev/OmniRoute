@@ -22,6 +22,7 @@ import { getCachedProviderConnectionById } from "@/lib/db/readCache";
 import { resolveProxyForConnection } from "@/lib/db/settings";
 import { runWithProxyContext } from "@omniroute/open-sse/utils/proxyFetch.ts";
 import { safePercentage } from "@/shared/utils/formatting";
+import { isQuotaWindowBoundedParkEnabled } from "@/shared/utils/featureFlags";
 import {
   saveQuotaSnapshot,
   cleanupOldSnapshots,
@@ -295,6 +296,19 @@ function normalizeConnectionQuotas(rawQuotas: Record<string, unknown>, provider:
 }
 
 // ─── Public API ─────────────────────────────────────────────────────────────
+
+/**
+ * #17000 — opt-in (QUOTA_WINDOW_BOUNDED_PARK, default off): the per-window policy honours the
+ * bounded park (#14359) the account-level check already applies — a passed park deadline, or an
+ * observation older than EXHAUSTED_MAX_PARK_MS, stops excluding the account until a fresh fetch.
+ * Off (or an unreadable flag store): the window keeps blocking on its cached percentage.
+ */
+function isWindowParkReleased(entry: QuotaCacheEntry, now: number): boolean {
+  if (!isQuotaWindowBoundedParkEnabled()) return false;
+  return (
+    advancedWindowResetAt(entry, now) !== null || now - entry.fetchedAt >= EXHAUSTED_MAX_PARK_MS
+  );
+}
 
 export function __clearForTests() {
   getState().cache.clear();
@@ -953,8 +967,10 @@ export function getQuotaWindowStatus(
     // If reset time has already passed, avoid stale cached percentages blocking selection.
     // #10095 — a window whose fraction upstream never reported is "unknown",
     // not "0% remaining"; never let it reach the exhaustion threshold.
+    // #17000 — opt-in (QUOTA_WINDOW_BOUNDED_PARK): a passed park deadline or an observation
+    // older than the park cap no longer reaches the threshold.
     reachedThreshold:
-      windowExpired || window.fractionReported === false
+      windowExpired || window.fractionReported === false || isWindowParkReleased(entry, now)
         ? false
         : remainingPercentage <= 0
           ? true

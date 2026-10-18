@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Načítat aktuální katalog modelů xAI pro připojení xai-oauth z https://api.x.ai/v1/models pomocí tokenu OAuth typu Bearer namísto neměnného statického základu. Ve výchozím nastavení vypnuto: xai-oauth nadále beze změny poskytuje statický základ. Při jakékoli chybě zjišťování se použije statický základ.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Spustit kontrolu integrity a stavu databáze až poté, co server začne přijímat požadavky, namísto blokování spuštění do jejího dokončení. Ve výchozím nastavení vypnuto: spuštění je kontrolou blokováno přesně jako před touto změnou, takže poškozená databáze je stále odhalena před obsloužením prvního požadavku.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "U běžných relé kompatibilních s Anthropic ponechte systémové zprávy uprostřed konverzace v seznamu zpráv namísto jejich přesouvání do systémové výzvy nejvyšší úrovně, aby předpona výzvy uložená v mezipaměti zůstala mezi jednotlivými tahy stabilní. Platí pouze v případě, že samotný klient odeslal betaverzi mid-conversation-system-2026-04-07. Ve výchozím nastavení je tato možnost vypnutá: každý systémový tah se přesune do systémové výzvy přesně jako dříve, protože relé bez této betaverze systémové tahy v seznamu zpráv odmítají.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Použít úrovně intenzity uvažování publikované na models.dev, pokud nejsou žádné deklarovány přepsáním operátora ani registrem poskytovatelů, přičemž se zachovají pouze známé úrovně intenzity a prázdný seznam deklarovaných úrovní se považuje za „žádné úrovně“. Ve výchozím nastavení vypnuto: katalog modelů a výsledné úrovně intenzity zůstanou beze změny.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Umožní požadavkům auto/* sestavit fond kandidátů s vyřešenými schopnostmi modelů (vidění, uvažování, přemýšlení) a pozorovaným skóre kvality, načtenými jedním hromadným čtením. Ve výchozím stavu vypnuto: váhy kandidátů v době požadavku zůstávají přesně jako dříve. Zapnuto: tyto signály vstupují do vah snímku, takže se váhy kandidátů i výběr mohou změnit.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Umožnit kontrole stavu přihlašovacích údajů znovu otestovat připojení, která brána sama vypnula (každé nejvýše jednou za 6 hodin, 5 během jedné kontroly), a po úspěšném opakovaném testu je znovu zapnout. Ve výchozím nastavení vypnuto: taková připojení zůstanou vypnutá, dokud nezasáhne operátor. Připojení zakázaná operátorem a trvale zablokovaná připojení se nikdy znovu netestují.",
   "sidebar": {
     "home": "Domov",
     "dashboard": "Nástěnka",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Tento odběr obsahuje uzly, které vyžadují lokální proxy jádro (SS/VMess/Trojan/VLESS); nebudou směrovány, dokud nenakonfigurujete SOCKS5 koncový bod lokálního jádra.",
         "NO_USABLE_NODES": "Odběr neposkytl žádné použitelné uzly (http/https/socks5 nebo uzly s koncovým bodem lokálního jádra).",
         "SELECTOR_SWITCH_FAILED": "Řídicí volání proxy-core selhalo; předchozí trasa zůstává aktivní. Zkontrolujte řídicí URL a tajný klíč a obnovte.",
+        "SELECTOR_EARLY_NO_CONTROL": "Žádná řídicí URL",
+        "SELECTOR_EARLY_UNMAPPED": "Žádné odpovídající předplatné",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Vygenerovanou konfiguraci jádra se nepodařilo nahradit přijatý soubor; místo toho byla zachována kopie vedle něj.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Vytvořit předplatné",
       "loading": "Načítání…",
       "noSubscriptions": "Zatím žádné odběry. Začněte kliknutím na „Přidat předplatné“.",
+      "earlySkipsSinceRestart": "Přeskočení selektoru od posledního restartu",
       "statusOk": "OK",
       "statusError": "Chyba",
       "statusEmpty": "Prázdný",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Počet Selhání",
       "retryAfterMs": "Zkusit Znovu Po (ms)",
-      "lastFailureKind": "Poslední Typ Selhání"
+      "lastFailureKind": "Poslední Typ Selhání",
+      "lastClose": "Poslední zavírací"
     },
     "empty": {
       "title": "Žádná připojení",

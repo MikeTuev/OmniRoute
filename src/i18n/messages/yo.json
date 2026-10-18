@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Gba àkójọ awoṣe xAI tó wà láàyè fún àwọn ìsopọ̀ xai-oauth láti https://api.x.ai/v1/models nípa lílo àmì OAuth bearer, dípò irúgbìn aimi tí a dì mú. A pa á ní àkọ́kọ́: xai-oauth yóò máa lo irúgbìn aimi náà láìyípadà. Bí àṣìṣe èyíkéyìí bá ṣẹlẹ̀ nígbà ìyanjú, ìṣàwárí yóò padà sí irúgbìn náà.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Ṣe àyẹ̀wò ìdúróṣinṣin/ìlera ibi ìpamọ́ dátà ní ìbẹ̀rẹ̀ lẹ́yìn tí olupín ti bẹ̀rẹ̀ sí í gba àwọn ìbéèrè, dípò dídènà ìbẹ̀rẹ̀ títí àyẹ̀wò náà yóò fi parí. A pa á ní àkọ́kọ́: ìbẹ̀rẹ̀ yóò dúró de àyẹ̀wò náà gẹ́gẹ́ bí ó ti rí ṣáájú ìyípadà yìí, nítorí náà a ó ṣì rí ibi ìpamọ́ dátà tó bàjẹ́ kí a tó ṣe ìtọ́jú ìbéèrè àkọ́kọ́.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Lórí àwọn relay anthropic-compatible lásán, jẹ́ kí àwọn ìyípadà system àárín ìjíròrò wà nínú àkójọ ìfiránṣẹ́ dípò kí a gbé wọn lọ sínú system prompt ìpele-ókè, kí prefix prompt tí a fi pamọ́ sínú cache lè dúró ṣinṣin láàárín àwọn ìyípadà. Èyí kan nígbà tí client fúnra rẹ̀ bá fi beta mid-conversation-system-2026-04-07 ránṣẹ́ nìkan. Ó wà ní pípa ní àkọ́kọ́: gbogbo ìyípadà system ni a máa ń gbé lọ sínú system prompt gẹ́gẹ́ bí ti tẹ́lẹ̀ gan-an, nítorí àwọn relay tí kò ní beta yẹn máa ń kọ àwọn ìyípadà system nínú àkójọ ìfiránṣẹ́.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Lo àwọn ìpele ìsapá ìrònú tí models.dev ṣe àtẹ̀jáde nígbà tí àtúnṣe olùdarí àti ìforúkọsílẹ̀ olùpèsè kò bá sọ èyíkéyìí, kí o sì fi àwọn ipele ìsapá tí a mọ̀ nìkan sílẹ̀, kí o sì ka àtòjọ ìpele tí a sọ tí ó ṣófo sí \"kò sí ìpele\". Ó wà ní pípa ní àìṣe-déédé: àkójọ awoṣe àti àwọn ìpele ìsapá tí a ti pinnu dúró gẹ́gẹ́ bí wọ́n ti wà tẹ́lẹ̀ gan-an.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Ó jẹ́ kí àwọn ìbéèrè auto/* kọ́ àkójọ àwọn olùdíje pẹ̀lú àwọn agbára àwòṣe tí a ti yanjú (ìríran, ìrònújinlẹ̀, ìrònú) àti àwọn máàkì dídára tí a ṣàkíyèsí, tí a kà ní ìkàwé ńlá kan ṣoṣo. Ó wà ní pípa ní àìyípadà: ìwọ̀n àwọn olùdíje ní àkókò ìbéèrè dúró gẹ́lẹ́ bí ó ti wà tẹ́lẹ̀. Nígbà tí ó bá wà ní títàn: àwọn àmì wọ̀nyẹn máa ń wọ inú ìwọ̀n àwòrán ìṣẹ́jú, nítorí náà ìwọ̀n àwọn olùdíje àti yíyàn lè yípadà.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Jẹ́ kí àyẹ̀wò ìlera ìwé-ẹ̀rí tún dán àwọn àsopọ̀ tí gateway pa fúnra rẹ̀ wò (ó pọ̀jù lẹ́ẹ̀kan ní gbogbo wákàtí 6 fún ọ̀kọ̀ọ̀kan, márùn-ún fún àyẹ̀wò kọ̀ọ̀kan), kí ó sì tún ọ̀kan tan nígbà tí àyẹ̀wò rẹ̀ bá ṣàṣeyọrí. Ó wà ní pípa láti ìbẹ̀rẹ̀: irú àwọn àsopọ̀ bẹ́ẹ̀ máa dúró ní pípa títí tí olùṣiṣẹ́ yóò fi gbé ìgbésẹ̀. A kì í tún àwọn àsopọ̀ tí olùṣiṣẹ́ pa tàbí tí a fòfin dè pátápátá dán wò láéláé.",
   "sidebar": {
     "home": "Ojúlé",
     "dashboard": "Pátákó Ìṣàkóso",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Ìforúkọsílẹ̀ yìí ní àwọn node tó nílò local proxy core (SS/VMess/Trojan/VLESS); a kò ní darí wọn títí tí o fi ṣètò ojú-ọ̀nà SOCKS5 local-core.",
         "NO_USABLE_NODES": "Ìforúkọsílẹ̀ kò mú node tó ṣeé lò kankan jáde (http/https/socks5 tàbí àwọn node tó ní ojú-ọ̀nà local core).",
         "SELECTOR_SWITCH_FAILED": "Ìpè ìṣàkóso proxy-core kùnà; ọ̀nà àtijọ́ wà ni íṣiṣẹ́. Ṣàyẹ̀wò URL àti àṣírí ìṣàkóso, lẹ́yìn náà ṣe àtúnsọ.",
+        "SELECTOR_EARLY_NO_CONTROL": "Kò sí URL ìdarí",
+        "SELECTOR_EARLY_UNMAPPED": "Kò sí ìforúkọsílẹ̀ tó bá mu",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Aṣẹ-ọ̀pọ̀ ti ṣe ko le yí iwe wọ́le tó ti hàn padà; àwọn lẹ́yìn rẹ̀ la fi páyà.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Ṣẹ̀dá Ìforúkọsílẹ̀",
       "loading": "Ń ṣàkójọ…",
       "noSubscriptions": "Kò sí ìforúkọsílẹ̀ kankan síbẹ̀. Tẹ \"Ṣàfikún Ìforúkọsílẹ̀\" láti bẹ̀rẹ̀.",
+      "earlySkipsSinceRestart": "Àwọn ìfojúfò aṣàyàn láti ìgbà àtúnbẹ̀rẹ̀ tó kẹ́yìn",
       "statusOk": "Ó DÁRA",
       "statusError": "Àṣìṣe",
       "statusEmpty": "Òfìfo",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Iye Ìkùnà",
       "retryAfterMs": "Tún Gbìyànjú Lẹ́yìn (ms)",
-      "lastFailureKind": "Irú Ìkùnà Tó Kẹ́yìn"
+      "lastFailureKind": "Irú Ìkùnà Tó Kẹ́yìn",
+      "lastClose": "Ìparí Àkọ́kọ́"
     },
     "empty": {
       "title": "Kò sí àwọn àsopọ̀",

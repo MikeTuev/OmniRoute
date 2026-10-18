@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "xai-oauth bağlantıları üçün sabit statik ilkin siyahı əvəzinə OAuth daşıyıcı tokenindən istifadə edərək https://api.x.ai/v1/models ünvanından aktual xAI model kataloqunu əldə edin. Defolt olaraq deaktivdir: xai-oauth statik ilkin siyahını dəyişmədən təqdim etməyə davam edir. Aşkarlama zamanı hər hansı xəta baş verərsə, ilkin siyahıdan istifadə olunur.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Başlanğıc verilənlər bazası bütövlüyü/sağlamlıq yoxlamasını server sorğuları qəbul etməyə başladıqdan sonra işə salın, onun tamamlanmasını gözləyərək başlanğıcı bloklamayın. Defolt olaraq deaktivdir: başlanğıc bu dəyişiklikdən əvvəl olduğu kimi yoxlama tamamlananadək bloklanır, beləliklə zədələnmiş verilənlər bazası yenə də ilk sorğu emal edilməzdən əvvəl aşkarlanır.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Adi anthropic-uyğun relelərdə, söhbətin ortasındakı sistem mesajlarını üst səviyyəli sistem sorğusuna köçürmək əvəzinə mesaj siyahısında saxlayın ki, keşlənmiş sorğu prefiksi mesajlar arasında sabit qalsın. Yalnız müştərinin özü mid-conversation-system-2026-04-07 beta versiyasını göndərdikdə tətbiq olunur. Defolt olaraq deaktivdir: həmin beta versiyasını dəstəkləməyən relelər mesaj siyahısındakı sistem mesajlarını rədd etdiyi üçün hər bir sistem mesajı əvvəlki kimi sistem sorğusuna köçürülür.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Nə operatorun üstəgəl təyini, nə də provayder reyestri hər hansı səviyyə elan etdikdə, yalnız məlum səy səviyyələrini saxlamaqla models.dev tərəfindən dərc olunan düşünmə səyi səviyyələrindən istifadə edin və boş elan edilmiş səviyyə siyahısını «səviyyə yoxdur» kimi qəbul edin. Defolt olaraq deaktivdir: model kataloqu və müəyyən edilmiş səy səviyyələri əvvəlki kimi qalır.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "auto/* sorğularına namizəd hovuzunu həll olunmuş model imkanları (görmə, mühakimə, düşünmə) və müşahidə olunan keyfiyyət balları ilə bir toplu oxumada qurmağa imkan verir. Defolt olaraq söndürülüb: sorğu zamanı namizəd çəkiləri əvvəlki kimi qalır. Aktiv olduqda: bu siqnallar snapshot çəkilərinə daxil olur, buna görə namizəd çəkiləri və seçim dəyişə bilər.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Etimadnamə vəziyyətinin yoxlanılması şlüzün öz-özünə söndürdüyü bağlantıları yenidən sınaqdan keçirsin (hər biri ən çox 6 saatda bir dəfə, hər yoxlamada 5 bağlantı) və yenidən sınaq uğurla keçdikdə bağlantını yenidən aktivləşdirsin. Defolt olaraq söndürülüb: belə bağlantılar operator müdaxilə edənədək söndürülmüş qalır. Operator tərəfindən söndürülmüş və daimi bloklanmış bağlantılar heç vaxt yenidən sınaqdan keçirilmir.",
   "sidebar": {
     "home": "Əsas səhifə",
     "dashboard": "İdarə paneli",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Bu abunəlikdə yerli proksi-nüvəyə (SS/VMess/Trojan/VLESS) ehtiyacı olan qovşaqlar var; yerli nüvənin SOCKS5 son nöqtəsini konfiqurasiya edənə qədər onlar yönləndirilməyəcək.",
         "NO_USABLE_NODES": "Abunəlik heç bir istifadəyə yararlı qovşaq vermədi (http/https/socks5 və ya yerli nüvə son nöqtəsi olan qovşaqlar).",
         "SELECTOR_SWITCH_FAILED": "Proxy-core idarəetmə çağırışı uğursuz oldu; əvvəlki marşrut aktiv qalır. İdarəetmə URL-ni və sirri yoxlayıb yeniləyin.",
+        "SELECTOR_EARLY_NO_CONTROL": "Kontrol URL yoxdur",
+        "SELECTOR_EARLY_UNMAPPED": "Uyğun abunəlik yoxdur",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Yaradılan əsas konfiqurasiya qəbul edilmiş faylı əvəz edə bilmədi; əvəzinə yanındakı nüsxə saxlanıldı.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Abunəlik yaradın",
       "loading": "Yüklənir...",
       "noSubscriptions": "Hələ abunə yoxdur. Başlamaq üçün \"Abunəlik əlavə et\" düyməsini basın.",
+      "earlySkipsSinceRestart": "Son yenidən başlatmadan bəri seçici ötürmələri",
       "statusOk": "OK",
       "statusError": "Xəta",
       "statusEmpty": "Boş",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Uğursuzluq Sayı",
       "retryAfterMs": "Sonra Yenidən Cəhd Et (ms)",
-      "lastFailureKind": "Son Uğursuzluq Növü"
+      "lastFailureKind": "Son Uğursuzluq Növü",
+      "lastClose": "Son Kapanış"
     },
     "empty": {
       "title": "Bağlantı yoxdur",

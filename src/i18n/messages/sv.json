@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Hämta xAI:s aktuella modellkatalog för xai-oauth-anslutningar från https://api.x.ai/v1/models med OAuth-bearer-token i stället för den statiska, oföränderliga grunduppsättningen. Av som standard: xai-oauth fortsätter att tillhandahålla den statiska grunduppsättningen oförändrad. Om ett fel uppstår när modellerna ska fastställas återgår identifieringen till grunduppsättningen.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Kör integritets-/hälsokontrollen av databasen vid start efter att servern har börjat ta emot förfrågningar, i stället för att blockera starten tills kontrollen är klar. Av som standard: starten blockeras av kontrollen precis som före denna ändring, så en skadad databas upptäcks fortfarande innan den första förfrågningen behandlas.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "På vanliga anthropic-kompatibla reläer behålls systemturer mitt i konversationen i meddelandelistan i stället för att flyttas till systemprompten på toppnivå, så att det cachade promptprefixet förblir stabilt mellan turerna. Gäller endast när klienten själv skickade betaversionen mid-conversation-system-2026-04-07. Av som standard: varje systemtur flyttas till systemprompten precis som tidigare, eftersom reläer utan den betaversionen avvisar systemturer i meddelandelistan.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Använd nivåerna för resonemangsinsats som models.dev publicerar när varken en operatörsåsidosättning eller leverantörsregistret anger några, behåll endast kända insatsnivåer och behandla en tom lista över angivna nivåer som \"inga nivåer\". Av som standard: modellkatalogen och de fastställda insatsnivåerna förblir exakt som tidigare.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Låter auto/*-förfrågningar bygga kandidatpoolen med fastställda modellförmågor (vision, resonemang, tänkande) och observerade kvalitetspoäng, inlästa i en enda massläsning. Av som standard: kandidatvikterna vid förfrågningstillfället förblir exakt som tidigare. På: dessa signaler matas in i ögonblicksbildens vikter, så kandidatvikter och urval kan ändras.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Låt hälsokontrollen för autentiseringsuppgifter testa anslutningar som gatewayen själv har stängt av på nytt (högst en gång var sjätte timme per anslutning, fem per kontroll) och slå på en anslutning igen när omtestet lyckas. Av som standard: sådana anslutningar förblir avstängda tills en operatör ingriper. Anslutningar som har stängts av av en operatör eller blockerats permanent testas aldrig på nytt.",
   "sidebar": {
     "home": "Hem",
     "dashboard": "Instrumentpanel",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Denna prenumeration har noder som behöver en lokal proxy-core (SS/VMess/Trojan/VLESS); de dirigeras inte förrän du konfigurerar local-core SOCKS5-slutpunkten.",
         "NO_USABLE_NODES": "Prenumerationen gav inga användbara noder (http/https/socks5 eller noder med en lokal core-slutpunkt).",
         "SELECTOR_SWITCH_FAILED": "Proxy-cores styranrop misslyckades; den tidigare rutten förblir aktiv. Kontrollera styr-URL och hemlighet och uppdatera sedan.",
+        "SELECTOR_EARLY_NO_CONTROL": "Ingen kontroll-URL",
+        "SELECTOR_EARLY_UNMAPPED": "Ingen matchande prenumeration",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Den genererade kärnkonfigurationen kunde inte ersätta den antagna filen; kopien bredvid sparades i stället.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Skapa prenumeration",
       "loading": "Laddar...",
       "noSubscriptions": "Inga prenumerationer än. Klicka på \"Lägg till prenumeration\" för att komma igång.",
+      "earlySkipsSinceRestart": "Väljaröverhopp sedan senaste omstarten",
       "statusOk": "OK",
       "statusError": "Fel",
       "statusEmpty": "Tom",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Antal Fel",
       "retryAfterMs": "Försök Igen Efter (ms)",
-      "lastFailureKind": "Senaste Feltyp"
+      "lastFailureKind": "Senaste Feltyp",
+      "lastClose": "Senaste Stängning"
     },
     "empty": {
       "title": "Inga anslutningar",

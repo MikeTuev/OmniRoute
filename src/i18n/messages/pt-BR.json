@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Busca o catálogo atualizado de modelos da xAI para conexões xai-oauth em https://api.x.ai/v1/models usando o token bearer OAuth, em vez do conjunto inicial estático e congelado. Desligado por padrão: xai-oauth continua disponibilizando o conjunto inicial estático sem alterações. Em caso de qualquer erro de resolução, a descoberta recorre ao conjunto inicial.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Executa a verificação de integridade/saúde do banco de dados na inicialização depois que o servidor começa a aceitar requisições, em vez de bloquear a inicialização até que ela termine. Desligado por padrão: a inicialização bloqueia na verificação exatamente como antes desta mudança, então um banco de dados corrompido ainda é detectado antes da primeira requisição ser atendida.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Em retransmissores simples compatíveis com a Anthropic, mantenha as mensagens de sistema no meio da conversa dentro da lista de mensagens, em vez de movê-las para o prompt de sistema de nível superior, para que o prefixo do prompt armazenado em cache permaneça estável entre as interações. Aplica-se somente quando o próprio cliente tiver enviado a versão beta mid-conversation-system-2026-04-07. Desativado por padrão: todas as mensagens de sistema são movidas para o prompt de sistema exatamente como antes, pois retransmissores sem essa versão beta rejeitam mensagens de sistema na lista de mensagens.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Use os níveis de esforço de raciocínio publicados pelo models.dev quando nem uma substituição do operador nem o registro do provedor declarar algum, mantendo apenas os níveis de esforço conhecidos e tratando uma lista vazia de níveis declarados como \"sem níveis\". Desativado por padrão: o catálogo de modelos e os níveis de esforço resolvidos permanecem exatamente como antes.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Permite que as requisições auto/* montem o pool de candidatos com as capacidades de modelo resolvidas (visão, raciocínio, pensamento) e as pontuações de qualidade observadas, lidas em uma única leitura em lote. Desativado por padrão: os pesos dos candidatos no momento da requisição permanecem exatamente como antes. Ativado: esses sinais alimentam os pesos do snapshot, então os pesos dos candidatos e a seleção podem mudar.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Permita que a verificação de integridade das credenciais teste novamente as conexões que o gateway desativou automaticamente (no máximo uma vez a cada 6 horas por conexão, 5 por verificação) e reative uma delas quando o novo teste for bem-sucedido. Desativado por padrão: essas conexões permanecem desativadas até que um operador tome uma ação. Conexões desativadas por um operador e conexões banidas permanentemente nunca são testadas novamente.",
   "sidebar": {
     "home": "Início",
     "dashboard": "Painel",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Esta assinatura tem nós que precisam de um core local (SS/VMess/Trojan/VLESS); eles não são roteados até você configurar o endpoint SOCKS5 do core local.",
         "NO_USABLE_NODES": "A assinatura não retornou nós utilizáveis (http/https/socks5 ou nós com endpoint de core local).",
         "SELECTOR_SWITCH_FAILED": "A chamada de controle do proxy-core falhou; a rota anterior continua ativa. Verifique a URL e o segredo de controle e atualize.",
+        "SELECTOR_EARLY_NO_CONTROL": "Nenhuma URL de controle",
+        "SELECTOR_EARLY_UNMAPPED": "Nenhuma assinatura correspondente",
         "CORE_CONFIG_NOT_GENERATED": "A configuração do núcleo local não foi gerada; o arquivo adotado não mudou. Verifique o caminho e atualize.",
         "CORE_CONFIG_NOT_APPLIED": "A configuração central gerada não pôde substituir o arquivo adotado; a cópia ao lado foi mantida.",
         "CORE_RELOAD_UNDECLARED": "Nenhum canal de recarga foi declarado para a configuração do núcleo substituída. Declare um: uma URL de controle em um núcleo compatível, a variável OMNIROUTE_PROXY_CORE_RELOAD_COMMAND como um array JSON de argumentos, ou o valor external para um observador externo.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Criar assinatura",
       "loading": "Carregando…",
       "noSubscriptions": "Ainda não há assinaturas. Clique em \"Adicionar assinatura\" para começar.",
+      "earlySkipsSinceRestart": "Saltos do seletor desde a última reinicialização",
       "statusOk": "OK",
       "statusError": "Erro",
       "statusEmpty": "Vazio",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Contagem de Falhas",
       "retryAfterMs": "Repetir Após (ms)",
-      "lastFailureKind": "Último Tipo de Falha"
+      "lastFailureKind": "Último Tipo de Falha",
+      "lastClose": "Último Fechamento"
     },
     "empty": {
       "title": "Nenhuma conexão",

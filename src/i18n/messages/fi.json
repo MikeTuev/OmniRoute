@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Nouda ajantasainen xAI-malliluettelo xai-oauth-yhteyksille osoitteesta https://api.x.ai/v1/models käyttämällä OAuth-haltijatunnusta jäädytetyn staattisen alkuluettelon sijaan. Oletusarvoisesti poissa käytöstä: xai-oauth käyttää edelleen muuttumatonta staattista alkuluetteloa. Jos määrityksessä tapahtuu virhe, mallien haku käyttää alkuluetteloa varavaihtoehtona.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Suorita tietokannan eheyden ja kunnon tarkistus käynnistyksen yhteydessä vasta sen jälkeen, kun palvelin on alkanut vastaanottaa pyyntöjä, sen sijaan että käynnistys estettäisiin tarkistuksen valmistumiseen asti. Oletusarvoisesti poissa käytöstä: käynnistys odottaa tarkistuksen valmistumista aivan kuten ennen tätä muutosta, joten vioittunut tietokanta havaitaan edelleen ennen ensimmäisen pyynnön käsittelyä.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Tavallisissa anthropic-yhteensopivissa välityspalveluissa keskustelun keskellä olevat järjestelmävuorot pidetään viestiluettelossa sen sijaan, että ne siirrettäisiin ylimmän tason järjestelmäkehotteeseen, jotta välimuistiin tallennetun kehotteen etuliite pysyy vakaana vuorojen välillä. Tätä sovelletaan vain, kun asiakas itse lähetti mid-conversation-system-2026-04-07-betaominaisuuden. Oletusarvoisesti pois käytöstä: jokainen järjestelmävuoro siirretään järjestelmäkehotteeseen täsmälleen kuten ennenkin, koska ilman kyseistä betaominaisuutta toimivat välityspalvelut hylkäävät viestiluettelossa olevat järjestelmävuorot.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Käytä models.dev-palvelun julkaisemia päättelypanoksen tasoja, kun operaattorin ohitus tai palveluntarjoajarekisteri ei määritä niitä. Säilytä vain tunnetut panostustasot ja käsittele tyhjää määritettyjen tasojen luetteloa niin, ettei tasoja ole. Oletusarvoisesti pois käytöstä: malliluettelo ja ratkaistut panostustasot säilyvät täsmälleen ennallaan.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Antaa auto/*-pyyntöjen koota ehdokasjoukon ratkaistuilla mallin ominaisuuksilla (näkö, päättely, ajattelu) ja havaituilla laatupisteillä, jotka luetaan yhdellä kertalukemisella. Oletuksena pois: ehdokkaiden painot pyyntöhetkellä pysyvät täsmälleen ennallaan. Päällä: nämä signaalit vaikuttavat tilannekuvan painoihin, joten ehdokkaiden painot ja valinta voivat muuttua.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Salli tunnistetietojen kuntotarkistuksen testata uudelleen yhteydet, jotka yhdyskäytävä on poistanut käytöstä automaattisesti (kukin enintään kerran 6 tunnissa, 5 tarkistusta kohden), ja ottaa yhteys takaisin käyttöön, kun uudelleentestaus onnistuu. Oletusarvoisesti pois käytöstä: tällaiset yhteydet pysyvät pois käytöstä, kunnes operaattori toimii. Operaattorin käytöstä poistamia ja pysyvästi estettyjä yhteyksiä ei koskaan testata uudelleen.",
   "sidebar": {
     "home": "Kotiin",
     "dashboard": "Kojelauta",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Tässä tilauksessa on solmuja, jotka tarvitsevat paikallisen välityspalvelinytimen (SS/VMess/Trojan/VLESS); niitä ei reititetä ennen kuin määrität paikallisen ytimen SOCKS5-päätepisteen.",
         "NO_USABLE_NODES": "Tilaus ei tuottanut käyttökelpoisia solmuja (http/https/socks5 tai solmuja, joilla on paikallisen ytimen päätepiste).",
         "SELECTOR_SWITCH_FAILED": "Välitysymen ohjauskutsu epäonnistui; edellinen reitti pysyy käytössä. Tarkista ohjaus-URL ja salaisuus ja päivitä sitten.",
+        "SELECTOR_EARLY_NO_CONTROL": "Ei hallinta-URL:ia",
+        "SELECTOR_EARLY_UNMAPPED": "Ei vastaavaa tilausta",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Generoitua ydinasetustiedostoa ei voitu korvata otetulla tiedostolla; viereinen kopio säilytettiin sen sijaan.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Luo tilaus",
       "loading": "Ladataan…",
       "noSubscriptions": "Ei vielä tilauksia. Aloita napsauttamalla \"Lisää tilaus\".",
+      "earlySkipsSinceRestart": "Valitsimen ohitukset viimeisimmän uudelleenkäynnistyksen jälkeen",
       "statusOk": "OK",
       "statusError": "Virhe",
       "statusEmpty": "Tyhjä",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Virheiden Määrä",
       "retryAfterMs": "Yritä Uudelleen (ms)",
-      "lastFailureKind": "Viimeisin Virhetyyppi"
+      "lastFailureKind": "Viimeisin Virhetyyppi",
+      "lastClose": "Viimeinen sulkeutuminen"
     },
     "empty": {
       "title": "Ei yhteyksiä",

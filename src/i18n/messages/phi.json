@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Kunin ang live na catalog ng modelo ng xAI para sa mga koneksyong xai-oauth mula sa https://api.x.ai/v1/models gamit ang OAuth bearer token, sa halip na ang hindi nagbabagong static seed. Naka-off bilang default: patuloy na ihahatid ng xai-oauth ang static seed nang walang pagbabago. Kapag may anumang error sa resolution, babalik ang discovery sa seed.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Patakbuhin ang database integrity/health check sa startup pagkatapos magsimulang tumanggap ng mga request ang server, sa halip na harangan ang startup hanggang sa matapos ito. Naka-off bilang default: haharangin ng startup ang check nang eksaktong gaya noong bago ang pagbabagong ito, kaya matutukoy pa rin ang sirang database bago maihatid ang unang request.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Sa mga karaniwang anthropic-compatible relay, panatilihin ang mga system turn sa gitna ng pag-uusap sa loob ng listahan ng mensahe sa halip na ilipat ang mga ito sa top-level na system prompt, upang manatiling hindi nagbabago ang naka-cache na prompt prefix sa bawat turn. Nalalapat lang ito kapag ang client mismo ang nagpadala ng mid-conversation-system-2026-04-07 beta. Naka-off bilang default: inililipat ang bawat system turn sa system prompt gaya mismo ng dati, dahil tinatanggihan ng mga relay na walang beta na iyon ang mga system turn sa listahan ng mensahe.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Gamitin ang mga antas ng reasoning effort na inilalathala ng models.dev kapag walang idinedeklarang anuman ang override ng operator o ang registry ng provider, panatilihin lamang ang mga kilalang antas ng effort, at ituring ang walang lamang listahan ng mga idineklarang antas bilang \"walang mga antas\". Naka-off bilang default: mananatiling eksaktong gaya ng dati ang catalog ng modelo at mga nalutas na antas ng effort.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Pinapayagan ang mga auto/* request na buuin ang pool ng mga kandidato gamit ang na-resolve na kakayahan ng modelo (vision, reasoning, thinking) at ang naobserbahang quality score, na binabasa sa iisang bulk na pagbasa. Naka-off bilang default: ang timbang ng mga kandidato sa oras ng request ay nananatiling eksaktong tulad ng dati. Naka-on: pumapasok ang mga signal na ito sa timbang ng snapshot, kaya maaaring magbago ang timbang ng mga kandidato at ang pagpili.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Payagan ang pagsusuri sa kalagayan ng kredensyal na muling subukan ang mga koneksiyong awtomatikong pinatay ng gateway (hindi hihigit sa isang beses bawat 6 na oras para sa bawat isa, 5 sa bawat pagsusuri) at muling buksan ang isang koneksiyon kapag pumasa ito sa muling pagsubok. Naka-off bilang default: mananatiling naka-off ang mga naturang koneksiyon hanggang sa kumilos ang isang operator. Hindi kailanman muling sinusubukan ang mga koneksiyong pinatay ng operator at ang mga permanenteng naka-ban.",
   "sidebar": {
     "home": "Bahay",
     "dashboard": "Dashboard",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Ang subscription na ito ay may mga node na nangangailangan ng lokal na proxy core (SS/VMess/Trojan/VLESS); hindi iruruta ang mga ito hanggang sa i-configure mo ang local-core SOCKS5 endpoint.",
         "NO_USABLE_NODES": "Walang naibigay na magagamit na mga node ang subscription (http/https/socks5 o mga node na may lokal na core endpoint).",
         "SELECTOR_SWITCH_FAILED": "Nabigo ang control call ng proxy-core; nananatiling aktibo ang nakaraang ruta. Suriin ang control URL at secret, saka mag-refresh.",
+        "SELECTOR_EARLY_NO_CONTROL": "Walang control URL",
+        "SELECTOR_EARLY_UNMAPPED": "Walang tumutugmang subscription",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "Hindi maipapalit ng nabuo na core configuration ang inadopt na file; halip, itinabi ang kopya sa tabi nito.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Lumikha ng Subscription",
       "loading": "Naglo-load…",
       "noSubscriptions": "Wala pang mga subscription. I-click ang \"Magdagdag ng Subscription\" upang makapagsimula.",
+      "earlySkipsSinceRestart": "Mga nilaktawan ng selector mula noong huling restart",
       "statusOk": "OK",
       "statusError": "Error",
       "statusEmpty": "Walang laman",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Bilang ng Kabiguan",
       "retryAfterMs": "Subukan Muli Pagkatapos ng (ms)",
-      "lastFailureKind": "Huling Uri ng Kabiguan"
+      "lastFailureKind": "Huling Uri ng Kabiguan",
+      "lastClose": "Huling Isara"
     },
     "empty": {
       "title": "Walang koneksyon",

@@ -1,0 +1,1 @@
+- **docs(docker):** document the `EACCES: permission denied` fix for `/app/data` on self-host (chown to the `node` UID 1000, or an opt-in named volume with its empty-volume/backup caveats); `docker-compose.selfhost.yml` keeps the `./data` bind mount as the active default (#14910 — thanks @matheusgcdj)

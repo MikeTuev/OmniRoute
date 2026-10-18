@@ -870,12 +870,12 @@ to the registry, which skips matching guardrails (`skipped: true` in `results`).
 
 The disable list only affects the **registry**. Prompt-injection `block` mode is
 a mandatory boundary: the injection-guard middleware
-(`src/middleware/promptInjectionGuard.ts`) builds a body-only disable list with
-`resolveDisabledGuardrails({ body })` and hands it to `evaluatePromptInjection()`,
-but `evaluatePromptInjection()` never reads `context.disabledGuardrails`, so the
-list has no effect and a request that disables `prompt-injection` is still
-rejected in `block` mode (removing that dead call is tracked in
-[#16934](https://github.com/diegosouzapw/OmniRoute/pull/16934)). This is by design. The disable channels are caller-controlled (request body,
+(`src/middleware/promptInjectionGuard.ts`) calls `evaluatePromptInjection()`
+without any caller-controlled disable list (the dead
+`resolveDisabledGuardrails({ body })` call it used to make was removed in
+[#16934](https://github.com/diegosouzapw/OmniRoute/pull/16934)), so a request
+that disables `prompt-injection` is still rejected in `block` mode. This is by
+design. The disable channels are caller-controlled (request body,
 metadata, headers), and a caller must not be able to switch off a security
 control the operator set
 ([#16413](https://github.com/diegosouzapw/OmniRoute/issues/16413)). The header

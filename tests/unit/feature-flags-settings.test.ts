@@ -60,6 +60,22 @@ const {
 // default off) to 87.
 // ANTHROPIC_COMPATIBLE_MID_CONVERSATION_SYSTEM (#16236, default off) takes it to 88.
 const EXPECTED_FEATURE_FLAG_COUNT = 88;
+// MODELS_DEV_EFFORT_TIERS_ENABLED (#15944, default off) takes it to 88.
+// default off) to 87; AUTO_REQUEST_RESOLVED_CAPABILITIES (#16419, resolved-capability
+// scoring inputs on the auto/* request path, default off) to 88.
+// default off) to 87; CREDENTIAL_HEALTH_RETEST_AUTO_DISABLED (#16190, retest of
+// gateway-disabled connections, default off) to 88.
+// CREDENTIAL_GATE_AUTH_DIAGNOSES_ONLY (#16599, default off) to 88.
+// default off) to 87; STREAM_LATE_OUTPUT_PROBE_ENABLED
+// (#16927 late-output stream probe, default off) to 88.
+// LMARENA_SYNTHESIZED_CX_ENABLED (#16895, default off) to 88.
+// CONTENT_POLICY_REFUSAL_COMBO_STOP_ENABLED (#15917, default off) takes it to 88.
+// NATIVE_CODEX_REACTIVE_COMPACTION_ENABLED (#16632, default off) to 88.
+// COOLDOWN_RETRY_SKIP_REFUSALS_ENABLED (#16305, default off) takes it to 88.
+// default off) to 87; QUOTA_WINDOW_BOUNDED_PARK
+// (#17000, per-window quota policy honours the bounded park, default off) to 88.
+// default off) to 87; IMAGE_GENERATION_LONG_JOBS
+// (#16260, connection image timeout + caller cancellation + Playground SSE, default off) to 88.
 
 // ──────────────────────────────────────────────────────
 // Test group 1 — Flag definitions registry

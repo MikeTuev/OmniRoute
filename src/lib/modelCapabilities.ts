@@ -16,7 +16,8 @@ import {
   type ModelSpec,
 } from "@/shared/constants/modelSpecs";
 import { getSyncedCapability } from "@/lib/modelsDevSync";
-import { MODELS_DEV_PROVIDER_MAP } from "@/lib/modelsDevSync/transform";
+import { knownReasoningEffortTiers, MODELS_DEV_PROVIDER_MAP } from "@/lib/modelsDevSync/transform";
+import { isModelsDevEffortTiersEnabled } from "@/shared/utils/featureFlags";
 import { getModelContextOverride } from "@/lib/db/modelContextOverrides";
 import {
   getModelCapabilityOverride,
@@ -832,6 +833,18 @@ export function getExplicitModelOutputCap(
   return spec?.maxOutputTokens ?? null;
 }
 
+/**
+ * models.dev tiers stored on the synced capability row, used only when neither an operator
+ * override nor the registry names any (MODELS_DEV_EFFORT_TIERS_ENABLED, default off — #15944).
+ * Narrowed to the known effort vocabulary. The flag is read only when synced tiers exist.
+ */
+function resolveSyncedEffortTierFallback(
+  syncedEfforts: readonly string[] | null | undefined
+): string[] | null {
+  if (!syncedEfforts || syncedEfforts.length === 0) return null;
+  return isModelsDevEffortTiersEnabled() ? knownReasoningEffortTiers(syncedEfforts) : null;
+}
+
 export function getResolvedModelCapabilities(
   input: CapabilityInput,
   options?: ResolveModelCapabilitiesOptions,
@@ -1006,7 +1019,9 @@ export function getResolvedModelCapabilities(
     reasoning: supportsThinking ?? heuristicReasoning(lookupKey),
     supportsThinking,
     supportedThinkingEfforts:
-      reasoningEffortsOverride ?? registryModel?.supportedThinkingEfforts ?? null,
+      reasoningEffortsOverride ??
+      registryModel?.supportedThinkingEfforts ??
+      resolveSyncedEffortTierFallback(synced?.reasoning_efforts),
     reasoningEffortsOverride: reasoningEffortsOverride !== null,
     supportsTools,
     supportsVision,

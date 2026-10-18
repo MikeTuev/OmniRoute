@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Lấy danh mục mô hình xAI trực tiếp cho các kết nối xai-oauth từ https://api.x.ai/v1/models bằng token bearer OAuth, thay vì dữ liệu khởi tạo tĩnh đã đóng băng. Tắt theo mặc định: xai-oauth tiếp tục cung cấp dữ liệu khởi tạo tĩnh không thay đổi. Khi có bất kỳ lỗi phân giải nào, quá trình khám phá sẽ quay lại dữ liệu khởi tạo.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Chạy kiểm tra tính toàn vẹn/sức khỏe cơ sở dữ liệu lúc khởi động sau khi máy chủ bắt đầu nhận yêu cầu, thay vì chặn quá trình khởi động cho đến khi kiểm tra hoàn tất. Tắt theo mặc định: quá trình khởi động vẫn chặn theo kiểm tra này giống như trước thay đổi này, vì vậy một cơ sở dữ liệu bị hỏng vẫn được phát hiện trước khi yêu cầu đầu tiên được phục vụ.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Trên các relay thông thường tương thích với Anthropic, hãy giữ các lượt hệ thống giữa cuộc hội thoại trong danh sách tin nhắn thay vì chuyển chúng vào lời nhắc hệ thống cấp cao nhất, để tiền tố lời nhắc được lưu vào bộ nhớ đệm duy trì ổn định qua các lượt. Chỉ áp dụng khi chính máy khách đã gửi bản beta mid-conversation-system-2026-04-07. Mặc định tắt: mọi lượt hệ thống đều được chuyển vào lời nhắc hệ thống giống hệt như trước đây, vì các relay không có bản beta đó sẽ từ chối các lượt hệ thống trong danh sách tin nhắn.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Sử dụng các cấp độ nỗ lực suy luận do models.dev công bố khi cả cấu hình ghi đè của người vận hành lẫn sổ đăng ký nhà cung cấp đều không khai báo cấp độ nào, chỉ giữ lại các mức nỗ lực đã biết và coi danh sách cấp độ được khai báo nhưng để trống là \"không có cấp độ\". Tắt theo mặc định: danh mục mô hình và các cấp độ nỗ lực đã phân giải vẫn giữ nguyên như trước.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Cho phép các yêu cầu auto/* xây dựng nhóm ứng viên với các khả năng mô hình đã được phân giải (thị giác, suy luận, tư duy) và điểm chất lượng quan sát được, đọc trong một lần đọc hàng loạt. Tắt theo mặc định: trọng số ứng viên tại thời điểm yêu cầu giữ nguyên chính xác như trước. Bật: các tín hiệu đó được đưa vào trọng số của ảnh chụp nhanh, nên trọng số ứng viên và việc lựa chọn có thể thay đổi.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Cho phép quy trình quét tình trạng thông tin xác thực kiểm tra lại các kết nối mà cổng đã tự tắt (tối đa một lần mỗi 6 giờ cho từng kết nối, 5 kết nối mỗi lượt quét) và bật lại kết nối khi kiểm tra lại thành công. Mặc định tắt: các kết nối đó vẫn bị tắt cho đến khi nhân viên vận hành can thiệp. Các kết nối bị nhân viên vận hành vô hiệu hóa và các kết nối bị cấm vĩnh viễn sẽ không bao giờ được kiểm tra lại.",
   "sidebar": {
     "home": "Trang chủ",
     "dashboard": "Trang tổng quan",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Gói đăng ký này có các nút cần một proxy core cục bộ (SS/VMess/Trojan/VLESS); chúng sẽ không được định tuyến cho đến khi bạn cấu hình điểm cuối SOCKS5 của core cục bộ.",
         "NO_USABLE_NODES": "Gói đăng ký không tạo ra nút nào có thể sử dụng (http/https/socks5 hoặc các nút có điểm cuối core cục bộ).",
         "SELECTOR_SWITCH_FAILED": "Lệnh gọi điều khiển proxy-core thất bại; tuyến hiện tại vẫn được giữ. Kiểm tra URL và secret điều khiển, rồi làm mới.",
+        "SELECTOR_EARLY_NO_CONTROL": "Không có URL kiểm soát",
+        "SELECTOR_EARLY_UNMAPPED": "Không có gói đăng ký khớp",
         "CORE_CONFIG_NOT_GENERATED": "Cấu hình lõi cục bộ chưa được tạo; tệp đã áp dụng không thay đổi. Hãy kiểm tra đường dẫn rồi làm mới.",
         "CORE_CONFIG_NOT_APPLIED": "Cấu hình lõi được tạo ra không thể thay thế tệp đã chấp nhận; bản sao bên cạnh đã được giữ lại.",
         "CORE_RELOAD_UNDECLARED": "Chưa khai báo kênh tải lại cho cấu hình lõi đã được thay thế. Hãy khai báo một trong các cách: URL điều khiển trên lõi tương thích, biến OMNIROUTE_PROXY_CORE_RELOAD_COMMAND dưới dạng mảng đối số JSON, hoặc giá trị external cho bên quan sát bên ngoài.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Tạo đăng ký",
       "loading": "Đang tải…",
       "noSubscriptions": "Chưa có đăng ký nào. Nhấp vào \"Thêm đăng ký\" để bắt đầu.",
+      "earlySkipsSinceRestart": "Số lần bỏ qua của trình chọn kể từ lần khởi động lại gần nhất",
       "statusOk": "được rồi",
       "statusError": "Lỗi",
       "statusEmpty": "trống",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Số Lần Thất Bại",
       "retryAfterMs": "Thử Lại Sau (ms)",
-      "lastFailureKind": "Loại Thất Bại Gần Nhất"
+      "lastFailureKind": "Loại Thất Bại Gần Nhất",
+      "lastClose": "Lần đóng gần nhất"
     },
     "empty": {
       "title": "Không có kết nối",

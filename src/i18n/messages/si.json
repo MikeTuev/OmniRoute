@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "ස්ථිතික seed එක වෙනුවට OAuth bearer token එක භාවිතයෙන් https://api.x.ai/v1/models වෙතින් xai-oauth සම්බන්ධතා සඳහා සජීවී xAI මාදිලි නාමාවලිය ලබා ගන්න. පෙරනිමියෙන් අක්රියයි: xai-oauth නොවෙනස් ස්ථිතික seed එක දිගටම සපයයි. විසඳීමේ කිසියම් දෝෂයකදී, සොයාගැනීම seed එක වෙත ආපසු යයි.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "සේවාදායකය ඉල්ලීම් පිළිගැනීම ආරම්භ කරන තෙක් ආරම්භය අවහිර කර තැබීම වෙනුවට, ඉල්ලීම් පිළිගැනීම ආරම්භ කළ පසු ආරම්භක දත්ත සමුදා අඛණ්ඩතා/සෞඛ්ය පරීක්ෂාව ධාවනය කරන්න. පෙරනිමියෙන් අක්රියයි: මෙම වෙනසට පෙර මෙන්ම පරීක්ෂාව අවසන් වන තෙක් ආරම්භය අවහිර වන බැවින්, දූෂිත දත්ත සමුදායක් පළමු ඉල්ලීමට සේවය සැපයීමට පෙරම තවමත් හඳුනා ගැනේ.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "සාමාන්ය anthropic-අනුකූල රිලේවලදී, සංවාදය මැද ඇති system turns ඉහළ මට්ටමේ system prompt වෙත ගෙන යාම වෙනුවට message ලැයිස්තුව තුළම තබන්න. එමඟින් cache කළ prompt prefix එක turns අතර ස්ථාවරව පවතී. මෙය අදාළ වන්නේ client විසින්ම mid-conversation-system-2026-04-07 බීටාව යවා ඇති විට පමණි. පෙරනිමියෙන් අක්රියයි: එම බීටාව නොමැති රිලේ message ලැයිස්තුවේ ඇති system turns ප්රතික්ෂේප කරන බැවින්, පෙර පරිදිම සෑම system turn එකක්ම system prompt වෙත ගෙන යනු ලැබේ.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "ක්රියාකරු අතික්රමණයක් හෝ සපයන්නාගේ රෙජිස්ට්රියක් කිසිවක් ප්රකාශ නොකරන විට models.dev ප්රකාශයට පත් කරන තාර්කික ප්රයත්න මට්ටම් භාවිත කරන්න, දන්නා ප්රයත්න මට්ටම් පමණක් තබා ගන්න, සහ හිස් ලෙස ප්රකාශිත මට්ටම් ලැයිස්තුවක් \"මට්ටම් නැත\" ලෙස සලකන්න. පෙරනිමියෙන් අක්රියයි: ආකෘති නාමාවලිය සහ නිර්ණය කළ ප්රයත්න මට්ටම් පෙර තිබූ ආකාරයටම පවතී.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "auto/* ඉල්ලීම්වලට විසඳන ලද මාදිලි හැකියාවන් (දර්ශනය, තර්කනය, චින්තනය) සහ නිරීක්ෂණය කළ ගුණාත්මක ලකුණු සමඟ, එක් තොග කියවීමකින්, අපේක්ෂක සංචිතය ගොඩනැගීමට ඉඩ දෙයි. පෙරනිමියෙන් අක්‍රියයි: ඉල්ලීම් අවස්ථාවේ අපේක්ෂක බර පෙර පරිදිම හරියටම පවතී. සක්‍රිය විට: මෙම සංඥා ස්නැප්ෂොට් බරට එක් වන බැවින් අපේක්ෂක බර සහ තේරීම වෙනස් විය හැක.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "අක්තපත්ර සෞඛ්ය පිරික්සුමට, ගේට්වේ විසින් ස්වයංක්රීයව අක්රිය කළ සම්බන්ධතා නැවත පරීක්ෂා කිරීමට (එක් එක් සම්බන්ධතාව උපරිම වශයෙන් පැය 6කට වරක්, එක් පිරික්සුමකට සම්බන්ධතා 5ක්) සහ නැවත පරීක්ෂාව සමත් වූ විට ඒවායින් එකක් යළි සක්රිය කිරීමට ඉඩ දෙන්න. පෙරනිමියෙන් අක්රියයි: ක්රියාකරුවෙකු ක්රියා කරන තෙක් එවැනි සම්බන්ධතා අක්රියව පවතී. ක්රියාකරු විසින් අක්රිය කළ සහ ස්ථිරව තහනම් කළ සම්බන්ධතා කිසිවිටෙක නැවත පරීක්ෂා නොකෙරේ.",
   "sidebar": {
     "home": "මුල් පිටුව",
     "dashboard": "උපකරණ පුවරුව",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "මෙම දායකත්වයේ දේශීය ප්රොක්සි කෝරයක් අවශ්ය නෝඩ ඇත (SS/VMess/Trojan/VLESS); ඔබ local-core SOCKS5 අන්ත ලක්ෂ්යය වින්යාස කරන තෙක් ඒවා මාර්ගගත නොකෙරේ.",
         "NO_USABLE_NODES": "දායකත්වයෙන් භාවිත කළ හැකි නෝඩ කිසිවක් නොලැබුණි (http/https/socks5 හෝ දේශීය කෝර අන්ත ලක්ෂ්යයක් සහිත නෝඩ).",
         "SELECTOR_SWITCH_FAILED": "ප්‍රොක්සි-කෝර් පාලන ඇමතුම අසාර්ථක විය; පෙර මාර්ගය සක්‍රීයව පවතී. පාලන URL සහ රහස පරීක්ෂා කර නැවුම් කරන්න.",
+        "SELECTOR_EARLY_NO_CONTROL": "පාලන URL එකක් නැත",
+        "SELECTOR_EARLY_UNMAPPED": "ගැලපෙන දායකත්වයක් නැත",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "සකස් කළ ප්‍රධාන වින්‍යාසය ඇතුළත් කළ ගොනුව ආදේශ කළ නොහැකි විය; ඒ වෙනුවට යාබද පිටපත තබා ගන්නා ලදී.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "දායකත්වය සාදන්න",
       "loading": "පූරණය වෙමින්…",
       "noSubscriptions": "තවම දායකත්වයන් නොමැත. ආරම්භ කිරීමට \"දායකත්වයක් එක් කරන්න\" ක්ලික් කරන්න.",
+      "earlySkipsSinceRestart": "අවසන් නැවත ආරම්භයෙන් පසු තේරීම් යන්ත්‍ර මඟහැරීම්",
       "statusOk": "හරි",
       "statusError": "දෝෂය",
       "statusEmpty": "හිස්",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "අසාර්ථක වීම් ගණන",
       "retryAfterMs": "නැවත උත්සාහ කිරීමේ ප්රමාදය (ms)",
-      "lastFailureKind": "අවසන් අසාර්ථකත්ව වර්ගය"
+      "lastFailureKind": "අවසන් අසාර්ථකත්ව වර්ගය",
+      "lastClose": "අවසන් වසාදැමීම"
     },
     "empty": {
       "title": "සම්බන්ධතා නොමැත",

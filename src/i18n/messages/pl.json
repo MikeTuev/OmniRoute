@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Pobieraj aktualny katalog modeli xAI dla połączeń xai-oauth z https://api.x.ai/v1/models przy użyciu tokenu Bearer OAuth zamiast niezmiennego statycznego zestawu początkowego. Domyślnie wyłączone: xai-oauth nadal udostępnia niezmieniony statyczny zestaw początkowy. W przypadku jakiegokolwiek błędu rozpoznawania mechanizm wykrywania wraca do zestawu początkowego.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Uruchamiaj kontrolę integralności i kondycji bazy danych po rozpoczęciu przez serwer przyjmowania żądań, zamiast blokować uruchamianie do czasu jej zakończenia. Domyślnie wyłączone: uruchamianie jest blokowane przez kontrolę dokładnie tak jak przed tą zmianą, dzięki czemu uszkodzona baza danych nadal zostanie wykryta przed obsłużeniem pierwszego żądania.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "W przypadku zwykłych przekaźników zgodnych z anthropic zachowuj systemowe komunikaty w środku konwersacji na liście wiadomości, zamiast przenosić je do systemowego promptu najwyższego poziomu, dzięki czemu buforowany prefiks promptu pozostaje stabilny między turami. Ma zastosowanie tylko wtedy, gdy klient sam wysłał wersję beta mid-conversation-system-2026-04-07. Domyślnie wyłączone: każdy komunikat systemowy jest przenoszony do promptu systemowego dokładnie tak jak wcześniej, ponieważ przekaźniki bez tej wersji beta odrzucają komunikaty systemowe na liście wiadomości.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Używaj poziomów intensywności rozumowania publikowanych przez models.dev, gdy nie określono ich ani w nadpisaniu operatora, ani w rejestrze dostawcy. Zachowuj wyłącznie znane poziomy intensywności, a pustą zadeklarowaną listę poziomów traktuj jako „brak poziomów”. Domyślnie wyłączone: katalog modeli i wynikowe poziomy intensywności pozostają dokładnie takie jak wcześniej.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Pozwala żądaniom auto/* budować pulę kandydatów z rozwiązanymi możliwościami modeli (wizja, rozumowanie, myślenie) i zaobserwowanymi ocenami jakości, wczytanymi jednym zbiorczym odczytem. Domyślnie wyłączone: wagi kandydatów w momencie żądania pozostają dokładnie takie jak wcześniej. Włączone: te sygnały trafiają do wag migawki, więc wagi kandydatów i wybór mogą się zmienić.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Zezwól, aby kontrola stanu danych uwierzytelniających ponownie testowała połączenia automatycznie wyłączone przez bramę (każde najwyżej raz na 6 godzin, po 5 w ramach jednej kontroli) i ponownie włączała połączenie, jeśli test zakończy się pomyślnie. Domyślnie wyłączone: takie połączenia pozostają wyłączone do czasu interwencji operatora. Połączenia wyłączone przez operatora i trwale zablokowane nigdy nie są ponownie testowane.",
   "sidebar": {
     "home": "Strona główna",
     "dashboard": "Panel",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Ta subskrypcja zawiera węzły, które wymagają lokalnego rdzenia proxy (SS/VMess/Trojan/VLESS); nie są one trasowane, dopóki nie skonfigurujesz punktu końcowego SOCKS5 lokalnego rdzenia.",
         "NO_USABLE_NODES": "Subskrypcja nie zwróciła żadnych użytecznych węzłów (http/https/socks5 lub węzłów z punktem końcowym lokalnego rdzenia).",
         "SELECTOR_SWITCH_FAILED": "Wywołanie sterujące rdzenia proxy nie powiodło się; poprzednia trasa pozostaje aktywna. Sprawdź adres URL i sekret sterowania, a następnie odśwież.",
+        "SELECTOR_EARLY_NO_CONTROL": "Brak URL sterującego",
+        "SELECTOR_EARLY_UNMAPPED": "Brak pasującej subskrypcji",
         "CORE_CONFIG_NOT_GENERATED": "Konfiguracja lokalnego rdzenia nie została wygenerowana; przyjęty plik pozostał bez zmian. Sprawdź ścieżkę i odśwież.",
         "CORE_CONFIG_NOT_APPLIED": "Wygenerowana konfiguracja rdzenia nie mogła zastąpić przyjętego pliku; zamiast tego zachowano kopię obok.",
         "CORE_RELOAD_UNDECLARED": "Dla zastąpionej konfiguracji rdzenia nie zadeklarowano kanału przeładowania. Zadeklaruj jeden: adres URL sterowania w zgodnym rdzeniu, zmienną OMNIROUTE_PROXY_CORE_RELOAD_COMMAND jako tablicę argumentów JSON albo wartość external dla zewnętrznego obserwatora.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Utwórz subskrypcję",
       "loading": "Ładowanie…",
       "noSubscriptions": "Nie ma jeszcze subskrypcji. Aby rozpocząć, kliknij „Dodaj subskrypcję”.",
+      "earlySkipsSinceRestart": "Pominięcia selektora od ostatniego restartu",
       "statusOk": "OK",
       "statusError": "Błąd",
       "statusEmpty": "Pusty",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Liczba Błędów",
       "retryAfterMs": "Ponów Po (ms)",
-      "lastFailureKind": "Ostatni Typ Błędu"
+      "lastFailureKind": "Ostatni Typ Błędu",
+      "lastClose": "Ostatnie zamknięcie"
     },
     "empty": {
       "title": "Brak połączeń",

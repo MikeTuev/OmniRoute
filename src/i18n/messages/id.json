@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Ambil katalog model xAI langsung untuk koneksi xai-oauth dari https://api.x.ai/v1/models menggunakan token bearer OAuth, bukan seed statis yang dibekukan. Nonaktif secara default: xai-oauth tetap menyajikan seed statis tanpa perubahan. Jika terjadi kesalahan resolusi, penemuan akan kembali menggunakan seed.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Jalankan pemeriksaan integritas/kesehatan basis data saat startup setelah server mulai menerima permintaan, bukan memblokir startup hingga pemeriksaan selesai. Nonaktif secara default: startup tetap diblokir selama pemeriksaan persis seperti sebelum perubahan ini, sehingga basis data yang rusak masih terdeteksi sebelum permintaan pertama dilayani.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Pada relay biasa yang kompatibel dengan anthropic, pertahankan giliran sistem di tengah percakapan dalam daftar pesan alih-alih memindahkannya ke prompt sistem tingkat atas, sehingga prefiks prompt yang di-cache tetap stabil di setiap giliran. Hanya berlaku jika klien itu sendiri mengirimkan beta mid-conversation-system-2026-04-07. Dinonaktifkan secara default: setiap giliran sistem dipindahkan ke prompt sistem persis seperti sebelumnya, karena relay tanpa beta tersebut menolak giliran sistem dalam daftar pesan.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Gunakan tingkat upaya penalaran yang dipublikasikan oleh models.dev ketika tidak ada penggantian oleh operator maupun deklarasi dari registri penyedia, dengan hanya mempertahankan tingkat upaya yang dikenal, dan perlakukan daftar tingkat yang dideklarasikan tetapi kosong sebagai \"tanpa tingkat\". Dinonaktifkan secara default: katalog model dan tingkat upaya yang telah ditentukan tetap sama persis seperti sebelumnya.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Memungkinkan permintaan auto/* menyusun kumpulan kandidat dengan kapabilitas model yang telah di-resolve (vision, reasoning, thinking) dan skor kualitas yang teramati, dibaca dalam satu pembacaan massal. Nonaktif secara default: bobot kandidat saat permintaan tetap persis seperti sebelumnya. Aktif: sinyal-sinyal tersebut masuk ke bobot snapshot, sehingga bobot kandidat dan pemilihan dapat berubah.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Izinkan pemindaian kesehatan kredensial menguji ulang koneksi yang dinonaktifkan sendiri oleh gateway (maksimal sekali setiap 6 jam untuk tiap koneksi, 5 koneksi per pemindaian) dan mengaktifkan kembali koneksi saat pengujian ulangnya berhasil. Secara default dinonaktifkan: koneksi tersebut tetap nonaktif hingga operator mengambil tindakan. Koneksi yang dinonaktifkan oleh operator dan diblokir secara permanen tidak pernah diuji ulang.",
   "sidebar": {
     "home": "Rumah",
     "dashboard": "Dasbor",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Langganan ini memiliki node yang memerlukan proxy core lokal (SS/VMess/Trojan/VLESS); node tersebut tidak akan dirutekan sampai Anda mengonfigurasi endpoint SOCKS5 local-core.",
         "NO_USABLE_NODES": "Langganan tidak menghasilkan node yang dapat digunakan (http/https/socks5 atau node dengan endpoint core lokal).",
         "SELECTOR_SWITCH_FAILED": "Panggilan kontrol proxy-core gagal; rute sebelumnya tetap aktif. Periksa URL dan secret kontrol, lalu muat ulang.",
+        "SELECTOR_EARLY_NO_CONTROL": "Tidak ada URL kontrol",
+        "SELECTOR_EARLY_UNMAPPED": "Tidak ada langganan yang cocok",
         "CORE_CONFIG_NOT_GENERATED": "Konfigurasi inti lokal tidak dibuat; file yang diadopsi tidak berubah. Periksa jalur lalu segarkan.",
         "CORE_CONFIG_NOT_APPLIED": "Konfigurasi inti yang dihasilkan tidak dapat mengganti file yang diadopsi; salinan di sebelahnya malah disimpan.",
         "CORE_RELOAD_UNDECLARED": "Tidak ada kanal muat ulang yang dideklarasikan untuk konfigurasi inti yang diganti. Deklarasikan salah satu: URL kontrol pada inti yang kompatibel, variabel OMNIROUTE_PROXY_CORE_RELOAD_COMMAND sebagai larik argumen JSON, atau nilai external untuk pengamat eksternal.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Buat Langganan",
       "loading": "Memuat…",
       "noSubscriptions": "Belum ada langganan. Klik \"Tambahkan Langganan\" untuk memulai.",
+      "earlySkipsSinceRestart": "Lompatan pemilih sejak mulai ulang terakhir",
       "statusOk": "Oke",
       "statusError": "Kesalahan",
       "statusEmpty": "Kosong",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Jumlah Kegagalan",
       "retryAfterMs": "Coba Lagi Setelah (ms)",
-      "lastFailureKind": "Tipe Kegagalan Terakhir"
+      "lastFailureKind": "Tipe Kegagalan Terakhir",
+      "lastClose": "Penutupan Terakhir"
     },
     "empty": {
       "title": "Tidak ada koneksi",

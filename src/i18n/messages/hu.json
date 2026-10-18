@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Az xai-oauth kapcsolatokhoz az élő xAI-modellkatalógus lekérése a https://api.x.ai/v1/models címről az OAuth bearer token használatával, a rögzített statikus alapadatok helyett. Alapértelmezés szerint kikapcsolva: az xai-oauth továbbra is változatlanul a statikus alapadatokat szolgáltatja. Bármilyen feloldási hiba esetén a felderítés visszaáll az alapadatokra.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Az indításkori adatbázis-integritási és állapotellenőrzés futtatása azután, hogy a kiszolgáló elkezdte fogadni a kéréseket, ahelyett, hogy az indítást az ellenőrzés befejezéséig blokkolná. Alapértelmezés szerint kikapcsolva: az indítás pontosan úgy vár az ellenőrzésre, mint e módosítás előtt, így a sérült adatbázist továbbra is az első kérés kiszolgálása előtt észleli a rendszer.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Egyszerű, Anthropic-kompatibilis átjátszók esetén a beszélgetés közbeni rendszerszerepű üzenetek maradjanak az üzenetlistában ahelyett, hogy a legfelső szintű rendszerpromptba kerülnének, így a gyorsítótárazott promptelőtag stabil marad a beszélgetési fordulók között. Ez csak akkor érvényes, ha maga a kliens küldte el a mid-conversation-system-2026-04-07 bétát. Alapértelmezés szerint ki van kapcsolva: minden rendszerszerepű üzenet pontosan úgy kerül át a rendszerpromptba, mint korábban, mert az ezt a bétát nem támogató átjátszók elutasítják az üzenetlistában szereplő rendszerszerepű üzeneteket.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Használja a models.dev által közzétett következtetési ráfordítási szinteket, ha sem operátori felülbírálás, sem a szolgáltatói nyilvántartás nem határoz meg ilyeneket; csak az ismert ráfordítási szinteket tartsa meg, az üresen deklarált szintlistát pedig kezelje úgy, mintha „nem lennének szintek”. Alapértelmezés szerint kikapcsolva: a modellkatalógus és a feloldott ráfordítási szintek pontosan a korábbiak maradnak.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Lehetővé teszi, hogy az auto/* kérések a jelöltkészletet feloldott modellképességekkel (látás, következtetés, gondolkodás) és megfigyelt minőségi pontszámokkal állítsák össze, egyetlen tömeges olvasással betöltve. Alapértelmezés szerint ki: a jelöltek súlyai a kérés idején pontosan a korábbiak maradnak. Be: ezek a jelek bekerülnek a pillanatkép súlyaiba, így a jelöltek súlyai és a kiválasztás változhat.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Engedélyezze, hogy a hitelesítő adatok állapotának ellenőrzése újratesztelje az átjáró által automatikusan kikapcsolt kapcsolatokat (kapcsolatonként legfeljebb 6 óránként egyszer, ellenőrzésenként 5-öt), és újra bekapcsolja őket, ha sikeresen teljesítik az újratesztelést. Alapértelmezés szerint ki van kapcsolva: az ilyen kapcsolatok mindaddig kikapcsolva maradnak, amíg egy operátor nem intézkedik. Az operátor által letiltott és a véglegesen kitiltott kapcsolatokat a rendszer soha nem teszteli újra.",
   "sidebar": {
     "home": "Otthon",
     "dashboard": "Irányítópult",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Ez az előfizetés olyan csomópontokat tartalmaz, amelyeknek helyi proxy-core-ra (SS/VMess/Trojan/VLESS) van szükségük; ezek nincsenek irányítva, amíg be nem állítja a helyi core SOCKS5 végpontot.",
         "NO_USABLE_NODES": "Az előfizetés nem eredményezett használható csomópontokat (http/https/socks5 vagy helyi core végponttal rendelkező csomópontok).",
         "SELECTOR_SWITCH_FAILED": "A proxy-core vezérlőhívása sikertelen; az előző útvonal aktív marad. Ellenőrizze a vezérlő URL-t és titkot, majd frissítsen.",
+        "SELECTOR_EARLY_NO_CONTROL": "Nincs vezérlő URL",
+        "SELECTOR_EARLY_UNMAPPED": "Nincs egyező előfizetés",
         "CORE_CONFIG_NOT_GENERATED": "The local-core config was not generated; the adopted file is unchanged. Check the path and refresh.",
         "CORE_CONFIG_NOT_APPLIED": "A generált alapkonfiguráció nem tudta helyettesíteni az elfogadott fájlt; helyette a mellette lévő másolat maradt meg.",
         "CORE_RELOAD_UNDECLARED": "No reload channel is declared for the replaced core config. Declare one: a control URL on a compatible core, the OMNIROUTE_PROXY_CORE_RELOAD_COMMAND variable as a JSON argument array, or the value external for an outside observer.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Előfizetés létrehozása",
       "loading": "Betöltés…",
       "noSubscriptions": "Még nincs előfizetés. A kezdéshez kattintson az \"Előfizetés hozzáadása\" gombra.",
+      "earlySkipsSinceRestart": "Választó-kihagyások a legutóbbi újraindítás óta",
       "statusOk": "OK",
       "statusError": "Hiba",
       "statusEmpty": "Üres",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Hibák Száma",
       "retryAfterMs": "Újrapróbálás Után (ms)",
-      "lastFailureKind": "Utolsó Hiba Típusa"
+      "lastFailureKind": "Utolsó Hiba Típusa",
+      "lastClose": "Utolsó zárás"
     },
     "empty": {
       "title": "Nincs kapcsolat",

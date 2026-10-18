@@ -1,0 +1,1 @@
+- **perf(cache):** opt-in `OMNIROUTE_CACHE_METRICS_MIN_COMPUTE_MS` serves the usage-history part of the cache page from the shared response cache (history may then lag up to the analytics TTL); unset keeps every read live ([#16361](https://github.com/diegosouzapw/OmniRoute/pull/16361)) — thanks @maxmad64bis

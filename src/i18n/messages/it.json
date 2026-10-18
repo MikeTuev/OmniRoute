@@ -1018,6 +1018,9 @@
   "featureFlagXaiOauthLiveModelDiscoveryDescription": "Recupera il catalogo live dei modelli xAI per le connessioni xai-oauth da https://api.x.ai/v1/models utilizzando il token bearer OAuth, anziché il seed statico invariabile. Disattivata per impostazione predefinita: xai-oauth continua a fornire il seed statico senza modifiche. In caso di errore di risoluzione, il rilevamento ripiega sul seed.",
   "featureFlagDbHealthcheckStartupDeferredEnabledDescription": "Esegui il controllo di integrità/stato del database all'avvio dopo che il server ha iniziato ad accettare richieste, anziché bloccare l'avvio fino al suo completamento. Disattivata per impostazione predefinita: l'avvio resta bloccato durante il controllo esattamente come prima di questa modifica, quindi un database danneggiato viene comunque rilevato prima che sia gestita la prima richiesta.",
   "featureFlagAnthropicCompatibleMidConversationSystemDescription": "Sui relay standard compatibili con Anthropic, mantieni i turni di sistema a metà conversazione nell'elenco dei messaggi anziché spostarli nel prompt di sistema di primo livello, in modo che il prefisso del prompt memorizzato nella cache rimanga stabile tra i turni. Si applica solo quando il client stesso ha inviato la beta mid-conversation-system-2026-04-07. Disattivato per impostazione predefinita: ogni turno di sistema viene spostato nel prompt di sistema esattamente come prima, perché i relay che non supportano tale beta rifiutano i turni di sistema nell'elenco dei messaggi.",
+  "featureFlagModelsDevEffortTiersEnabledDescription": "Usa i livelli di impegno di ragionamento pubblicati da models.dev quando né una sostituzione dell'operatore né il registro del provider ne dichiarano alcuno, mantenendo solo i livelli di impegno noti e considerando un elenco vuoto di livelli dichiarati come \"nessun livello\". Disattivato per impostazione predefinita: il catalogo dei modelli e i livelli di impegno risolti rimangono esattamente come prima.",
+  "featureFlagAutoRequestResolvedCapabilitiesDescription": "Consente alle richieste auto/* di costruire il pool di candidati con le capacità del modello risolte (visione, ragionamento, thinking) e i punteggi di qualità osservati, letti in un'unica lettura in blocco. Disattivato per impostazione predefinita: i pesi dei candidati al momento della richiesta restano esattamente come prima. Attivato: questi segnali alimentano i pesi dello snapshot, quindi i pesi dei candidati e la selezione possono cambiare.",
+  "featureFlagCredentialHealthRetestAutoDisabledDescription": "Consenti alla verifica periodica dello stato delle credenziali di testare nuovamente le connessioni disattivate automaticamente dal gateway (al massimo una volta ogni 6 ore per ciascuna connessione, 5 per verifica) e di riattivarle quando superano il nuovo test. Opzione disattivata per impostazione predefinita: tali connessioni rimangono disattivate finché non interviene un operatore. Le connessioni disattivate da un operatore e quelle bloccate in modo permanente non vengono mai testate nuovamente.",
   "sidebar": {
     "home": "Casa",
     "dashboard": "Pannello di controllo",
@@ -7140,6 +7143,8 @@
         "NEEDS_CORE_NOT_CONFIGURED": "Questa sottoscrizione contiene nodi che richiedono un core proxy locale (SS/VMess/Trojan/VLESS); non verranno instradati finché non configuri l'endpoint SOCKS5 del core locale.",
         "NO_USABLE_NODES": "La sottoscrizione non ha prodotto nodi utilizzabili (http/https/socks5 o nodi con un endpoint del core locale).",
         "SELECTOR_SWITCH_FAILED": "La chiamata di controllo del proxy-core non è riuscita; il percorso precedente resta attivo. Controlla URL e secret di controllo, quindi aggiorna.",
+        "SELECTOR_EARLY_NO_CONTROL": "Nessun URL di controllo",
+        "SELECTOR_EARLY_UNMAPPED": "Nessun abbonamento corrispondente",
         "CORE_CONFIG_NOT_GENERATED": "La configurazione del core locale non è stata generata; il file adottato è invariato. Controlla il percorso e aggiorna.",
         "CORE_CONFIG_NOT_APPLIED": "La configurazione di base generata non ha potuto sostituire il file adottato; è stata mantenuta invece la copia affiancata.",
         "CORE_RELOAD_UNDECLARED": "Nessun canale di ricaricamento è dichiarato per la configurazione del core sostituita. Dichiarane uno: un URL di controllo su un core compatibile, la variabile OMNIROUTE_PROXY_CORE_RELOAD_COMMAND come array JSON di argomenti, oppure il valore external per un osservatore esterno.",
@@ -7171,6 +7176,7 @@
       "createSubscription": "Crea abbonamento",
       "loading": "Caricamento…",
       "noSubscriptions": "Nessun abbonamento ancora. Fai clic su \"Aggiungi abbonamento\" per iniziare.",
+      "earlySkipsSinceRestart": "Salti del selettore dall'ultimo riavvio",
       "statusOk": "OK",
       "statusError": "Errore",
       "statusEmpty": "Vuoto",
@@ -14375,7 +14381,8 @@
       "never": "-",
       "failureCount": "Conteggio Fallimenti",
       "retryAfterMs": "Riprova Dopo (ms)",
-      "lastFailureKind": "Ultimo Tipo di Fallimento"
+      "lastFailureKind": "Ultimo Tipo di Fallimento",
+      "lastClose": "Ultima chiusura"
     },
     "empty": {
       "title": "Nessuna connessione",

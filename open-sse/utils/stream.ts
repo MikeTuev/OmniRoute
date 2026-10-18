@@ -102,6 +102,14 @@ import { createSSEOutputSink } from "./sseOutputSink.ts";
 import { normalizeArrayContentChunk } from "./arrayContentDelta.ts";
 import { drainTranslateFlushTail } from "./translateFlushTail.ts";
 
+function isLateOutputProbeEnabled(): boolean {
+  try {
+    return isFeatureFlagEnabled("STREAM_LATE_OUTPUT_PROBE_ENABLED");
+  } catch {
+    return false;
+  }
+}
+
 /**
  * Race a response body read against a timeout.
  * Prevents indefinite hangs when the upstream sends headers but stalls on the body.
@@ -809,7 +817,9 @@ export function createSSEStream(options: StreamOptions = {}) {
   // Canonical streaming timing (TTFT / ITL / interruption). One instance per
   // stream, marked from the transform below. ttft() = first-forwarded-SSE-chunk
   // latency (NOT token-level) — see streamTiming.ts.
-  const timing: StreamTiming = createStreamTiming();
+  // #16927 opt-in: keep probing for late visible output past the first 64 chunks (fail
+  // closed: any flag-resolution error keeps the release 64-chunk window).
+  const timing: StreamTiming = createStreamTiming({ probeLateOutput: isLateOutputProbeEnabled() });
 
   // Drop internal commentary-phase Responses output before forwarding (#6199).
   // Explicit option wins; otherwise read the feature flag (default on) — resolved once per stream.
